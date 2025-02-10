@@ -1,8 +1,8 @@
 import axios from 'axios'
+import { API_BASE_URL } from '@/config'
 
 const instance = axios.create({
-    // baseURL: 'http://localhost:8080',
-    baseURL: 'https://d360cba8-fcbe-47c7-b19f-a38bcd9a5824.mock.pstmn.io', // Postman Mock Server 주소
+    baseURL: API_BASE_URL,
     headers: {
         'Content-Type': 'application/json', // JSON 응답 기대
     },
@@ -46,11 +46,52 @@ const removeBookmark = async (token, profileId, lectureId) => {
 // 강의 상세 관련 API
 //===============================================
 
-// 강의 리뷰 불러오기
+// 강의 상세 불러오기
+const getLectureDetail = async (lectureId) => {
+    return instance.get(`/api/lecture/detail/${lectureId}`)
+}
 
+// 강의 리뷰 불러오기
 const getLectureReview = async (lectureId, pageIndex) => {
     return instance.get(`/api/reviews/lectures/${lectureId}`, { params: { pageIndex } })
 }
 
-export { addBookmark, removeBookmark, getLectureReview }
+// 본인의 리뷰 가져오기
+const getSelfReview = async (token, lectureId) => {
+    return instance.get(`/api/reviews/lectures/${lectureId}/my-review`, {
+        headers: { Authorization: `Bearer ${token}` },
+    })
+}
+
+// 강의 리뷰 등록
+const writeLectureReview = async (token, lectureId, score, content) => {
+    return instance.post(
+        `/api/reviews`,
+        { lectureId, score, content }, // body에 포함
+        {
+            headers: { Authorization: `Bearer ${token}` },
+        }
+    )
+}
+
+// 강의 리뷰 수정
+const editLectureReview = async (token, reviewId, lectureId, score, content) => {
+    return instance.patch(
+        `/api/reviews/${reviewId}`,
+        { lectureId, score, content }, // body에 포함
+        {
+            headers: { Authorization: `Bearer ${token}` },
+        }
+    )
+}
+
+export {
+    addBookmark,
+    removeBookmark,
+    getLectureDetail,
+    getLectureReview,
+    getSelfReview,
+    writeLectureReview,
+    editLectureReview,
+}
 export default instance

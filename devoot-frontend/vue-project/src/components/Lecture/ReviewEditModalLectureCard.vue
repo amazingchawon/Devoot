@@ -5,8 +5,7 @@
     >
         <!-- Thumbnail Container -->
         <div class="w-[7.5rem] h-full bg-gray-300 flex-shrink-0 relative">
-            <img :src="lecture.lecture.imgUrl" alt="강의 썸네일" class="w-full h-full" />
-            <Move class="absolute w-6 h-6 text-white top-[33.6px]" />
+            <img :src="lecture.imgUrl" alt="강의 썸네일" class="w-full h-full" />
         </div>
 
         <!-- Info Container -->
@@ -14,16 +13,16 @@
             <!-- Title Section -->
             <div class="flex items-center justify-between w-full h-full gap-x-0.5">
                 <div class="flex flex-col justify-center w-full h-full">
-                    <p class="text-gray-400 text-caption-sm">{{ lecture.lecture.sourceName }}</p>
+                    <p class="text-gray-400 text-caption-sm">{{ lecture.sourceName }}</p>
                     <p
                         class="text-black cursor-pointer text-overflow text-body"
-                        :title="lecture.lecture.name"
+                        :title="lecture.title"
                     >
-                        {{ lecture.lecture.name }}
+                        {{ lecture.title }}
                     </p>
                 </div>
                 <!-- 관심 강의 추가 -->
-                <div @click="toggleBookmark(lecture.id)">
+                <div @click="toggleBookmark()">
                     <component
                         :is="isBookmarked ? BookmarkFill : BookmarkDefault"
                         class="w-6 h-6 cursor-pointer text-primary-500"
@@ -33,7 +32,7 @@
             <!-- Tag Section -->
             <div class="flex gap-1.5 w-full">
                 <div
-                    v-for="tag in lecture.lecture.tags.split(',')"
+                    v-for="tag in lecture.tags.split(',')"
                     :key="tag"
                     class="inline-flex gap-1 text-caption-sm tag-gray max-w-[60px]"
                 >
@@ -51,17 +50,16 @@
 </template>
 
 <script setup>
-import { ref, defineProps } from 'vue'
+import { computed } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { addBookmark, removeBookmark } from '@/helpers/lecture' // API 함수 가져오기
 
 import BookmarkFill from '@/assets/icons/bookmark_filled.svg'
 import BookmarkDefault from '@/assets/icons/bookmark_default.svg'
-import Move from '@/assets/icons/move.svg'
 
 const userStore = useUserStore() // Pinia 스토어 가져오기
 
-defineProps({
+const props = defineProps({
     lecture: {
         type: Object,
         required: true,
@@ -69,7 +67,8 @@ defineProps({
 })
 
 // 북마크 관련
-const isBookmarked = ref(true)
+// lecture의 isBookmarked 상태를 반응형으로 유지
+const isBookmarked = computed(() => props.lecture.isBookmarked)
 
 const toggleBookmark = async (lectureId) => {
     console.log('버튼클릭됨!!!!!')
