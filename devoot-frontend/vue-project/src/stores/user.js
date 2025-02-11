@@ -1,3 +1,5 @@
+// src\stores\user.js
+
 import { defineStore } from 'pinia'
 import {
     auth,
@@ -32,6 +34,7 @@ export const useUserStore = defineStore('user', {
                 // Firebase에서 받아온 사용자 정보 저장
                 this.user = result.user
                 this.token = await result.user.getIdToken(true)
+                console.log(this.token)
 
                 // API 파일에서 getUserInfo() 호출
                 const res = await getUserInfo(this.token)

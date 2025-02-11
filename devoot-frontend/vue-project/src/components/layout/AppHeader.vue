@@ -51,6 +51,9 @@
                     사용자 검색
                 </button>
             </div>
+
+            <!-- 사용자 검색 모달 -->
+            <UserSearchModal :isOpen="isUserSearchModalOpen" @close="closeUserSearchModal" />
         </template>
 
         <!-- 오른쪽: 알림 버튼 (공통) -->
@@ -60,7 +63,7 @@
                 aria-label="알림"
                 @click="openNotificationModal"
             >
-                <!-- 알람 여부에 따라 아이콘 변경 -->
+                <!-- 알림 여부에 따라 아이콘 변경 -->
                 <component
                     :is="hasNotifications ? BellNotificationIcon : BellIcon"
                     class="w-6 h-6"
@@ -68,12 +71,10 @@
             </button>
         </div>
 
-        <!-- 사용자 검색 모달 -->
-        <UserSearchModal :isOpen="isUserSearchModalOpen" @close="closeUserSearchModal" />
         <!-- 알림 모달 -->
         <NotificationModal
             :isOpen="isNotificationModalOpen"
-            :notifications="notifications"
+            :token="userStore.token"
             @close="closeNotificationModal"
         />
     </header>
@@ -82,16 +83,18 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+import { hasUnread } from '@/helpers/notification'
+
 import CategoryIcon from '@/assets/icons/category.svg'
-import UserSearchIcon from '@/assets/icons/user_search.svg'
+import CategoryDropDown from '@/components/Common/CategoryDropDown.vue'
+import SearchIcon from '@/assets/icons/search.svg'
 import BellIcon from '@/assets/icons/bell.svg'
 import BellNotificationIcon from '@/assets/icons/bell_notification.svg'
-import SearchIcon from '@/assets/icons/search.svg'
-import CategoryDropDown from '@/components/Common/CategoryDropDown.vue'
+import NotificationModal from '@/components/Common/NotificationModal.vue'
 import UserSearchModal from '@/components/Common/UserSearchModal.vue'
-import NotificationModal from '@/components/Common/NotificationModal.vue' // 알림
 
-// Props 정의 (기본값 포함)
+// Props 정의
 defineProps({
     type: {
         type: String,
@@ -103,21 +106,31 @@ defineProps({
 // 상태 관리 변수
 const searchQuery = ref('')
 const isCategoryDropdownVisible = ref(false)
+const isNotificationModalOpen = ref(false)
+const hasNotifications = ref(false)
 const isUserSearchModalOpen = ref(false)
-const isNotificationModalOpen = ref(false) // 알림 모달 열림 여부
-const hasNotifications = ref(false) // 알람 여부
 
-// 라우터 설정
+const userStore = useUserStore()
 const router = useRouter()
 
-// 드롭다운 토글 함수
+// 카테고리 드롭다운 토글
 const toggleCategoryDropdown = () => {
     isCategoryDropdownVisible.value = !isCategoryDropdownVisible.value
 }
 
-// 드롭다운 닫기 함수 (카테고리 선택 시 호출)
+// 카테고리 드롭다운 닫기
 const closeCategoryDropdown = () => {
     isCategoryDropdownVisible.value = false
+}
+
+// 사용자 검색 모달 열기
+const openUserSearchModal = () => {
+    isUserSearchModalOpen.value = true
+}
+
+// 사용자 검색 모달 닫기
+const closeUserSearchModal = () => {
+    isUserSearchModalOpen.value = false
 }
 
 // 검색 실행 함수
@@ -125,41 +138,45 @@ const executeSearch = () => {
     const trimmedQuery = searchQuery.value.trim()
     if (trimmedQuery) {
         router.push({ path: '/lecture', query: { q: trimmedQuery } })
-    } else {
-        router.push({ path: '/lecture' })
     }
     searchQuery.value = ''
 }
 
-// 사용자 검색 모달 열기/닫기 함수
-const openUserSearchModal = () => {
-    isUserSearchModalOpen.value = true
-}
-const closeUserSearchModal = () => {
-    isUserSearchModalOpen.value = false
+// 알림 존재 여부 확인 후 아이콘 변경
+const updateHasUnread = async () => {
+    if (!userStore.token) return
+
+    try {
+        const response = await hasUnread(userStore.token)
+        hasNotifications.value = response.data
+        console.log('🔔 읽지 않은  알림 존재 여부:', response.data)
+    } catch (error) {
+        console.error('❌ 읽지 않은 알림 존재 여부 확인 실패:', error)
+    }
 }
 
-// 알림 모달 열기 함수
+// 알림 모달 열기
 const openNotificationModal = () => {
     isNotificationModalOpen.value = true
 }
-// 알림 모달 닫기 함수
+
+// 알림 모달 닫기
 const closeNotificationModal = () => {
     isNotificationModalOpen.value = false
 }
 
-// 더미 데이터로부터 알림 여부 확인
-onMounted(async () => {
-    try {
-        const response = await fetch('/notification_dummy_data.json')
-        const data = await response.json()
-        // 배열 안에 객체가 하나라도 있으면 알림 존재 여부를 true로 설정
-        hasNotifications.value =
-            Array.isArray(data) && data.length > 0 && typeof data[0] === 'object'
-    } catch (error) {
-        console.error('Failed to load notification data:', error)
-    }
+// 페이지 로드 및 토큰 변경 시 알림 존재 여부 확인
+onMounted(() => {
+    updateHasUnread()
 })
+
+watch(
+    () => userStore.token,
+    (newToken) => {
+        console.log('🔑 현재 사용자', userStore.userId, '토큰:', newToken)
+        updateHasUnread()
+    }
+)
 </script>
 
 <style scoped></style>

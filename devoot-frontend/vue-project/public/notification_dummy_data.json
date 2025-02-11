@@ -1,34 +1,24 @@
-[
-    {
-        "id": 1,
-        "toUser": 123,
-        "fromUser": "sae_balbadak_noread",
-        "followId": 456,
-        "createdAt": "2025-02-07T03:00:00Z",
-        "hasRead": false
-    },
-    {
-        "id": 2,
-        "toUser": 123,
-        "fromUser": "gae_balbadak_read",
-        "followId": null,
-        "createdAt": "2025-02-06T12:00:00Z",
-        "hasRead": true
-    },
-    {
-        "id": 3,
-        "toUser": 123,
-        "fromUser": "sae_balbadak_read",
-        "followId": null,
-        "createdAt": "2025-02-05T08:30:00Z",
-        "hasRead": true
-    },
-    {
-        "id": 3,
-        "toUser": 123,
-        "fromUser": "gea_balbadak_noread",
-        "followId": null,
-        "createdAt": "2025-02-05T08:30:00Z",
-        "hasRead": false
-    }
-]
+{
+    "totalElements": 2,
+    "totalPages": 1,
+    "content": [
+        {
+            "id": 5,
+            "fromUserProfileId": "bon",
+            "fromUserNickname": "뽄드",
+            "fromUserImageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7LpapIl8DITfz4_Y2z7pqs7FknPkjReAZCg&s",
+            "followId": 7,
+            "hasRead": true,
+            "pending": true
+        },
+        {
+            "id": 4,
+            "fromUserProfileId": "l3olvy",
+            "fromUserNickname": "김보니",
+            "fromUserImageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7LpapIl8DITfz4_Y2z7pqs7FknPkjReAZCg&s",
+            "followId": 5,
+            "hasRead": true,
+            "pending": false
+        }
+    ]
+}
