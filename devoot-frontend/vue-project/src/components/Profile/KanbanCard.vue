@@ -51,7 +51,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps } from 'vue'
+// import { ref, defineProps } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { addBookmark, removeBookmark } from '@/helpers/lecture' // API 함수 가져오기
 
@@ -60,7 +60,6 @@ import BookmarkDefault from '@/assets/icons/bookmark_default.svg'
 import Move from '@/assets/icons/move.svg'
 import { ref, defineProps, watch } from 'vue'
 import axios from 'axios'
-import { useUserStore } from '@/stores/user'
 
 const userStore = useUserStore() // Pinia 스토어 가져오기
 defineProps({
@@ -108,34 +107,34 @@ const deleteBookmark = async (token, userId, lectureId) => {
     }
 }
 
-const addBookmark = async (token, userId, lectureId) => {
-    try {
-        const mock_server_url = 'http://localhost:8080'
-        // const profileId = 'l3olvy' // 여기에 실제 사용자 ID를 넣어야 함
-        // const profileId = userStore.userId // 여기에 실제 사용자 ID를 넣어야 함
-        // console.log(profileId)
+// const addBookmark = async (token, userId, lectureId) => {
+//     try {
+//         const mock_server_url = 'http://localhost:8080'
+//         // const profileId = 'l3olvy' // 여기에 실제 사용자 ID를 넣어야 함
+//         // const profileId = userStore.userId // 여기에 실제 사용자 ID를 넣어야 함
+//         // console.log(profileId)
 
-        const API_URL = `${mock_server_url}/api/users/${userId}}/bookmarks/`
-        // const token = 'asdfasdfasdf' // 여기에 Bearer 토큰을 넣어야 함
+//         const API_URL = `${mock_server_url}/api/users/${userId}}/bookmarks/`
+//         // const token = 'asdfasdfasdf' // 여기에 Bearer 토큰을 넣어야 함
 
-        const response = await axios.post(
-            API_URL,
-            {
-                lectureId: lectureId,
-            },
-            {
-                headers: {
-                    'Content-Type': 'application/json', //필수 헤더 추가
-                    Authorization: `Bearer ${token}`, // 필요 시 Bearer 토큰 추가
-                },
-            }
-        )
-        isBookmark.value = !isBookmark.value
-        // console.log('응답', response)
-    } catch (error) {
-        console.error('에러:', error)
-    }
-}
+//         const response = await axios.post(
+//             API_URL,
+//             {
+//                 lectureId: lectureId,
+//             },
+//             {
+//                 headers: {
+//                     'Content-Type': 'application/json', //필수 헤더 추가
+//                     Authorization: `Bearer ${token}`, // 필요 시 Bearer 토큰 추가
+//                 },
+//             }
+//         )
+//         isBookmark.value = !isBookmark.value
+//         // console.log('응답', response)
+//     } catch (error) {
+//         console.error('에러:', error)
+//     }
+// }
 </script>
 
 <style>
