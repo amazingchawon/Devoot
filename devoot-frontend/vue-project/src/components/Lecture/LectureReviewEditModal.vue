@@ -12,7 +12,11 @@
         </div>
 
         <!-- 강의 카드 -->
-        <ReviewEditModalLectureCard :lecture="lecture" />
+        <ReviewEditModalLectureCard
+            :lecture="lecture"
+            :lecture-id-int="lectureIdInt"
+            @close-modal="emit('closeModal')"
+        />
 
         <div id="text-container" class="flex flex-col gap-1">
             <!-- 별점 -->
