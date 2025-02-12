@@ -20,10 +20,20 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { useUserStore } from './stores/user'
+
 import AppNavigation from './components/Layout/AppNavigation.vue'
 import AppHeader from './components/Layout/AppHeader.vue'
+
+const userStore = useUserStore()
+// const isLoaded = ref(false) // 사용자 정보 로드 상태 변수
+
+onMounted(async () => {
+    await userStore.fetchUser()
+    // isLoaded.value = true // 사용자 정보가 모두 로드된 후 isLoaded를 true로 설정
+})
 
 const route = useRoute()
 

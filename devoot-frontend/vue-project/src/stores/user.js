@@ -91,6 +91,8 @@ export const useUserStore = defineStore('user', {
                 if (user) {
                     this.user = user
                     this.token = await user.getIdToken(true)
+                    // console.log('dfkslfjalsjfklsajfklsjflasfj')
+                    // console.log('dfkslfjalsjfklsajfklsjflasfj', this.token)
 
                     // API에서 추가 유저 정보 가져오기
                     try {

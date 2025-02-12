@@ -102,7 +102,9 @@ import Delete from '@/assets/icons/delete.svg'
 import NavigateDown from '@/assets/icons/navigate_down.svg'
 import { ref, computed, watch, onMounted } from 'vue'
 import { useTodoStore } from '@/stores/todo'
-
+import { useUserStore } from '@/stores/user'
+// import { getInprogressLecture } from '@/stores/todoStore';
+const userStore = useUserStore()
 const todoStore = useTodoStore() // Pinia 스토어 가져오기
 // 강의 추가 버튼 상태 관리
 const isButtonClicked = ref(false)
@@ -212,7 +214,7 @@ const submitTodo = async () => {
     // console.log('tododata', todoData)
 
     try {
-        await todoStore.addTodo(todoData) // 📌 Pinia Store의 addTodo 실행
+        await todoStore.addTodo(todoData, userStore.token, userStore.userId) // 📌 Pinia Store의 addTodo 실행
         selectedLectureId.value = null
         subLectureId.value = null
         alert('할 일이 추가되었습니다!')
@@ -222,9 +224,19 @@ const submitTodo = async () => {
     }
 }
 
-onMounted(() => {
-    todoStore.getInprogressLecture() // 컴포넌트가 로드될 때 JSON 데이터 가져오기
-})
+watch(
+    () => [userStore.token, userStore.userId],
+    async ([newToken, newUserId]) => {
+        if (newToken && newUserId) {
+            console.log('✅ 토큰과 userId가 준비되었습니다.')
+            await todoStore.getInprogressLecture(newToken, newUserId)
+        }
+    },
+    { immediate: true }
+)
+// onMounted(() => {
+//     todoStore.getInprogressLecture() // 컴포넌트가 로드될 때 JSON 데이터 가져오기
+// })
 </script>
 
 <style></style>

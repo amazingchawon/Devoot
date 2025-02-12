@@ -71,29 +71,16 @@ import Trash from '@/assets/icons/trash.svg'
 import Star from '@/assets/icons/star_filled.svg'
 import { computed } from 'vue'
 
-const review = {
-    id: 4123,
-    lectureId: 1234,
-    userId: 12345,
-    rating: 2.5,
-    content:
-        '이 강의는 가볍게 들을 수 있습니다. 이 강의는 가볍게 들을 수 있습니다.이 강의는 가볍게 들을 수 있습니다.이 강의는 가볍게 들을 수 있습니다.이 강의는 가볍게 들을 수 있습니다.이 강의는 가볍게 들을 수 있습니다.이 강의는 가볍게 들을 수 있습니다.이 강의는 가볍게 들을 수 있습니다.이 강의는 가볍게 들을 수 있습니다.이 강의는 가볍게 들을 수 있습니다.',
-    createdAt: '2025-01-17 13:05:12',
-    profileId: 'customid123',
-    nickname: '테스트닉네임',
-    imageUrl:
-        'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
-}
-// const props = defineProps({
-//     review: {
-//         type: Object,
-//         required: true,
-//     },
-// })
+const props = defineProps({
+    review: {
+        type: Object,
+        required: true,
+    },
+})
 
 // 날짜 포맷 변경
 const formattedDate = computed(() => {
-    const date = new Date(review.createdAt)
+    const date = new Date(props.review.createdAt)
     const year = date.getFullYear()
     const month = String(date.getMonth() + 1).padStart(2, '0')
     const day = String(date.getDate()).padStart(2, '0')
@@ -102,8 +89,8 @@ const formattedDate = computed(() => {
 })
 
 // 별 개수 계산
-const fullStars = computed(() => Math.floor(review.rating))
-const hasHalfStar = computed(() => review.rating % 1 !== 0)
+const fullStars = computed(() => Math.floor(props.review.rating))
+const hasHalfStar = computed(() => props.review.rating % 1 !== 0)
 const emptyStars = computed(() => 5 - fullStars.value - (hasHalfStar.value ? 1 : 0))
 </script>
 

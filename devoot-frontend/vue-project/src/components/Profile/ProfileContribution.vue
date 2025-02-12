@@ -112,6 +112,14 @@ import FootPrint from '@/assets/icons/footprint.svg'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 
+const props = defineProps({
+    userId: {
+        type: String,
+        required: true,
+    },
+    token: String,
+})
+
 const userStore = useUserStore() // Pinia 스토어 가져오기
 
 // 0. 상태 변수 정의
@@ -132,23 +140,20 @@ const navigateYear = (offset) => {
 const contributions = ref([]) // 기여도 데이터를 저장하는 반응형 변수
 // const isDataLoaded = ref(false) // 데이터가 로드되었는지 여부를 나타내는 반응형 변수
 
-const loadContributions = async (selectedYear) => {
+const loadContributions = async (selectedYear, token, userId) => {
     try {
-        const mock_server_url = 'https://d360cba8-fcbe-47c7-b19f-a38bcd9a5824.mock.pstmn.io'
-        const profileId = 'l3olvy' // 여기에 실제 사용자 ID를 넣어야 함
+        const mock_server_url = 'http://localhost:8080'
+        // const profileId = 'l3olvy' // 여기에 실제 사용자 ID를 넣어야 함
         // const profileId = userStore.userId // 여기에 실제 사용자 ID를 넣어야 함
-        const API_URL = `${mock_server_url}/api/users/${profileId}/todos/contributions?year=${selectedYear}`
+        const API_URL = `${mock_server_url}/api/users/${userId}/todos/contributions?year=${selectedYear}`
         // const token = 'asdfasdfasdf' // 여기에 Bearer 토큰을 넣어야 함
-        const response = await axios.get(
-            API_URL,
-            {},
-            {
-                headers: {
-                    'Content-Type': 'application/json', //필수 헤더 추가
-                    Authorization: `Bearer ${userStore.token}`, // Bearer 토큰 추가
-                },
-            }
-        )
+
+        const response = await axios.get(API_URL, {
+            headers: {
+                'Content-Type': 'application/json', //필수 헤더 추가
+                Authorization: `Bearer ${token}`, // Bearer 토큰 추가
+            },
+        })
 
         const data = response.data
         // console.log(selectedYear)
@@ -165,6 +170,9 @@ const loadContributions = async (selectedYear) => {
         // console.log('새로운 년도', year.value)
         // console.log('📌 새로운 데이터 반영 완료:', contributions.value)
         // isDataLoaded.value = true // 데이터 로드 상태를 true로 변경
+
+        // console.log('잔디토큰', token)
+        // console.log('잔디아이디', userId)
     } catch (error) {
         console.error('진행중인 강의 불러오기 에러:', error)
     }
@@ -253,12 +261,17 @@ const calendarData = computed(() => {
     // console.log(columns) // 계산된 캘린더 데이터를 콘솔에 출력
     return columns // 최종적으로 계산된 캘린더 데이터를 반환
 })
-watch(year, async (newYear) => {
-    // console.log('📌 watch: year 변경 감지됨, 새로운 year:', newYear)
-
-    contributions.value = [] // ✅ 기존 데이터 초기화
-    await loadContributions(newYear) // ✅ 데이터를 비운 후 새로운 데이터를 기다렸다가 반영
-})
+watch(
+    () => [year.value, userStore.token, props.userId],
+    async ([newYear, newToken, newUserId]) => {
+        if (newYear && newToken && newUserId) {
+            console.log('✅ 모든 값이 준비되었습니다:', newYear, newToken, newUserId)
+            contributions.value = [] // 기존 데이터 초기화
+            await loadContributions(newYear, newToken, newUserId)
+        }
+    },
+    { immediate: true }
+)
 
 // 데이터 변경 시 특정 날짜 업데이트
 // watch(contributions, (newContributions) => {
@@ -292,7 +305,7 @@ onMounted(() => {
         year.value = new Date().getFullYear() // ✅ `year.value`가 없으면 현재 연도로 초기화
     }
     // console.log('📌 onMounted 이후 year.value:', year.value) // ✅ 정상적으로 설정되었는지 확인
-    loadContributions(year.value) // 컴포넌트가 로드될 때 JSON 데이터 가져오기
+    // loadContributions(year.value) // 컴포넌트가 로드될 때 JSON 데이터 가져오기
 })
 </script>
 
