@@ -87,6 +87,22 @@ const editLectureReview = async (token, reviewId, lectureId, content, rating) =>
     )
 }
 
+// 강의 리뷰 신고
+const reportLectureReview = async (token, reviewId) => {
+    return instance.post(
+        `/api/reviews/${reviewId}/report`,
+        {}, // body가 필요 없는 경우 빈 객체 `{}` 전달
+        { headers: { Authorization: `Bearer ${token}` } } // ✅ headers를 올바른 위치에 배치
+    )
+}
+
+// 강의 리뷰 삭제
+const deleteLectureReview = async (token, reviewId) => {
+    return instance.delete(`/api/reviews/${reviewId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+    })
+}
+
 export {
     addBookmark,
     removeBookmark,
@@ -95,5 +111,7 @@ export {
     getSelfReview,
     writeLectureReview,
     editLectureReview,
+    reportLectureReview,
+    deleteLectureReview,
 }
 export default instance

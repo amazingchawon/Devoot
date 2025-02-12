@@ -28,11 +28,12 @@
 
             <!-- 수정하기 / 삭제하기 / 신고하기 -->
             <div
+                v-if="isOwnReview"
                 id="review-action"
                 class="flex flex-row items-center gap-2 text-gray-300 text-caption"
             >
                 <!-- 본인 리뷰인 경우 : 수정하기 -->
-                <div class="relative flex flex-row items-center gap-1 group">
+                <div class="relative flex flex-row items-center gap-1 group" @click="editReview">
                     <Edit class="w-4 h-4" />
                     <p class="hidden md:inline">수정하기</p>
                     <!-- 툴팁 -->
@@ -44,7 +45,7 @@
                 </div>
 
                 <!-- 삭제하기 -->
-                <div class="relative flex flex-row items-center gap-1 group">
+                <div class="relative flex flex-row items-center gap-1 group" @click="deleteReview">
                     <Trash class="w-4 h-4" />
                     <p class="hidden md:inline">삭제하기</p>
                     <!-- 툴팁 -->
@@ -54,9 +55,14 @@
                         삭제하기
                     </div>
                 </div>
-
+            </div>
+            <div
+                v-else
+                id="review-action"
+                class="flex flex-row items-center gap-2 text-gray-300 text-caption"
+            >
                 <!-- 본인 리뷰가 아닌 경우 : 신고하기 -->
-                <div class="relative flex flex-row items-center gap-1 group">
+                <div class="relative flex flex-row items-center gap-1 group" @click="reportReview">
                     <Report class="w-4 h-4" />
                     <p class="hidden md:inline">신고하기</p>
                     <!-- 툴팁 -->
@@ -101,6 +107,8 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useUserStore } from '@/stores/user'
+import { deleteLectureReview, reportLectureReview } from '@/helpers/lecture'
 
 import Edit from '@/assets/icons/edit.svg'
 import Trash from '@/assets/icons/trash.svg'
@@ -114,6 +122,12 @@ const props = defineProps({
     },
 })
 
+const userStore = useUserStore()
+const userId = computed(() => userStore.userId) // 현재 로그인한 유저의 ID
+
+// 본인 리뷰인지 확인하는 computed 속성
+const isOwnReview = computed(() => userId.value === props.review.profileId)
+
 // 날짜 포맷 변경
 const formattedDate = computed(() => {
     const date = new Date(props.review.createdAt)
@@ -124,6 +138,45 @@ const formattedDate = computed(() => {
 const fullStars = computed(() => Math.floor(props.review.rating))
 const hasHalfStar = computed(() => props.review.rating % 1 !== 0)
 const emptyStars = computed(() => 5 - fullStars.value - (hasHalfStar.value ? 1 : 0))
+
+//==========================
+// 리뷰 삭제 / 수정 / 신고
+//==========================
+const emit = defineEmits(['edit-review']) // 부모 컴포넌트에 이벤트 전달
+
+const editReview = () => {
+    emit('edit-review', props.review) // LectureReviewSection으로 이벤트 전달
+}
+
+const deleteReview = async () => {
+    console.log('✅✅✅✅✅✅')
+    console.log(props.review.id)
+    console.log(userStore.token)
+
+    try {
+        await deleteLectureReview(userStore.token, props.review.id)
+        console.log('✅ 리뷰 삭제 성공')
+    } catch (error) {
+        console.error('❌ 리뷰 삭제 중 오류 발생:', error)
+    }
+}
+
+const reportReview = async () => {
+    try {
+        await reportLectureReview(userStore.token, props.review.id)
+        console.log('✅ 리뷰 신고 성공')
+        alert('신고가 정상적으로 접수되었습니다.') // ✅ 성공 알림
+    } catch (error) {
+        console.error('❌ 리뷰 신고 중 오류 발생:', error)
+
+        // ✅ 409 Conflict 에러 처리
+        if (error.response && error.response.status === 409) {
+            alert('이미 신고한 리뷰입니다.') // ✅ 이미 신고한 경우 알림
+        } else {
+            alert('신고 중 문제가 발생했습니다. 다시 시도해주세요.') // ✅ 기타 오류 처리
+        }
+    }
+}
 </script>
 
 <style scoped>
