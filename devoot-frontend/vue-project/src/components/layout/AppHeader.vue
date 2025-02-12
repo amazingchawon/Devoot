@@ -173,7 +173,7 @@ onMounted(() => {
 watch(
     () => userStore.token,
     (newToken) => {
-        console.log('🔑 현재 사용자', userStore.userId, '토큰:', newToken)
+        // console.log('🔑 현재 사용자', userStore.userId, '토큰:', newToken)
         updateHasUnread()
     }
 )
