@@ -30,7 +30,7 @@
                 </div>
             </div>
             <!-- Tag Section -->
-            <div class="flex gap-1.5 w-full">
+            <!-- <div class="flex gap-1.5 w-full">
                 <div
                     v-for="tag in lecture.tags.split(',')"
                     :key="tag"
@@ -44,7 +44,7 @@
                         {{ tag }}
                     </p>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>

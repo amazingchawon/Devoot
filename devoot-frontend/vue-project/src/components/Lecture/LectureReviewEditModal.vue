@@ -12,7 +12,7 @@
         </div>
 
         <!-- 강의 카드 -->
-        <ReviewLectureCard :lecture="lecture" />
+        <ReviewEditModalLectureCard :lecture="lecture" />
 
         <div id="text-container" class="flex flex-col gap-1">
             <!-- 별점 -->
@@ -59,7 +59,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useUserStore } from '@/stores/user'
-import ReviewLectureCard from './ReviewEditModalLectureCard.vue'
+import ReviewEditModalLectureCard from './ReviewEditModalLectureCard.vue'
 import { writeLectureReview, editLectureReview } from '@/helpers/lecture'
 
 import Delete from '@/assets/icons/delete.svg'
@@ -69,6 +69,10 @@ const props = defineProps({
     lecture: {
         type: Object,
         required: true,
+    },
+    lectureIdInt: {
+        type: Number,
+        default: null,
     },
     selfReview: {
         type: Object,
@@ -142,29 +146,16 @@ const handleReview = async () => {
     try {
         if (props.selfReview) {
             // 리뷰 수정 (수정하기)
-            console.log('🛠 리뷰 수정 요청:', {
-                user: userStore.token,
-                reviewId: props.selfReview.value.id,
-                lectureId: props.lecture.id,
-                rating: rating.value,
-                content: text.value,
-            })
             await editLectureReview(
                 userStore.token,
-                props.selfReview.value.id,
-                props.lecture.id,
-                rating.value,
-                text.value
+                props.selfReview.id,
+                props.lectureIdInt,
+                text.value,
+                rating.value
             )
             alert('리뷰가 수정되었습니다.')
         } else {
-            // 리뷰 등록 (저장하기)
-            console.log('✅ 리뷰 저장 요청:', {
-                lectureId: props.lecture.id,
-                rating: rating.value,
-                content: text.value,
-            })
-            await writeLectureReview(userStore.token, props.lecture.id, rating.value, text.value)
+            await writeLectureReview(userStore.token, props.lectureIdInt, text.value, rating.value)
             alert('리뷰가 등록되었습니다.')
         }
 

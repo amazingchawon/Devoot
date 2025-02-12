@@ -23,7 +23,7 @@ instance.interceptors.response.use(
 
 // 유저 정보 가져오는 API 함수
 const getUserInfo = async (token) => {
-    return instance.get('/api/users/me', {
+    return instance.get('/api/login', {
         headers: { Authorization: `Bearer ${token}` },
     })
 }

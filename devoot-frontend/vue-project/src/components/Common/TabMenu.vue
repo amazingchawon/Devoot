@@ -1,20 +1,35 @@
 <template>
-    <div class="grid col-12">
+    <div class="relative grid col-12">
         <div class="flex flex-row items-center border-b border-gray-200 h-11">
-            <div
-                class="flex-1 text-center cursor-pointer text-h3"
-                :class="{ 'text-primary-500': modelValue === 'left' }"
-                @click="$emit('update:modelValue', 'left')"
-            >
-                {{ tabLeft }}
+            <!-- 왼쪽 탭 -->
+            <div class="flex items-center justify-center flex-1 h-full">
+                <div
+                    class="relative flex items-center justify-center h-full cursor-pointer text-h3"
+                    :class="{ 'text-primary-500': modelValue === 'left' }"
+                    @click="$emit('update:modelValue', 'left')"
+                >
+                    <span>{{ tabLeft }}</span>
+                    <div
+                        v-if="modelValue === 'left'"
+                        class="absolute bottom-[-1px] w-full h-[2px] bg-primary-500"
+                    ></div>
+                </div>
             </div>
+            <!-- 중앙 구분선 -->
             <div class="h-full border border-l border-gray-200"></div>
-            <div
-                class="flex-1 text-center cursor-pointer text-h3"
-                :class="{ 'text-primary-500': modelValue === 'right' }"
-                @click="$emit('update:modelValue', 'right')"
-            >
-                {{ tabRight }}
+            <!-- 오른쪽 탭 -->
+            <div class="flex items-center justify-center flex-1 h-full">
+                <div
+                    class="relative flex items-center justify-center h-full cursor-pointer text-h3"
+                    :class="{ 'text-primary-500': modelValue === 'right' }"
+                    @click="$emit('update:modelValue', 'right')"
+                >
+                    <span>{{ tabRight }}</span>
+                    <div
+                        v-if="modelValue === 'right'"
+                        class="absolute bottom-[-1px] w-full h-[2px] bg-primary-500"
+                    ></div>
+                </div>
             </div>
         </div>
     </div>
