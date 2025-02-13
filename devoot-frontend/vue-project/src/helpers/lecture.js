@@ -53,9 +53,15 @@ const getLectureDetail = async (token, lectureId) => {
     })
 }
 
+const getLectureDetailWithLogout = async (lectureId) => {
+    return instance.get(`/api/lectures/${lectureId}`, {
+        headers: { Authorization: null },
+    })
+}
+
 // 강의 리뷰 불러오기
 const getLectureReview = async (lectureId, pageIndex) => {
-    return instance.get(`/api/reviews/lectures/${lectureId}`, { params: { pageIndex } })
+    return instance.get(`/api/reviews/lectures/${lectureId}`, { params: { page: pageIndex } }) // page로 수정
 }
 
 // 본인의 리뷰 가져오기
@@ -107,6 +113,7 @@ export {
     addBookmark,
     removeBookmark,
     getLectureDetail,
+    getLectureDetailWithLogout,
     getLectureReview,
     getSelfReview,
     writeLectureReview,

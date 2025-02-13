@@ -16,6 +16,11 @@
                 @edit-review="handleEditReview"
                 @delete-review="refreshReviews"
             />
+            <PaginationControl
+                :current-page="currentPage"
+                :total-pages="totalPages"
+                @page-changed="updatePage"
+            />>
         </div>
         <p v-else class="text-black text-body-bold">아직 리뷰가 없습니다.</p>
     </div>
@@ -23,29 +28,43 @@
 
 <script setup>
 import LectureReviewCard from './LectureReviewCard.vue'
+import PaginationControl from '../Common/PaginationControl.vue'
 import Edit from '@/assets/icons/edit.svg'
 
-// selfReview를 props로 받기
 defineProps({
     reviews: {
         type: Array,
         required: true,
     },
+    totalPages: {
+        type: Number,
+        required: true,
+    },
+    currentPage: {
+        type: Number,
+        required: true,
+    },
     selfReview: {
         type: Object,
-        default: null, // 기본값을 null로 설정
+        default: null,
     },
 })
 
 // 부모 컴포넌트에 이벤트 전달
-const emit = defineEmits(['edit-review', 'update-reviews'])
+const emit = defineEmits(['edit-review', 'update-reviews', 'update-page'])
 
+// 페이지 변경 이벤트 처리
+const updatePage = (page) => {
+    emit('update-page', page)
+}
+
+// 리뷰 수정 이벤트 처리
 const handleEditReview = (review) => {
     emit('edit-review', review)
 }
 
 const refreshReviews = () => {
-    emit('update-reviews') // ✅ 부모(LectureDetailPage)에게 리뷰 갱신 요청
+    emit('update-reviews') // 부모(LectureDetailPage)에게 리뷰 갱신 요청
 }
 </script>
 
