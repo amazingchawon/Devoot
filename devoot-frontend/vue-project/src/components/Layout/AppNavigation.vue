@@ -4,7 +4,11 @@
         class="fixed top-0 left-0 z-50 w-[4.5rem] lg:w-[13.5rem] flex flex-col h-screen bg-white border-r border-gray-200 ease-in-out transition-all duration-500"
     >
         <!-- 로고 -->
-        <div id="logo" class="flex flex-row items-center justify-center h-20 gap-3">
+        <div
+            id="logo"
+            class="flex flex-row items-center justify-center h-20 gap-3 cursor-pointer"
+            @click="navigateTo({ name: 'home', routeName: 'home' })"
+        >
             <Logo class="w-8 h-8" />
             <div class="hidden text-h1 lg:block">개발바닥</div>
         </div>
@@ -132,8 +136,8 @@ const memberMenu = [
     { name: 'logout', label: '로그아웃', routeName: 'home', icon: LogOut }, // 로그아웃 후 홈으로 이동
 ]
 
-// 선택된 메뉴를 저장하는 변수 (기본값: 'home')
-const selectedMenu = ref('home')
+// 선택된 메뉴를 저장하는 변수
+const selectedMenu = ref(null)
 
 // 사용자 ID (변수)
 const userId = computed(() => userStore.userId)
@@ -142,10 +146,27 @@ const userId = computed(() => userStore.userId)
 const updateSelectedMenu = () => {
     console.log('현재 라우트:', route.path, '이름:', route.name)
 
-    const allMenus = [...serviceMenu, ...memberMenu]
-    const matchedMenu = allMenus.find((menu) => menu.routeName === route.name)
+    if (route.name === 'lectureDetail') {
+        // 강의 상세 페이지일 경우, 'lecture'를 활성화
+        selectedMenu.value = 'lecture'
+    } else if (route.name === 'profile') {
+        // 프로필 페이지일 경우
+        const profileId = route.params.id
 
-    selectedMenu.value = matchedMenu ? matchedMenu.name : 'home'
+        if (profileId === userId.value) {
+            // 본인의 프로필이면 'profile'을 활성화
+            selectedMenu.value = 'profile'
+        } else {
+            // 남의 프로필이면 아무것도 활성화하지 않음
+            selectedMenu.value = null
+        }
+    } else {
+        // 다른 메뉴 처리
+        const allMenus = [...serviceMenu, ...memberMenu]
+        const matchedMenu = allMenus.find((menu) => menu.routeName === route.name)
+
+        selectedMenu.value = matchedMenu ? matchedMenu.name : null
+    }
 
     console.log('선택된 메뉴:', selectedMenu.value)
 }
