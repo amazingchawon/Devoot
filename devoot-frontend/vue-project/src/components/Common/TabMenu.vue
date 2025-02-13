@@ -1,5 +1,5 @@
 <template>
-    <div class="relative grid col-12">
+    <div class="relative z-20 grid col-12">
         <div class="flex flex-row items-center border-b border-gray-200 h-11">
             <!-- 왼쪽 탭 -->
             <div class="flex items-center justify-center flex-1 h-full">

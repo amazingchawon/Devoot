@@ -1,7 +1,7 @@
 <template>
     <div
         id="navigation"
-        class="w-[4.5rem] lg:w-[13.5rem] flex flex-col h-screen bg-white border-r ease-in-out border-gray-200 transition-all lg:transition-transform duration-500"
+        class="fixed top-0 left-0 z-50 w-[4.5rem] lg:w-[13.5rem] flex flex-col h-screen bg-white border-r border-gray-200 ease-in-out transition-all duration-500"
     >
         <!-- 로고 -->
         <div id="logo" class="flex flex-row items-center justify-center h-20 gap-3">

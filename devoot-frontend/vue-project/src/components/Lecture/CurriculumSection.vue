@@ -87,7 +87,7 @@ const sections = computed(() => {
 
     try {
         const curriculum = JSON.parse(props.lecture.curriculum.replace(/'/g, '"')) // JSON 변환
-        return Object.keys(curriculum).map((key, curriculumindex) => ({
+        return Object.keys(curriculum).map((key) => ({
             number: key,
             title: curriculum[key].majorTitle,
             totalLectures: curriculum[key].subLectures.length,

@@ -1,41 +1,51 @@
 <template>
-    <div class="flex flex-col col-span-12 gap-9">
-        <DetailHeader v-if="lecture" :lecture="lecture" />
-
-        <div class="overflow-hidden border border-gray-200 rounded-2xl">
-            <!-- 탭 메뉴 -->
-            <TabMenu v-model="selectedTab" tab-left="커리큘럼" tab-right="리뷰" />
-
-            <!-- 커리큘럼 섹션 -->
-            <CurriculumSection v-if="lecture && selectedTab === 'left'" :lecture="lecture" />
-
-            <!-- 리뷰 섹션 -->
-            <LectureReviewSection
-                v-if="selectedTab === 'right'"
-                :reviews="reviews"
-                :self-review="selfReview"
-                :current-page="pageIndex"
-                :total-pages="totalPages"
-                @edit-review="openReviewModal"
-                @update-reviews="refreshReviews"
-                @update-page="changePage"
-            />
+    <div>
+        <!-- 로딩 중 -->
+        <div v-if="isLoading" class="relative z-10 space-y-4 animate-pulse">
+            <div class="h-12 bg-gray-200 rounded"></div>
+            <div class="w-3/4 h-6 bg-gray-200 rounded"></div>
+            <div class="w-1/2 h-6 bg-gray-200 rounded"></div>
         </div>
 
-        <!-- 리뷰 수정 모달 (Dim 배경 포함) -->
-        <div
-            v-if="isModalOpen"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-            @click.self="closeReviewModal"
-        >
-            <LectureReviewEditModal
+        <!-- 로딩 완료 -->
+        <div v-if="!isLoading" class="flex flex-col col-span-12 gap-9">
+            <DetailHeader v-if="lecture" :lecture="lecture" />
+
+            <div class="overflow-hidden border border-gray-200 rounded-2xl">
+                <!-- 탭 메뉴 -->
+                <TabMenu v-model="selectedTab" tab-left="커리큘럼" tab-right="리뷰" />
+
+                <!-- 커리큘럼 섹션 -->
+                <CurriculumSection v-if="lecture && selectedTab === 'left'" :lecture="lecture" />
+
+                <!-- 리뷰 섹션 -->
+                <LectureReviewSection
+                    v-if="selectedTab === 'right'"
+                    :reviews="reviews"
+                    :self-review="selfReview"
+                    :current-page="pageIndex"
+                    :total-pages="totalPages"
+                    @edit-review="openReviewModal"
+                    @update-reviews="refreshReviews"
+                    @update-page="changePage"
+                />
+            </div>
+
+            <!-- 리뷰 수정 모달 (Dim 배경 포함) -->
+            <div
                 v-if="isModalOpen"
-                :lecture="lecture"
-                :self-review="selfReview"
-                class="w-full max-w-2xl p-6 bg-white shadow-lg rounded-2xl"
-                @close-modal="isModalOpen = false"
-                @update-reviews="refreshReviews"
-            />
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+                @click.self="closeReviewModal"
+            >
+                <LectureReviewEditModal
+                    v-if="isModalOpen"
+                    :lecture="lecture"
+                    :self-review="selfReview"
+                    class="w-full max-w-2xl p-6 bg-white shadow-lg rounded-2xl"
+                    @close-modal="isModalOpen = false"
+                    @update-reviews="refreshReviews"
+                />
+            </div>
         </div>
     </div>
 </template>
@@ -67,48 +77,46 @@ const reviews = ref([]) // 전체 리뷰 목록을 저장
 
 const lecture = ref(null)
 
+const isLoading = ref(true) // 로딩 상태
+
 onMounted(async () => {
     await userStore.fetchUser()
-    console.log('🚀 유저 데이터 패치 완료')
-
-    await fetchLectureDetail() // ✅ 강의 정보 가져오기
+    await fetchLectureDetail()
 })
 
+// ✅ watchEffect 대신 watch 사용 (로그인 시 다시 실행)
+watchEffect(
+    () => userStore.token,
+    async () => {
+        await fetchLectureDetail()
+    },
+    { immediate: false } // ✅ 첫 실행 시 중복 실행 방지
+)
+
 const fetchLectureDetail = async () => {
+    console.log('📢 fetchLectureDetail 호출됨')
+
     try {
         if (userStore.token) {
-            // 로그인한 경우: 토큰을 포함해서 요청
             const response = await getLectureDetail(userStore.token, route.params.id)
             lecture.value = response.data.lectureDetail
-
-            await refreshReviews() // ✅ 리뷰 목록과 본인 리뷰 가져오기
+            await refreshReviews() // 리뷰도 가져오기
         } else {
-            // 로그인하지 않은 경우: 일반 강의 정보 요청
             const response = await getLectureDetailWithLogout(route.params.id)
             lecture.value = response.data.lectureDetail
+            await refreshReviews()
         }
     } catch (error) {
         console.error('❌ 강의 정보 불러오기 실패:', error)
+    } finally {
+        isLoading.value = false
     }
 }
 
-watchEffect(async () => {
-    if (userStore.token) {
-        await fetchLectureDetail()
-    }
-})
-
-// 모달 열기
-const openReviewModal = () => {
-    isModalOpen.value = true
-}
-
-// 모달 닫기
-const closeReviewModal = () => {
-    isModalOpen.value = false
-}
-
+//===========================
 // 페이지네이션
+//===========================
+
 const totalPages = ref(0)
 const pageIndex = ref(1) // 나중에 페이지네이션과 연결 해야함
 
@@ -126,6 +134,10 @@ const changePage = (page) => {
         })
     }
 }
+
+//===========================
+// 리뷰
+//===========================
 
 // ✅ 리뷰 목록 가져오기
 const fetchReviews = async () => {
@@ -155,6 +167,16 @@ const refreshReviews = async () => {
     console.log('🔄 리뷰 목록 및 selfReview 새로고침')
     await fetchReviews()
     await fetchSelfReview()
+}
+
+// 모달 열기
+const openReviewModal = () => {
+    isModalOpen.value = true
+}
+
+// 모달 닫기
+const closeReviewModal = () => {
+    isModalOpen.value = false
 }
 </script>
 
