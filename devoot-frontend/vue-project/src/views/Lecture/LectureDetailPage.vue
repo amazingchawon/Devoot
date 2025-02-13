@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col col-span-12 gap-9">
-        <DetailHeader v-if="lecture" :lecture="lecture" :lecture-id-int="lectureIdInt" />
+        <DetailHeader v-if="lecture" :lecture="lecture" />
 
         <div class="overflow-hidden border border-gray-200 rounded-2xl">
             <!-- 탭 메뉴 -->
@@ -12,8 +12,10 @@
             <!-- 리뷰 섹션 -->
             <LectureReviewSection
                 v-if="selectedTab === 'right'"
+                :reviews="reviews"
                 :self-review="selfReview"
                 @edit-review="openReviewModal"
+                @update-reviews="refreshReviews"
             />
         </div>
 
@@ -26,20 +28,20 @@
             <LectureReviewEditModal
                 v-if="isModalOpen"
                 :lecture="lecture"
-                :lecture-id-int="lectureIdInt"
                 :self-review="selfReview"
                 class="w-full max-w-2xl p-6 bg-white shadow-lg rounded-2xl"
                 @close-modal="isModalOpen = false"
+                @update-reviews="refreshReviews"
             />
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watchEffect, computed } from 'vue'
+import { ref, onMounted, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { getLectureDetail, getSelfReview } from '@/helpers/lecture'
+import { getLectureDetail, getSelfReview, getLectureReview } from '@/helpers/lecture'
 
 import CurriculumSection from '@/components/Lecture/CurriculumSection.vue'
 import DetailHeader from '@/components/Lecture/DetailHeader.vue'
@@ -49,16 +51,11 @@ import LectureReviewEditModal from '@/components/Lecture/LectureReviewEditModal.
 
 const route = useRoute()
 const userStore = useUserStore()
+
 const selectedTab = ref('left') // 기본값: '커리큘럼' 탭
 const isModalOpen = ref(false) // 리뷰 수정 모달 상태
 const selfReview = ref(null) // selfReview를 관리
-
-const lectureId = ref(route.params.id)
-// 안전하게 숫자로 변환하는 computed
-const lectureIdInt = computed(() => {
-    const id = Number(lectureId.value)
-    return isNaN(id) ? null : id // NaN 방지
-})
+const reviews = ref([]) // 전체 리뷰 목록을 저장
 
 const lecture = ref(null)
 
@@ -72,29 +69,12 @@ onMounted(async () => {
 watchEffect(async () => {
     if (userStore.token) {
         try {
-            console.log('✅ 토큰 확인됨')
-
-            console.log('강의 상세 정보 불러오기 시작')
             const response = await getLectureDetail(userStore.token, route.params.id)
             lecture.value = response.data.lectureDetail
-            console.log('강의 상세 정보 불러오기 완료', lecture.value)
 
-            console.log('본인 리뷰 불러오기 시작')
-            const selfReviewResponse = await getSelfReview(userStore.token, route.params.id)
-            console.log('🔍 API 응답 전체:', selfReviewResponse)
-            console.log('🔍 응답 데이터 타입:', typeof selfReviewResponse.data)
-
-            if (selfReviewResponse.data === null) {
-                console.warn('⚠️ API 응답이 null입니다. 기본값으로 설정합니다.')
-            } else if (selfReviewResponse.data === '') {
-                console.warn('⚠️ API 응답이 빈 문자열입니다. 기본값으로 설정합니다.')
-            }
-
-            selfReview.value = selfReviewResponse.data || null
-
-            console.log('✅ 최종 selfReview 값:', selfReview.value)
+            await refreshReviews() // ✅ 리뷰 목록과 본인 리뷰 가져오
         } catch (error) {
-            console.error('❌ 불러오기 실패:', error)
+            console.error('❌ 강의 정보 불러오기 실패:', error)
         }
     }
 })
@@ -107,6 +87,38 @@ const openReviewModal = () => {
 // 모달 닫기
 const closeReviewModal = () => {
     isModalOpen.value = false
+}
+
+// 페이지네이션
+const pageIndex = ref(1) // 나중에 페이지네이션과 연결 해야함
+
+// ✅ 리뷰 목록 가져오기
+const fetchReviews = async () => {
+    try {
+        const response = await getLectureReview(route.params.id, pageIndex.value)
+        reviews.value = response.data.content
+    } catch (error) {
+        console.error('❌ 리뷰 목록 불러오기 실패:', error)
+    }
+}
+
+// ✅ 본인 리뷰 가져오기
+const fetchSelfReview = async () => {
+    if (userStore.token) {
+        try {
+            const response = await getSelfReview(userStore.token, route.params.id)
+            selfReview.value = response.data || null // 리뷰가 없으면 null 설정
+        } catch (error) {
+            console.error('❌ selfReview 불러오기 실패:', error)
+        }
+    }
+}
+
+// ✅ 리뷰 목록과 본인 리뷰 모두 새로고침하는 함수
+const refreshReviews = async () => {
+    console.log('🔄 리뷰 목록 및 selfReview 새로고침')
+    await fetchReviews()
+    await fetchSelfReview()
 }
 </script>
 

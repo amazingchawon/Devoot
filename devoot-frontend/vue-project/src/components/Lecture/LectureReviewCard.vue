@@ -142,38 +142,46 @@ const emptyStars = computed(() => 5 - fullStars.value - (hasHalfStar.value ? 1 :
 //==========================
 // 리뷰 삭제 / 수정 / 신고
 //==========================
-const emit = defineEmits(['edit-review']) // 부모 컴포넌트에 이벤트 전달
+const emit = defineEmits(['edit-review', 'delete-review', 'update-self-review']) // 부모 컴포넌트에 이벤트 전달
 
 const editReview = () => {
     emit('edit-review', props.review) // LectureReviewSection으로 이벤트 전달
 }
 
 const deleteReview = async () => {
-    console.log('✅✅✅✅✅✅')
-    console.log(props.review.id)
-    console.log(userStore.token)
+    const isConfirmed = window.confirm('리뷰를 삭제하시겠습니까?')
 
-    try {
-        await deleteLectureReview(userStore.token, props.review.id)
-        console.log('✅ 리뷰 삭제 성공')
-    } catch (error) {
-        console.error('❌ 리뷰 삭제 중 오류 발생:', error)
+    if (isConfirmed) {
+        try {
+            await deleteLectureReview(userStore.token, props.review.id)
+            console.log('✅ 리뷰 삭제 성공')
+            alert('리뷰가 삭제되었습니다.')
+            emit('delete-review', props.review.id) // 🔥 리뷰 섹션에서 fetchReviews() 호출
+            emit('update-self-review') // 🔥 부모에서 selfReview 업데이트하도록 요청
+        } catch (error) {
+            console.error('❌ 리뷰 삭제 중 오류 발생:', error)
+            alert('삭제에 실패했습니다. 나중에 다시 시도해주세요.')
+        }
     }
 }
 
 const reportReview = async () => {
-    try {
-        await reportLectureReview(userStore.token, props.review.id)
-        console.log('✅ 리뷰 신고 성공')
-        alert('신고가 정상적으로 접수되었습니다.') // ✅ 성공 알림
-    } catch (error) {
-        console.error('❌ 리뷰 신고 중 오류 발생:', error)
+    const isConfirmed = window.confirm('리뷰를 신고하시겠습니까?')
 
-        // ✅ 409 Conflict 에러 처리
-        if (error.response && error.response.status === 409) {
-            alert('이미 신고한 리뷰입니다.') // ✅ 이미 신고한 경우 알림
-        } else {
-            alert('신고 중 문제가 발생했습니다. 다시 시도해주세요.') // ✅ 기타 오류 처리
+    if (isConfirmed) {
+        try {
+            await reportLectureReview(userStore.token, props.review.id)
+            console.log('✅ 리뷰 신고 성공')
+            alert('신고가 정상적으로 접수되었습니다.') // ✅ 성공 알림
+        } catch (error) {
+            console.error('❌ 리뷰 신고 중 오류 발생:', error)
+
+            // ✅ 409 Conflict 에러 처리
+            if (error.response && error.response.status === 409) {
+                alert('이미 신고한 리뷰입니다.') // ✅ 이미 신고한 경우 알림
+            } else {
+                alert('신고 중 문제가 발생했습니다. 다시 시도해주세요.') // ✅ 기타 오류 처리
+            }
         }
     }
 }

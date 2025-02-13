@@ -7,9 +7,9 @@
                 class="flex flex-row items-center h-12 gap-3 px-3 bg-gray-100 cursor-pointer lg:px-6 text-h3"
                 @click="toggleAccordion(sectionIndex)"
             >
-                <NavigateUp
-                    class="w-6 h-6 transition-transform duration-300 cursor-pointer"
-                    :class="{ 'rotate-180': openSections.includes(sectionIndex) }"
+                <NavigateRight
+                    class="w-4 h-4 text-gray-300 transition-transform duration-300 cursor-pointer"
+                    :class="{ 'rotate-90': openSections.includes(sectionIndex) }"
                 />
                 <p>{{ section.number }}</p>
                 <p class="min-w-0 truncate">{{ section.title }}</p>
@@ -45,7 +45,7 @@
 
 <script setup>
 import { ref, nextTick, computed } from 'vue'
-import NavigateUp from '@/assets/icons/navigate_up.svg'
+import NavigateRight from '@/assets/icons/navigate_right.svg'
 
 const props = defineProps({
     lecture: {

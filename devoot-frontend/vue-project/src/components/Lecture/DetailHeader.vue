@@ -92,9 +92,9 @@
 </template>
 
 <script setup>
-import { computed, ref, watchEffect } from 'vue'
+import { computed, ref, onMounted } from 'vue'
+import { addBookmark, removeBookmark } from '@/helpers/lecture'
 import { useUserStore } from '@/stores/user'
-import { addBookmark, removeBookmark } from '@/helpers/lecture' // API 함수 가져오기
 
 import LinkExternal from '@/assets/icons/link_external.svg'
 import Star from '@/assets/icons/star_filled.svg'
@@ -105,10 +105,6 @@ const props = defineProps({
     lecture: {
         type: Object,
         required: true,
-    },
-    lectureIdInt: {
-        type: Number,
-        default: null,
     },
 })
 
@@ -122,22 +118,13 @@ const title = computed(() => props.lecture.name || '제목 없음')
 const rating = computed(() => props.lecture.rating?.toFixed(1) || '0.0')
 const tagList = computed(() => props.lecture.tags || []) // 기본값 빈 배열
 
-// 가격
-const originalPrice = computed(() => props.lecture.originPrice || 0)
-const currentPrice = computed(() => props.lecture.currentPrice || 0)
-
-// 북마크
-const isBookmarked = ref(props.lecture.isBookmarked || false)
-const bookmarkId = computed(() => props.lecture.bookmarkId || null)
-
-// ✅ props 값이 변경되면 반영 (API 데이터 변경 시 동기화)
-watchEffect(() => {
-    isBookmarked.value = props.lecture.isBookmarked || false
-})
-
 //===========================
 // 가격 상태
 //===========================
+
+// 가격
+const originalPrice = computed(() => props.lecture.originPrice || 0)
+const currentPrice = computed(() => props.lecture.currentPrice || 0)
 
 // 할인 중 여부 (originalPrice와 currentPrice가 다를 때)
 const isDiscounted = computed(
@@ -160,30 +147,39 @@ const formattedCurrentPrice = computed(() => {
 //===========================
 // 북마크 관련
 //===========================
-
-// 사용자 token 및 profileId(userId)를 가져오기 위해 store 사용
 const userStore = useUserStore()
 
+// ✅ 북마크 상태 로컬 관리
+const isBookmarked = ref(props.lecture.isBookmarked || false)
+const bookmarkId = ref(props.lecture.bookmarkId || null) // 북마크 ID 저장
+
+// ✅ props 값 변경 시 동기화
+onMounted(() => {
+    isBookmarked.value = props.lecture.isBookmarked || false
+    bookmarkId.value = props.lecture.bookmarkId || null
+})
+
 const toggleBookmark = async () => {
-    console.log('버튼클릭됨!!!!!')
-    if (userStore.token) {
-        console.log('토큰 있음')
-    }
     try {
-        if (isBookmarked.value) {
-            // api 요청
-            await removeBookmark(userStore.token, userStore.userId, bookmarkId.value)
-            // await removeBookmark(token.value, userId.value, props.lectureIdInt)
-            console.log('북마크 제거 완료')
+        if (!isBookmarked.value) {
+            // 북마크 추가 요청
+            const response = await addBookmark(userStore.token, userStore.userId, props.lecture.id)
+            bookmarkId.value = response.data.id
+
+            console.log('✅ 북마크 추가 성공:', bookmarkId.value)
         } else {
-            // api 요청
-            await addBookmark(userStore.token, userStore.userId, props.lectureIdInt)
-            // await addBookmark(token.value, userId.value, props.lectureIdInt)
-            console.log('북마크 추가 완료')
+            // 북마크 삭제 요청
+            if (bookmarkId.value) {
+                await removeBookmark(userStore.token, userStore.userId, bookmarkId.value)
+                console.log('✅ 북마크 삭제 성공')
+                bookmarkId.value = null
+            }
         }
+
+        // 북마크 상태 토글
         isBookmarked.value = !isBookmarked.value
     } catch (error) {
-        console.error('API 요청 실패', error)
+        console.error('❌ 북마크 토글 실패:', error)
     }
 }
 </script>

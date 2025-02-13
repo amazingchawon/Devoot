@@ -12,11 +12,7 @@
         </div>
 
         <!-- 강의 카드 -->
-        <ReviewEditModalLectureCard
-            :lecture="lecture"
-            :lecture-id-int="lectureIdInt"
-            @close-modal="emit('closeModal')"
-        />
+        <ReviewEditModalLectureCard :lecture="lecture" @close-modal="emit('closeModal')" />
 
         <div id="text-container" class="flex flex-col gap-1">
             <!-- 별점 -->
@@ -74,20 +70,16 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-    lectureIdInt: {
-        type: Number,
-        default: null,
-    },
     selfReview: {
         type: Object,
         default: () => null, // 부모로부터 리뷰 데이터 받기
     },
 })
 
-const userStore = useUserStore()
+// `close` 및 `update-reviews` 이벤트를 부모 컴포넌트로 전달할 emit 정의
+const emit = defineEmits(['closeModal', 'update-reviews'])
 
-// `close` 이벤트를 부모 컴포넌트로 전달할 emit 정의
-const emit = defineEmits(['closeModal'])
+const userStore = useUserStore()
 
 // 댓글 내용
 const text = ref(props.selfReview?.content || '') // 기존 리뷰 내용
@@ -149,21 +141,23 @@ const handleReview = async () => {
 
     try {
         if (props.selfReview) {
-            // 리뷰 수정 (수정하기)
+            // 리뷰 수정
             await editLectureReview(
                 userStore.token,
                 props.selfReview.id,
-                props.lectureIdInt,
+                props.lecture.id,
                 text.value,
                 rating.value
             )
             alert('리뷰가 수정되었습니다.')
         } else {
-            await writeLectureReview(userStore.token, props.lectureIdInt, text.value, rating.value)
+            // 리뷰 작성
+            await writeLectureReview(userStore.token, props.lecture.id, text.value, rating.value)
             alert('리뷰가 등록되었습니다.')
         }
 
-        emit('closeModal') // 저장/수정 완료 후 모달 닫기
+        emit('update-reviews') // ✅ 부모에게 리뷰 목록 갱신 요청
+        emit('closeModal') // 모달 닫기
     } catch (error) {
         console.error('❌ 리뷰 저장/수정 실패:', error)
         alert('리뷰 저장/수정에 실패했습니다.')
