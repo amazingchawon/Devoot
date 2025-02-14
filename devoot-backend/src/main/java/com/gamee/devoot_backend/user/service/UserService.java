@@ -31,6 +31,7 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	private final FollowRepository followRepository;
+	private final S3Service s3Service;
 
 	public boolean existsUserByUid(String uid) {
 		return userRepository.existsByUid(uid);
@@ -53,7 +54,6 @@ public class UserService {
 			&& existsByProfileId(userRegistrationDto.profileId(), null)) {
 			throw new UserProfileIdAlreadyExistsException();
 		}
-		String imageUrl = handleProfileImage(file);
 
 		User newUser = User.builder()
 			.uid(uid)
@@ -62,11 +62,18 @@ public class UserService {
 			.nickname(userRegistrationDto.nickname())
 			.links(userRegistrationDto.links())
 			.isPublic(userRegistrationDto.isPublic())
-			.imageUrl(imageUrl)
+			.imageUrl(null)
 			.tags(userRegistrationDto.tags())
 			.build();
 
-		return userRepository.save(newUser);
+		userRepository.save(newUser);
+		if (file != null && !file.isEmpty()) {
+			String imageUrl = s3Service.uploadFile(newUser.getId(), file);
+			newUser.setImageUrl(imageUrl);
+			userRepository.save(newUser);
+		}
+
+		return newUser;
 	}
 
 	public UserDetailDto getUserInfo(CustomUserDetails userDetails, String profileId) {
@@ -122,7 +129,7 @@ public class UserService {
 		user.setTags(userUpdateDto.tags());
 
 		if (file != null && !file.isEmpty()) {
-			String imageUrl = handleProfileImage(file);
+			String imageUrl = s3Service.uploadFile(userId, file);
 			user.setImageUrl(imageUrl);
 		}
 		return userRepository.save(user);
@@ -132,16 +139,6 @@ public class UserService {
 		if (!user.profileId().equals(profileId)) {
 			throw new UserProfileIdMismatchException();
 		}
-	}
-
-	private String handleProfileImage(MultipartFile file) {
-		if (file != null && !file.isEmpty()) {
-			// TODO: S3 연동 로직 추가 예정
-			System.out.println("Received file: " + file.getOriginalFilename());
-		}
-
-		// 임시 URL 반환
-		return "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7LpapIl8DITfz4_Y2z7pqs7FknPkjReAZCg&s";
 	}
 
 	public CustomPage<UserShortDetailDto> searchByPrefix(String query, int page, int size) {
