@@ -31,23 +31,35 @@ export const useUserStore = defineStore('user', {
                 await setPersistence(auth, browserLocalPersistence) // 로그인 유지
                 const result = await signInWithPopup(auth, googleProvider)
 
+                if (!result.user) {
+                    console.warn('🚨 로그인 취소 또는 중단됨')
+                    return null // 중단된 경우 아무 작업도 하지 않음
+                }
+
                 // Firebase에서 받아온 사용자 정보 저장
                 this.user = result.user
                 this.token = await result.user.getIdToken(true)
-                console.log(this.token)
 
-                // API 파일에서 getUserInfo() 호출
-                const res = await getUserInfo(this.token)
-
-                this.userId = res.data.profileId // 서비스의 유저 ID 저장
-
-                return true // 로그인 성공
-            } catch (error) {
-                if (!error.response) {
-                    // Firebase 로그인 자체 오류만 로깅
-                    console.error('🚨 Firebase 로그인 실패:', error)
+                // API에서 유저 정보 가져오기
+                try {
+                    const res = await getUserInfo(this.token)
+                    this.userId = res.data.profileId // 서비스의 유저 ID 저장
+                    return true // 로그인 성공
+                } catch (apiError) {
+                    console.error('🚨 유저 정보 가져오기 실패:', apiError)
+                    return false // API 요청 실패 시 회원가입 유도
                 }
-                return false
+            } catch (error) {
+                if (
+                    error.code === 'auth/popup-closed-by-user' ||
+                    error.code === 'auth/cancelled-popup-request'
+                ) {
+                    console.warn('🚨 사용자가 로그인 팝업을 닫았습니다.')
+                    return null // 로그인 창을 닫은 경우 아무 작업도 하지 않음
+                }
+
+                console.error('🚨 Firebase 로그인 실패:', error)
+                return false // 다른 에러가 발생하면 false 반환
             }
         },
 
@@ -57,23 +69,35 @@ export const useUserStore = defineStore('user', {
                 await setPersistence(auth, browserLocalPersistence) // 로그인 유지
                 const result = await signInWithPopup(auth, githubProvider)
 
+                if (!result.user) {
+                    console.warn('🚨 로그인 취소 또는 중단됨')
+                    return null // 중단된 경우 아무 작업도 하지 않음
+                }
+
                 // Firebase에서 받아온 사용자 정보 저장
                 this.user = result.user
                 this.token = await result.user.getIdToken(true)
 
-                // API 파일에서 getUserInfo() 호출
-                const res = await getUserInfo(this.token)
-                console.log('Login success! user:', res.data)
-
-                this.userId = res.data.profileId // 서비스의 유저 ID 저장
-
-                return true // 로그인 성공
-            } catch (error) {
-                if (!error.response) {
-                    // Firebase 로그인 자체 오류만 로깅
-                    console.error('🚨 Firebase 로그인 실패:', error)
+                // API에서 유저 정보 가져오기
+                try {
+                    const res = await getUserInfo(this.token)
+                    this.userId = res.data.profileId // 서비스의 유저 ID 저장
+                    return true // 로그인 성공
+                } catch (apiError) {
+                    console.error('🚨 유저 정보 가져오기 실패:', apiError)
+                    return false // API 요청 실패 시 회원가입 유도
                 }
-                return false
+            } catch (error) {
+                if (
+                    error.code === 'auth/popup-closed-by-user' ||
+                    error.code === 'auth/cancelled-popup-request'
+                ) {
+                    console.warn('🚨 사용자가 로그인 팝업을 닫았습니다.')
+                    return null // 로그인 창을 닫은 경우 아무 작업도 하지 않음
+                }
+
+                console.error('🚨 Firebase 로그인 실패:', error)
+                return false // 다른 에러가 발생하면 false 반환
             }
         },
 
