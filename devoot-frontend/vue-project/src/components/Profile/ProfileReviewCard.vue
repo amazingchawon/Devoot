@@ -9,24 +9,24 @@
             </div>
             <div class="flex gap-2">
                 <!-- 본인 리뷰인 경우 : 수정하기 -->
-                <div class="relative flex flex-row items-center gap-1 group">
+                <div class="relative flex flex-row items-center gap-1 cursor-pointer group">
                     <Edit class="w-4 h-4" />
                     <p class="hidden text-gray-300 text-caption md:inline">수정하기</p>
                     <!-- 툴팁 -->
                     <div
-                        class="absolute px-2 py-1 text-xs text-white transition-opacity transform -translate-x-1/2 -translate-y-2 bg-black rounded opacity-0 left-1/2 bottom-full whitespace-nowrap group-hover:opacity-100"
+                        class="absolute px-2 py-1 text-xs text-white transition-opacity transform -translate-x-1/2 -translate-y-2 bg-black rounded opacity-0 cursor-default left-1/2 bottom-full whitespace-nowrap group-hover:opacity-100"
                     >
                         수정하기
                     </div>
                 </div>
 
                 <!-- 삭제하기 -->
-                <div class="relative flex flex-row items-center gap-1 group">
+                <div class="relative flex flex-row items-center gap-1 cursor-pointer group">
                     <Trash class="w-4 h-4" />
                     <p class="hidden text-gray-300 md:inline text-caption">삭제하기</p>
                     <!-- 툴팁 -->
                     <div
-                        class="absolute px-2 py-1 text-xs text-white transition-opacity transform -translate-x-1/2 -translate-y-2 bg-black rounded opacity-0 left-1/2 bottom-full whitespace-nowrap group-hover:opacity-100"
+                        class="absolute px-2 py-1 text-xs text-white transition-opacity transform -translate-x-1/2 -translate-y-2 bg-black rounded opacity-0 cursor-default left-1/2 bottom-full whitespace-nowrap group-hover:opacity-100"
                     >
                         삭제하기
                     </div>

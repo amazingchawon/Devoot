@@ -1,5 +1,5 @@
 <template>
-    <div v-if="ProfileData">
+    <div v-if="ProfileData" class="flex flex-col gap-y-8">
         <div class="flex justify-center col-span-12 gap-[26px] pb-11">
             <div class="w-fit h-fit px-[13px] py-[3px]">
                 <img
@@ -27,7 +27,10 @@
                                         }}
                                     </p>
                                 </div>
-                                <div class="flex items-center gap-2 cursor-pointer">
+                                <div
+                                    class="flex items-center gap-2 cursor-pointer"
+                                    @click="openModal('follower')"
+                                >
                                     <p class="text-gray-400 text-caption">팔로워</p>
                                     <p class="text-body-bold">
                                         {{
@@ -37,7 +40,10 @@
                                         }}
                                     </p>
                                 </div>
-                                <div class="flex items-center gap-2">
+                                <div
+                                    class="flex items-center gap-2 cursor-pointer"
+                                    @click="openModal('following')"
+                                >
                                     <p class="text-gray-400 text-caption">팔로잉</p>
                                     <p class="cursor-pointer text-body-bold">
                                         {{
@@ -47,13 +53,22 @@
                                         }}
                                     </p>
                                 </div>
+                                <FollowerFollowingModal
+                                    v-if="isModalOpen"
+                                    :type="modalType"
+                                    :users="modalType === 'follower' ? followers : followings"
+                                    :user-id="route.params.id"
+                                    :isOpen="isModalOpen"
+                                    @close="isModalOpen = false"
+                                />
                             </div>
                             <button
                                 v-if="ProfileData?.followStatus !== null"
                                 :class="{
                                     'button-primary': ProfileData?.followStatus === 'NOTFOLLOWING',
                                     'button-gray': ProfileData?.followStatus === 'FOLLOWING',
-                                    'button-gray': ProfileData?.followStatus === 'PENDING',
+                                    'button-gray cursor-default':
+                                        ProfileData?.followStatus === 'PENDING',
                                 }"
                                 @click="
                                     handleFollowClick(
@@ -74,9 +89,11 @@
                                 }}
                             </button>
                         </div>
-                        <div class="flex items-center h-6 text-gray-400 text-caption">
-                            {{ ProfileData.links.title }}
-                            {{ ProfileData.links.url }}
+                        <div
+                            class="flex gap-[6px] items-center h-6 text-gray-400 cursor-pointer text-caption"
+                        >
+                            <Link class="w-4 h-4 text-gray-400" />
+                            <a :href="ProfileData.links.url">{{ ProfileData.links.title }}</a>
                         </div>
                     </div>
                 </div>
@@ -99,12 +116,12 @@
             </div>
         </div>
         <ProfileContribution
-            v-if="userToken && ProfileData.isPublic"
+            v-if="userToken && (ProfileData.isPublic || isMyProfile)"
             :user-id="route.params.id"
             :token="userToken"
         />
         <TodoList
-            v-if="userToken && ProfileData.isPublic"
+            v-if="userToken && (ProfileData.isPublic || isMyProfile)"
             :user-id="route.params.id"
             :token="userToken"
             :follow-status="ProfileData.followStatus"
@@ -113,36 +130,52 @@
 
         <!-- 할 일 추가하기 모달 (TodoList 아래에 위치) -->
         <TodoAddModal
-            v-if="isAddModalOpen && userToken && ProfileData.isPublic"
+            v-if="isAddModalOpen && userToken && (ProfileData.isPublic || isMyProfile)"
             :user-id="route.params.id"
             :token="userToken"
             @close="isAddModalOpen = false"
         />
-        <div v-if="ProfileData.isPublic" class="border border-gray-200 rounded-[20px]">
-            <TabMenu
-                tab-left="북마크한 강의"
-                tab-right="내가 쓴 리뷰"
-                @update-tab="handleTabChange"
-            />
-            <component
-                v-if="userToken && userData"
+
+        <div
+            v-if="userToken && (ProfileData.isPublic || isMyProfile)"
+            class="border border-gray-200 rounded-[20px]"
+        >
+            <TabMenu v-model="selectedTab" tab-left="북마크한 강의" tab-right="내가 쓴 리뷰" />
+            <KanbanSection
+                v-if="userToken && userData && selectedTab === 'left'"
                 :user-id="route.params.id"
                 :token="userToken"
-                :is="currentComponent"
+            />
+            <ProfileReviewSection
+                v-if="userToken && userData && selectedTab === 'right'"
+                :user-id="route.params.id"
+                :token="userToken"
             />
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
-import axios from 'axios'
+import Link from '@/assets/icons/link.svg'
 import TabMenu from '@/components/Common/TabMenu.vue'
+import FollowerFollowingModal from '@/components/Profile/FollowerFollowingModal.vue'
 import { useUserStore } from '@/stores/user'
 import { useRoute } from 'vue-router' // ✅ useRoute 훅 불러오기
+import { ref, computed, watch, onMounted } from 'vue'
+import axios from 'axios'
+
+const isModalOpen = ref(false)
+const modalType = ref(null) // 초기값 follower
+
+const openModal = (type) => {
+    modalType.value = type
+    isModalOpen.value = true
+    // console.log(modalType.value)
+}
 
 const route = useRoute() // ✅ 라우트 정보 가져오기
-const isAddModalOpen = ref(false)
+const isAddModalOpen = ref(false) // TodoAddModal 상태 관리
+const selectedTab = ref('left') // TabMenu 관리, 기본값: 칸반 섹션
 
 const userStore = useUserStore() // Pinia 스토어 가져오기
 
@@ -153,6 +186,12 @@ const userToken = computed(() => userStore.token)
 const isLoaded = ref(false)
 
 const ProfileData = ref([])
+const isMyProfile = computed(() => {
+    if (!userId.value || !route.params.id) return false // 초기 값 처리
+    return userId.value === route.params.id
+})
+
+const followers = ref([]) // 팔로워 목록
 
 const loadProfileDatas = async (token, id) => {
     try {
@@ -180,6 +219,7 @@ watch(
         if (newUser && newToken && newUserId && newId) {
             // console.log('✅ 사용자 정보와 토큰이 준비되었습니다.')
             // console.log('유저데이터:', newUser)
+            isMyProfile.value = newUserId === newId // ✅ 여기서 isMyProfile 설정
             console.log('유저토큰:', newToken)
             // console.log('유저아이디:', newUserId)
 
@@ -254,18 +294,10 @@ const handleFollowClick = async (token, userId, followId) => {
     }
 }
 
-// 현재 선택된 탭 (기본값 : 'left')
-const currentTab = ref('left')
+// onMounted(() => {
+//     console.log('팔로워 목록', followers.value)
+// })
 
-// 탭에 따라 렌더링할 컴포넌트 설정
-const currentComponent = computed(() => {
-    return currentTab.value === 'left' ? KanbanSection : ProfileReviewSection
-})
-
-// 탭 변경 이벤트 핸들러
-const handleTabChange = (tab) => {
-    currentTab.value = tab
-}
 import ProfileContribution from '@/components/Profile/ProfileContribution.vue'
 import KanbanSection from '@/components/Profile/KanbanSection.vue'
 import TodoAddModal from '@/components/Profile/TodoAddModal.vue'

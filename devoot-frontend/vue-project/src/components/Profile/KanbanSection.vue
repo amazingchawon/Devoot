@@ -34,10 +34,10 @@
                     data-status="in-progress"
                 >
                     <KanbanCard
-                        draggable="true"
-                        :lecture="lecture"
                         v-for="lecture in lectureDatas['in-progress']"
                         :key="lecture.id"
+                        draggable="true"
+                        :lecture="lecture"
                         :data-id="lecture.id"
                         class="draggable cursor-grab"
                     />
@@ -56,10 +56,10 @@
                     data-status="done"
                 >
                     <KanbanCard
-                        draggable="true"
-                        :lecture="lecture"
                         v-for="lecture in lectureDatas.done"
                         :key="lecture.id"
+                        draggable="true"
+                        :lecture="lecture"
                         :data-id="lecture.id"
                         class="draggable cursor-grab"
                     />
@@ -74,10 +74,19 @@ import KanbanCard from './KanbanCard.vue'
 import { ref, onMounted, onUpdated, watch, computed } from 'vue'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
+// import { useTodoStore } from '@/stores/todo'
+
+// const todoStore = useTodoStore()
 
 defineProps({
-    userId: String,
-    token: String,
+    userId: {
+        type: String,
+        default: '',
+    },
+    token: {
+        type: String,
+        default: '',
+    },
 })
 
 const userStore = useUserStore() // Pinia 스토어 가져오기
@@ -89,8 +98,6 @@ const loadLectureDatas = async (token, userId) => {
 
     try {
         const mock_server_url = 'http://localhost:8080'
-        // const profileId = 'l3olvy' // 여기에 실제 사용자 ID를 넣어야 함
-        // const profileId = userStore.userId // 여기에 실제 사용자 ID를 넣어야 함
         const API_URL = `${mock_server_url}/api/users/${userId}/bookmarks`
         // const token = 'asdfasdfasdf' // 여기에 Bearer 토큰을 넣어야 함
 
@@ -108,15 +115,10 @@ const loadLectureDatas = async (token, userId) => {
     }
 }
 
-const updateStatus = async (el, bookmarkId, token, userId) => {
+const updateStatus = async (el, bookmarkId, token, userId, afterBookmarkId) => {
     try {
         const mock_server_url = 'http://localhost:8080'
-        // const profileId = 'l3olvy' // 여기에 실제 사용자 ID를 넣어야 함
-        // const profileId = userStore.userId // 여기에 실제 사용자 ID를 넣어야 함
-        // const bookmarkId = el.dataset.id
-        // console.log('el', el.id)
         const API_URL = `${mock_server_url}/api/users/${userId}/bookmarks/${bookmarkId}`
-        // const token = 'asdfasdfasdf' // 여기에 Bearer 토큰을 넣어야 함
 
         const parentContainer = el.closest('.container') // 현재 이동된 컨테이너 찾기
 
@@ -134,7 +136,7 @@ const updateStatus = async (el, bookmarkId, token, userId) => {
             API_URL,
             {
                 status: updatedStatus, // 상태 변경
-                nextId: 0,
+                nextId: afterBookmarkId,
             },
             {
                 headers: {
@@ -144,9 +146,20 @@ const updateStatus = async (el, bookmarkId, token, userId) => {
             }
         )
         console.log('응답', response)
-        console.log('가까운 부모컨테이너', parentContainer.dataset.status)
-        console.log('업데이트 상태:', updatedStatus)
-        console.log('칸반섹션 데이터', lectureDatas.value)
+
+        // if (updatedStatus === 2) {
+        //     console.log('✅ Status가 2로 업데이트되었습니다:', bookmarkId)
+        //     // console.log('lecture가 뭔데', lectureDatas.value)
+
+        //     // ✅ Pinia Store에 추가
+        //     // if (!todoStore.inprogressLectures.some((lecture) => lecture.id === bookmarkId)) {
+        //     //     todoStore.inprogressLectures.push() // 값 추가
+        //     //     console.log('📚 inprogressLectures에 추가되었습니다.')
+        //     // }
+        // }
+        // // console.log('가까운 부모컨테이너', parentContainer.dataset.status)
+        // console.log('업데이트 상태:', updatedStatus)
+        // console.log('칸반섹션 데이터', lectureDatas.value)
     } catch (error) {
         console.error('에러:', error)
     }
@@ -172,26 +185,39 @@ onUpdated(() => {
     const draggables = $('.draggable')
     const containers = $('.container')
 
+    // 현재 프로필이 본인의 것인지 확인
+    // const isMyProfile = userId === userStore.userId
+
     // console.log('드래그 가능한 엘리먼트', draggables)
     // console.log('컨테이너', containers)
 
     // 드래그 가능한 엘리먼트에 이벤트(드래그 시작, 드래그 종료) 추가
     draggables.forEach((el) => {
+        // if (isMyProfile)
         el.addEventListener('dragstart', () => {
             el.classList.add('dragging', 'highlight', 'cursor-grabbing')
-            console.log('드래그 시작')
-            console.log('el이다', el)
+            // console.log('드래그 시작')
+            // console.log('el이다', el)
         })
 
         el.addEventListener('dragend', () => {
+            const container = el.closest('.container') // 현재 요소가 속한 컨테이너 찾기
+            const afterElement = getDragAfterElement(container, el.getBoundingClientRect().bottom) // 현재 위치의 바로 아래 요소 찾기
             const bookmarkId = el.dataset.id // ✅ data-id에서 고유 id 가져오기
-            console.log('북마크의 ID:', bookmarkId) // ✅ dataset 값 확인
+
+            let afterBookmarkId = 0 // ✅ 미리 선언
+            if (afterElement) {
+                afterBookmarkId = afterElement.dataset.id // ✅ 값 할당
+                console.log('가장 가까운 아래 요소의 북마크 ID:', afterBookmarkId)
+                console.log('북마크의 ID:', bookmarkId) // ✅ dataset 값 확인
+            }
             el.classList.remove('dragging', 'highlight')
+            console.log('가장 가까운 아래 요소의 북마크 ID:', afterBookmarkId)
+            console.log('북마크의 ID:', bookmarkId) // ✅ dataset 값 확인
+
             if (userStore.token && userStore.userId) {
-                updateStatus(el, bookmarkId, userStore.token, userStore.userId)
-            } // ✅ 최신 토큰 사용
-            console.log('드래그 종료')
-            // console.log('전달된 bookmarkId', bookmarkId)
+                updateStatus(el, bookmarkId, userStore.token, userStore.userId, afterBookmarkId) // ✅ updateStatus 함수 호출
+            }
         })
     })
 
@@ -229,6 +255,7 @@ onUpdated(() => {
 
     // 드래그중일 때
     containers.forEach((container) => {
+        // if (isMyProfile)
         container.addEventListener('dragover', (e) => {
             e.preventDefault()
             const afterElement = getDragAfterElement(container, e.clientY) //clientY: 마우스 이벤트가 발생한 위치의 Y(수직) 좌표

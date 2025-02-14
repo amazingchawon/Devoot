@@ -1,5 +1,5 @@
 <template>
-    <div class="border border-gray-200 rounded-[1rem] p-[1.5rem] inline-flex flex-col gap-6">
+    <div class="border border-gray-200 rounded-[1rem] p-[1.5rem] flex flex-col gap-6 col-span-12">
         <!-- 상단 영역 -->
         <div class="flex items-center justify-between w-full">
             <!-- 왼쪽 텍스트 -->
@@ -19,13 +19,13 @@
         </div>
 
         <!-- 하단 잔디 영역 -->
-        <div class="flex justify-between w-full">
+        <div class="flex flex-1 w-full gap-2">
             <div class="inline-flex flex-col justify-between pt-4 text-gray-300 text-caption-sm">
                 <span>sun</span>
                 <span>wed</span>
                 <span>sat</span>
             </div>
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col flex-1 gap-2">
                 <div class="text-gray-300 text-caption-sm">
                     <p class="flex justify-between text-center">
                         <span class="w-5">jan</span>
@@ -44,61 +44,59 @@
                     </p>
                 </div>
 
-                <table class="inline-flex">
-                    <tr>
-                        <td
-                            v-for="(column, columnIndex) in calendarData"
-                            :key="columnIndex"
-                            class="p-0"
+                <div class="grid gap-0 grid-cols-[repeat(53,1fr)]">
+                    <div
+                        v-for="(column, columnIndex) in calendarData"
+                        :key="columnIndex"
+                        class="flex flex-col"
+                    >
+                        <div
+                            v-for="(day, rowIndex) in column"
+                            :key="rowIndex"
+                            class="contribution-wrapper"
                         >
+                            <!-- 모든 데이터를 렌더링 -->
                             <div
-                                v-for="(day, rowIndex) in column"
-                                :key="rowIndex"
-                                class="contribution-wrapper"
+                                :data-date="day.date"
+                                :data-level="day.level"
+                                :class="{
+                                    'ContributionCalendar-day': !day.empty,
+                                    'empty-cell': day.empty,
+                                }"
+                                tabindex="0"
+                                role="gridcell"
                             >
-                                <!-- 모든 데이터를 렌더링 -->
-                                <div
-                                    :data-date="day.date"
-                                    :data-level="day.level"
-                                    :class="{
-                                        'ContributionCalendar-day': !day.empty,
-                                        'empty-cell': day.empty,
-                                    }"
-                                    tabindex="0"
-                                    role="gridcell"
-                                >
-                                    <!-- 데이터가 있는 경우 FootPrint 렌더링 -->
-                                    <div class="relative group">
-                                        <FootPrint
-                                            v-if="day.date"
-                                            class="w-3.5 h-3.5 rotate-45"
-                                            :class="[
-                                                {
-                                                    'text-white': day.level === 0,
-                                                    'text-primary-100': day.level === 1,
-                                                    'text-primary-200': day.level === 2,
-                                                    'text-primary-300': day.level === 3,
-                                                    'text-primary-400': day.level === 4,
-                                                    'text-primary-500': day.level === 5,
-                                                },
-                                            ]"
-                                        />
-                                        <div
-                                            v-if="day.date"
-                                            id="tooltip-default"
-                                            role="tooltip"
-                                            class="flex whitespace-nowrap flex-col items-center absolute left-1/2 bottom-full translate-x-[-50%] translate-y-[-10px] z-50 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gray-100 text-black text-caption-sm rounded-lg px-2 py-2 shadow-lg w-auto text-center space-y-1"
-                                        >
-                                            <span>{{ day.date }}</span>
-                                            <span>완료: {{ day.cnt }}개</span>
-                                            <div class="tooltip-arrow"></div>
-                                        </div>
+                                <!-- 데이터가 있는 경우 FootPrint 렌더링 -->
+                                <div class="relative group">
+                                    <FootPrint
+                                        v-if="day.date"
+                                        class="w-3.5 h-3.5 rotate-45"
+                                        :class="[
+                                            {
+                                                'text-white': day.level === 0,
+                                                'text-primary-100': day.level === 1,
+                                                'text-primary-200': day.level === 2,
+                                                'text-primary-300': day.level === 3,
+                                                'text-primary-400': day.level === 4,
+                                                'text-primary-500': day.level === 5,
+                                            },
+                                        ]"
+                                    />
+                                    <div
+                                        v-if="day.date"
+                                        id="tooltip-default"
+                                        role="tooltip"
+                                        class="flex whitespace-nowrap flex-col items-center absolute left-1/2 bottom-full translate-x-[-50%] translate-y-[-10px] z-50 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gray-100 text-black text-caption-sm rounded-lg px-2 py-2 shadow-lg w-auto text-center space-y-1"
+                                    >
+                                        <span>{{ day.date }}</span>
+                                        <span>완료: {{ day.cnt }}개</span>
+                                        <div class="tooltip-arrow"></div>
                                     </div>
                                 </div>
                             </div>
-                        </td>
-                    </tr>
-                </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -220,12 +220,20 @@ const moveUndone = async (selectedDate, token, userId) => {
         )
 
         // ✅ 다음 날 todos에 새롭게 추가
-        response.data.forEach((movedTodo) => {
+
+        const todos = Array.isArray(response.data)
+        todos.forEach((movedTodo) => {
             todoStore.todos.push({
                 ...movedTodo,
                 date: formattedDate,
             })
         })
+        // response.data.forEach((movedTodo) => {
+        //     todoStore.todos.push({
+        //         ...movedTodo,
+        //         date: formattedDate,
+        //     })
+        // })
     } catch (error) {
         console.error('에러:', error)
         // console.log('에러 selectedDate', selectedDate.value)

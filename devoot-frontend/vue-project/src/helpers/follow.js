@@ -31,6 +31,44 @@ const acceptFollowRequest = async (token, followId) => {
         throw error
     }
 }
+// 팔로워 목록 조회 함수
+const readFollowers = async (token, userId, page = 1, size = 10) => {
+    try {
+        const response = await instance.get(
+            `/api/users/${userId}/followers?page=${page}&size=${size}`,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        )
+        // console.log(response.data)
+        return response.data // ✅ response의 data 부분만 반환
+    } catch (error) {
+        console.error('❌ 팔로워 목록 조회 에러 발생:', error)
+        throw error // 에러를 호출한 곳에서 처리
+    }
+}
 
-export { acceptFollowRequest }
+// 팔로잉 목록 조회 함수
+const readFollowings = async (token, userId, page = 1, size = 10) => {
+    try {
+        const response = await instance.get(
+            `/api/users/${userId}/following?page=${page}&size=${size}`,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        )
+        return response.data // ✅ response의 data 부분만 반환
+    } catch (error) {
+        console.error('❌ 팔로워 목록 조회 에러 발생:', error)
+        throw error // 에러를 호출한 곳에서 처리
+    }
+}
+
+export { acceptFollowRequest, readFollowers, readFollowings }
 export default instance

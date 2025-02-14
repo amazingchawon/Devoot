@@ -13,7 +13,7 @@
                             ? 'cursor-pointer button-primary'
                             : 'cursor-pointer button-line',
                     ]"
-                    @click="submitTodo"
+                    @click="submitTodo(token, userId)"
                 >
                     강의 추가
                 </div>
@@ -55,8 +55,8 @@
                         :key="lectureData.id"
                         class="flex flex-col h-auto gap-1 px-4 py-3 border-b border-gray-200"
                         :class="{
-                            'bg-primary-100': selectedLectureId === lectureData.id,
-                            'bg-white': selectedLectureId !== lectureData.id,
+                            'bg-primary-100': selectedLectureId === lectureData.lecture.id,
+                            'bg-white': selectedLectureId !== lectureData.lecture.id,
                         }"
                         @click="selectLecture(lectureData)"
                     >
@@ -104,8 +104,21 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useTodoStore } from '@/stores/todo'
 import { useUserStore } from '@/stores/user'
 // import { getInprogressLecture } from '@/stores/todoStore';
+
+defineProps({
+    userId: {
+        type: String,
+        default: '',
+    },
+    token: {
+        type: String,
+        default: '',
+    },
+})
+
 const userStore = useUserStore()
 const todoStore = useTodoStore() // Pinia 스토어 가져오기
+
 // 강의 추가 버튼 상태 관리
 const isButtonClicked = ref(false)
 
@@ -162,9 +175,11 @@ const subLectureName = ref(null)
 const selectLecture = (lecture) => {
     // console.log(lecture)
     // selectedLecture.value = lecture
-    selectedLectureId.value = lecture.id
+    selectedLectureId.value = lecture.lecture.id
+    // console.log('선택한 강의', selectedLectureId.value)
     selectedLectureName.value = lecture.lecture.name
-    selectedLectureURL.value = lecture.lecture.sourceName
+    selectedLectureURL.value = lecture.lecture.sourceUrl
+    // console.log('강의 url', selectedLectureURL.value)
     selectedSubLectures.value = null // 대강의 변경 시 subLecture 초기화
     subLectureId.value = null // ✅ 선택된 subLecture도 초기화!
     // console.log('filteredSubLectures', filteredSubLectures.value)
@@ -174,36 +189,34 @@ const selectLecture = (lecture) => {
 // selectedLectureId에 해당하는 subLectures를 찾아 반환
 // selectedLectureId, lecture 데이터가 바뀌면 자동으로 그 강의의 subLectures를 업데이트
 const filteredSubLectures = computed(() => {
-    const selectedLecture = lectures.value.find((lecture) => lecture.id === selectedLectureId.value)
+    // ✅ selectedLectureId와 lecture.lecture.id를 비교
+    const selectedLecture = lectures.value.find(
+        (lecture) => lecture.lecture.id === selectedLectureId.value
+    )
 
     if (!selectedLecture || !selectedLecture.lecture.curriculum) return []
 
-    // curriculum 객체를 배열로 변환 후 subLectures 배열만 가져옴
+    // ✅ curriculum 객체를 배열로 변환 후 subLectures 배열 가져오기
     return Object.values(selectedLecture.lecture.curriculum).flatMap(
         (curriculumItem) => curriculumItem.subLectures
     )
 })
 
-// 📌 `filteredSubLectures`가 변경될 때 자동으로 `selectedSubLectures` 업데이트
-watch(filteredSubLectures, (newSubLectures) => {
-    // console.log('📌 `filteredSubLectures` 변경 감지:', newSubLectures)
-    selectedSubLectures.value = newSubLectures
-})
-
 // subLecture 선택
 const selectsubLecture = (subLecture, index) => {
-    subLectureId.value = index // 클릭한 강의 인덱스 저장
+    subLectureId.value = index // ✅ subLecture의 고유 ID 저장
     subLectureName.value = subLecture.title
     isButtonClicked.value = true
-    // console.log('서브강의 이름', subLectureName.value)
-    // console.log('선택된 sublecture 인덱스:', subLectureId.value)
+
+    // console.log('✅ 선택된 subLecture 이름:', subLectureName.value)
+    // console.log('✅ 선택된 subLecture ID:', subLectureId.value)
+    // console.log('선택된 sublecture 전체:', index)
 }
 
 // 📌 Todo 추가 요청
-const submitTodo = async () => {
+const submitTodo = async (token, userId) => {
     const todoData = {
         lectureId: selectedLectureId.value,
-        // lectureId: 14000,
         lectureName: selectedLectureName.value,
         subLectureName: subLectureName.value,
         sourceUrl: selectedLectureURL.value,
@@ -214,25 +227,34 @@ const submitTodo = async () => {
     // console.log('tododata', todoData)
 
     try {
-        await todoStore.addTodo(todoData, userStore.token, userStore.userId) // 📌 Pinia Store의 addTodo 실행
+        const response = await todoStore.addTodo(todoData, token, userId)
+        // console.log('나와라 토큰', token)
+
+        // console.log('투두데이터 뭐냐', todoData)
+        // ✅ 응답 데이터가 현재 선택된 날짜와 같을 때만 추가
+        if (response.date === selectedDate.value) {
+            todoStore.todos.push(response)
+        }
         selectedLectureId.value = null
         subLectureId.value = null
-        alert('할 일이 추가되었습니다!')
+        // alert('할 일이 추가되었습니다!')
         isButtonClicked.value = !isButtonClicked.value
     } catch (error) {
         console.error('🚨 할 일 추가 실패:', error)
     }
 }
 
+// 📌 `filteredSubLectures`가 변경될 때 자동으로 `selectedSubLectures` 업데이트
 watch(
-    () => [userStore.token, userStore.userId],
-    async ([newToken, newUserId]) => {
-        if (newToken && newUserId) {
-            console.log('✅ 토큰과 userId가 준비되었습니다.')
-            await todoStore.getInprogressLecture(newToken, newUserId)
+    () => [filteredSubLectures.value, userStore.token, userStore.userId], // ✅ 세 값을 동시에 감시
+    async ([newSubLectures, newToken, newUserId]) => {
+        if (newSubLectures) {
+            // ✅ filteredSubLectures가 변경되었을 때
+            selectedSubLectures.value = newSubLectures
+            console.log('📌 `filteredSubLectures` 변경 감지W:', newSubLectures)
         }
     },
-    { immediate: true }
+    { immediate: true } // ✅ 초기값도 즉시 확인
 )
 // onMounted(() => {
 //     todoStore.getInprogressLecture() // 컴포넌트가 로드될 때 JSON 데이터 가져오기
