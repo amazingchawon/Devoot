@@ -10,9 +10,27 @@ instance.interceptors.response.use(
     (error) => {
         if (error.response) {
             console.error(`❌ API 요청 실패 (HTTP ${error.response.status}):`, error.response.data)
+
+            // 특정 에러 코드에 대한 처리
+            const { status, data } = error.response
+
+            if (status === 400) {
+                if (data.code === 'COMMON_400_1') {
+                    console.error('🚨 잘못된 데이터 입력:', data.errors)
+                    return Promise.reject({ type: 'VALIDATION_ERROR', errors: data.errors })
+                }
+                if (data.code === 'S3_400_1') {
+                    console.error('🚨 S3 이미지 업로드 실패:', data.detail || data.message)
+                    return Promise.reject({
+                        type: 'S3_ERROR',
+                        message: data.detail || data.message,
+                    })
+                }
+            }
         } else {
             console.error('❌ 네트워크 오류 또는 서버 응답 없음:', error)
         }
+
         return Promise.reject(error) // 호출한 곳에서 추가 처리 가능
     }
 )

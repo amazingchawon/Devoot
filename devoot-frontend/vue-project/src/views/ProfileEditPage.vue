@@ -5,26 +5,25 @@
             <div id="profile-edit" class="flex flex-col items-center w-full gap-4 mb-6">
                 <!-- 프로필 이미지 -->
                 <div class="overflow-hidden rounded-full w-36 h-36">
-                    <!-- 추후 defaultProfileImage 설정 변경 필요 (서버에서 가져오기) -->
                     <img
                         :src="profileImage"
                         alt="프로필 이미지"
                         class="object-cover w-full h-full border border-gray-200"
                     />
                 </div>
-
-                <!-- 이미지 업로드 버튼 -->
-                <div class="flex items-center gap-4">
-                    <!-- 파일 선택 버튼 -->
-                    <label for="file-upload" class="button-primary">파일 선택</label>
-                    <input
-                        id="file-upload"
-                        type="file"
-                        accept="image/*"
-                        class="hidden"
-                        @change="onFileChange"
-                    />
-                </div>
+                <!-- 파일 선택 버튼 -->
+                <label for="file-upload" class="button-primary">파일 선택</label>
+                <input
+                    id="file-upload"
+                    type="file"
+                    accept="image/*"
+                    class="hidden"
+                    @change="onFileChange"
+                />
+                <!-- 파일 형태 안내 -->
+                <p class="text-gray-300 text-caption-sm">
+                    이미지 파일은 .jpg, .jpeg, .png, .gif 형식만 업로드할 수 있습니다.
+                </p>
             </div>
 
             <hr class="mb-4" />
@@ -348,18 +347,16 @@ onMounted(async () => {
 // 아이디 중복 확인
 //=================================================
 // 입력값 변경 시 에러 초기화
-watch(id, (newValue, oldValue) => {
-    if (!watchEnabled.value) return // ✅ onMounted 이후에만 watch 실행
+watch(id, (newValue) => {
+    if (!watchEnabled.value) return // 데이터 로딩 후에만 watch 실행
 
-    // ✅ 기존 아이디와 동일한 경우 watch 실행 방지
+    // 기존 아이디와 동일하면 중복 검사 결과 유지
     if (newValue === originalId.value) {
         return
     }
 
-    if (newValue !== oldValue) {
-        idError.value = newValue.trim() === ''
-        idCheckResult.value = '' // ✅ 아이디가 변경된 경우에만 초기화
-    }
+    // ✅ 아이디가 변경된 경우에만 중복 검사 초기화
+    idCheckResult.value = ''
 })
 
 const checkId = async () => {
@@ -534,12 +531,7 @@ const saveProfile = async () => {
     try {
         if (isNewUser.value) {
             await registerUser(userStore.token, formData) // 회원가입 API 호출
-            try {
-                await router.replace({ name: 'home' }) // ✅ 뒤로 가기 방지
-                console.log('🔥 router.replace 실행 완료!')
-            } catch (error) {
-                console.error('🚨 router.replace 실행 중 오류 발생:', error)
-            }
+            await router.replace({ name: 'home' }) // ✅ 뒤로 가기 방지
         } else {
             await updateUserInfo(userStore.token, formData) // 프로필 수정 API 호출
             alert('프로필이 성공적으로 업데이트되었습니다!')
@@ -547,25 +539,36 @@ const saveProfile = async () => {
 
         isNewUser.value = false // 회원가입이든 수정이든 완료 후 기존 유저 모드 유지
     } catch (error) {
-        if (error.response?.status === 400) {
-            console.error('🚨 400 오류 발생! 응답 데이터:', error.response.data)
+        if (error.type === 'VALIDATION_ERROR') {
+            const fieldErrors = error.errors || {}
+            errorMessage.value = '잘못된 입력이 있습니다. 확인해주세요.'
 
-            const fieldErrors = error.response.data.errors || {}
-            console.log('🔥 API에서 받은 에러 필드:', fieldErrors) // 필드별 오류 확인
-
-            errorMessage.value = '잘못된 입력입니다. 다시 확인해주세요.'
-
-            // 특정 필드의 오류가 있는 경우 해당 필드 에러 표시
             if (fieldErrors.email) {
                 emailError.value = true
                 console.log('🚨 이메일 오류:', fieldErrors.email)
             }
-            if (fieldErrors.tags) {
-                tagsError.value = true
+            if (fieldErrors.profileId) {
+                idError.value = true
+                console.log('🚨 아이디 오류:', fieldErrors.profileId)
+            }
+            if (fieldErrors.nickname) {
+                console.log('🚨 닉네임 오류:', fieldErrors.nickname)
+                alert(fieldErrors.nickname[0]) // 닉네임 길이 초과 등 경고창 띄우기
             }
             if (fieldErrors.isPublic) {
                 isPublicError.value = true
             }
+            if (fieldErrors.links) {
+                console.log('🚨 링크 오류:', fieldErrors.links)
+                alert('링크 정보가 올바르지 않습니다. 다시 확인해주세요!')
+            }
+            if (fieldErrors.tags) {
+                tagsError.value = true
+                alert('태그는 1개 이상 5개 이하로 선택해야 합니다!')
+            }
+        } else if (error.type === 'S3_ERROR') {
+            console.error('🚨 S3 업로드 실패:', error.message)
+            alert('이미지 업로드에 실패했습니다. 올바른 이미지 파일을 업로드해주세요.')
         } else {
             errorMessage.value = '프로필 업데이트에 실패했습니다. 다시 시도해주세요.'
         }
