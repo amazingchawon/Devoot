@@ -9,7 +9,18 @@
 
         <!-- 로딩 완료 -->
         <div v-if="!isLoading" class="flex flex-col col-span-12 gap-9">
-            <DetailHeader v-if="lecture" :lecture="lecture" />
+            <div class="flex flex-col gap-4">
+                <!-- 강의 신고 -->
+                <div class="flex flex-row items-center justify-end gap-4">
+                    <p class="text-gray-300 text-caption">강의 정보에 오류가 있나요?</p>
+                    <button class="flex flex-row gap-2 button-gray" @click="handleLectureReport">
+                        <Report class="w-4 h-4 text-red-500 fill-red-500" />
+                        <p class="text-gray-500 text-caption">신고하기</p>
+                    </button>
+                </div>
+
+                <DetailHeader v-if="lecture" :lecture="lecture" />
+            </div>
 
             <div class="overflow-hidden border border-gray-200 rounded-2xl">
                 <!-- 탭 메뉴 -->
@@ -57,6 +68,7 @@ import { useUserStore } from '@/stores/user'
 import {
     getLectureDetail,
     getLectureDetailWithLogout,
+    reportLecture,
     getSelfReview,
     getLectureReview,
 } from '@/helpers/lecture'
@@ -66,6 +78,8 @@ import DetailHeader from '@/components/Lecture/DetailHeader.vue'
 import TabMenu from '@/components/Common/TabMenu.vue'
 import LectureReviewSection from '@/components/Lecture/LectureReviewSection.vue'
 import LectureReviewEditModal from '@/components/Lecture/LectureReviewEditModal.vue'
+
+import Report from '@/assets/icons/report.svg'
 
 const route = useRoute()
 const userStore = useUserStore()
@@ -177,6 +191,26 @@ const openReviewModal = () => {
 // 모달 닫기
 const closeReviewModal = () => {
     isModalOpen.value = false
+}
+
+//===========================
+// 리뷰
+const handleLectureReport = async () => {
+    if (!userStore.token) return
+
+    const isConfirmed = confirm('이 강의를 신고하시겠습니까?')
+    if (!isConfirmed) return
+
+    try {
+        await reportLecture(userStore.token, route.params.id)
+        alert('신고가 접수되었습니다. 강의 내용을 검토한 후 조치하겠습니다!')
+    } catch (error) {
+        if (error.response?.status === 409) {
+            alert('이미 신고하신 강의입니다. 빠른 검토 후 수정 조치하겠습니다!')
+        } else {
+            alert('신고 중 오류가 발생했습니다. 다시 시도해주세요.')
+        }
+    }
 }
 </script>
 

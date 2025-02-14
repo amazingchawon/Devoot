@@ -5,7 +5,7 @@
     >
         <!-- 강의 사진 -->
         <div id="lecture-image" class="w-[50%] min-w-[300px]">
-            <img :src="imageUrl" alt="강의 이미지" class="object-cover w-full h-auto" />
+            <img :src="imageUrl" alt="강의 이미지" class="object-cover h-full" />
         </div>
 
         <!-- 강의 설명 -->
