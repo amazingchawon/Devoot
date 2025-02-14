@@ -75,6 +75,7 @@ dependencies {
     implementation("jakarta.validation:jakarta.validation-api:3.0.0")
     implementation("org.hibernate.validator:hibernate-validator:9.0.0.CR1")
     implementation("com.google.firebase:firebase-admin:9.4.2")
+    implementation("io.awspring.cloud:spring-cloud-aws-starter-s3:3.0.0")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
