@@ -9,7 +9,11 @@
             </div>
             <div class="flex gap-2">
                 <!-- 본인 리뷰인 경우 : 수정하기 -->
-                <div class="relative flex flex-row items-center gap-1 cursor-pointer group">
+                <div
+                    v-if="isMyProfile"
+                    class="relative flex flex-row items-center gap-1 cursor-pointer group"
+                    @click="editReview"
+                >
                     <Edit class="w-4 h-4" />
                     <p class="hidden text-gray-300 text-caption md:inline">수정하기</p>
                     <!-- 툴팁 -->
@@ -21,7 +25,11 @@
                 </div>
 
                 <!-- 삭제하기 -->
-                <div class="relative flex flex-row items-center gap-1 cursor-pointer group">
+                <div
+                    v-if="isMyProfile"
+                    class="relative flex flex-row items-center gap-1 cursor-pointer group"
+                    @click="deleteReview"
+                >
                     <Trash class="w-4 h-4" />
                     <p class="hidden text-gray-300 md:inline text-caption">삭제하기</p>
                     <!-- 툴팁 -->
@@ -69,14 +77,19 @@
 import Edit from '@/assets/icons/edit.svg'
 import Trash from '@/assets/icons/trash.svg'
 import Star from '@/assets/icons/star_filled.svg'
+import { useUserStore } from '@/stores/user'
+import { useRoute } from 'vue-router'
 import { computed } from 'vue'
-
+const userStore = useUserStore() // Pinia 스토어 가져오기
+const route = useRoute()
 const props = defineProps({
     review: {
         type: Object,
         required: true,
     },
 })
+
+const isMyProfile = computed(() => userStore.userId === route.params.id)
 
 // 날짜 포맷 변경
 const formattedDate = computed(() => {
@@ -92,6 +105,19 @@ const formattedDate = computed(() => {
 const fullStars = computed(() => Math.floor(props.review.rating))
 const hasHalfStar = computed(() => props.review.rating % 1 !== 0)
 const emptyStars = computed(() => 5 - fullStars.value - (hasHalfStar.value ? 1 : 0))
+
+//==========================
+// 리뷰 삭제 / 수정 / 신고
+//==========================
+const emit = defineEmits(['edit-review', 'delete-review', 'update-self-review']) // 부모 컴포넌트에 이벤트 전달
+
+const editReview = () => {
+    emit('edit-review', props.review) // ProfileReviewSection으로 이벤트 전달
+}
+
+const deleteReview = () => {
+    emit('delete-review', props.review) // ProfileReviewSection으로 이벤트 전달
+}
 </script>
 
 <style></style>

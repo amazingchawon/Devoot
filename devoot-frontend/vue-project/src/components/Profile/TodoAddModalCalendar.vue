@@ -135,7 +135,7 @@ const selectDate = (date) => {
     // YYYY-MM-DD 형식으로 변환
     const formattedDate = `${currentYear.value}-${formattedMonth}-${formattedDay}`
 
-    console.log('📌 선택한 날짜 (YYYY-MM-DD):', formattedDate)
+    // console.log('📌 선택한 날짜 (YYYY-MM-DD):', formattedDate)
 
     // 부모 컴포넌트(`TodoAddModal.vue`)로 emit
     emit('select-date', formattedDate)

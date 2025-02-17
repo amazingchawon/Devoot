@@ -7,19 +7,15 @@
         <div class="z-50 bg-white shadow-lg rounded-lg w-[300px] h-[400px] p-4" @click.stop>
             <div class="flex flex-col h-full">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-base font-bold">사용자 검색</h2>
-                    <button @click="closeModal" class="text-2xl text-gray-500 hover:text-black">
+                    <h2 class="text-h2">{{ modalTitle }}</h2>
+                    <button
+                        @click="closeModal"
+                        class="flex items-center justify-center w-6 h-6 text-2xl text-gray-500 hover:text-black"
+                    >
                         &times;
                     </button>
                 </div>
-                <div class="relative">
-                    <input
-                        v-model="searchQuery"
-                        type="text"
-                        placeholder="사용자 검색"
-                        class="w-full py-2 pl-4 pr-8 text-sm border rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
+
                 <ul class="flex-1 mt-4 overflow-y-auto no-scrollbar">
                     <li
                         v-for="user in users"
@@ -44,7 +40,7 @@
 </template>
 
 <script setup>
-import { ref, watchEffect, onMounted, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { searchUsers } from '@/helpers/api'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router' // 추가: 라우터 사용
@@ -64,7 +60,15 @@ const props = defineProps({
 })
 const emit = defineEmits(['close'])
 
-const searchQuery = ref('')
+const modalTitle = computed(() => {
+    if (props.type === 'follower') {
+        return '팔로워 목록'
+    } else if (props.type === 'following') {
+        return '팔로잉 목록'
+    }
+    return '사용자 검색' // 기본값
+})
+
 // const users = ref([])
 // 기본 이미지 URL (안정적인 URL 사용)
 const defaultImage = 'https://placehold.co/40x40'

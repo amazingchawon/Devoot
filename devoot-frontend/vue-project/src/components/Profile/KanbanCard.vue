@@ -5,7 +5,7 @@
     >
         <!-- Thumbnail Container -->
         <div class="w-[7.5rem] h-full bg-gray-300 flex-shrink-0 relative">
-            <img :src="lecture.lecture.imgUrl" alt="강의 썸네일" class="w-full h-full" />
+            <img :src="lecture.lecture.imageUrl" alt="강의 썸네일" class="w-full h-full" />
             <Move class="absolute w-6 h-6 text-white top-[33.6px]" />
         </div>
 
@@ -23,7 +23,7 @@
                     </p>
                 </div>
                 <!-- 관심 강의 추가 -->
-                <div @click="toggleBookmark(lecture.lecture.id, lecture.id)">
+                <div v-if="isMyProfile" @click="toggleBookmark(lecture.lecture.id, lecture.id)">
                     <component
                         :is="isBookmarked ? BookmarkFill : BookmarkDefault"
                         class="w-6 h-6 cursor-pointer text-primary-500"
@@ -58,16 +58,19 @@ import { addBookmark, removeBookmark } from '@/helpers/lecture' // API 함수 �
 import BookmarkFill from '@/assets/icons/bookmark_filled.svg'
 import BookmarkDefault from '@/assets/icons/bookmark_default.svg'
 import Move from '@/assets/icons/move.svg'
-import { ref, defineProps, watch } from 'vue'
+import { ref, defineProps, watch, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import axios from 'axios'
 
 const userStore = useUserStore() // Pinia 스토어 가져오기
+const route = useRoute()
 defineProps({
     lecture: {
         type: Object,
         required: true,
     },
 })
+const isMyProfile = computed(() => userStore.userId === route.params.id)
 
 watch(
     () => [userStore.token, userStore.userId], // ✅ 두 값을 동시에 감시

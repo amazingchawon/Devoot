@@ -70,5 +70,29 @@ const readFollowings = async (token, userId, page = 1, size = 10) => {
     }
 }
 
-export { acceptFollowRequest, readFollowers, readFollowings }
+// 팔로우 요청 함수
+const sendFollowRequest = async (token, userId) => {
+    return instance.post(
+        `/api/follows`,
+        { profileId: userId },
+        {
+            headers: { Authorization: `Bearer ${token}` },
+        }
+    )
+}
+
+// 팔로우 취소 함수
+const cancelFollowRequest = async (token, followId) => {
+    return instance.delete(`/api/follows/${followId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+    })
+}
+
+export {
+    acceptFollowRequest,
+    readFollowers,
+    readFollowings,
+    sendFollowRequest,
+    cancelFollowRequest,
+}
 export default instance

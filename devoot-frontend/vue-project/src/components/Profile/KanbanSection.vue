@@ -74,8 +74,11 @@ import KanbanCard from './KanbanCard.vue'
 import { ref, onMounted, onUpdated, watch, computed } from 'vue'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
+import { useTodoStore } from '@/stores/todo'
+import { getLectureDatas, updateKanbanStatus } from '@/helpers/todo'
+import { useRoute } from 'vue-router'
 // import { useTodoStore } from '@/stores/todo'
-
+const todoStore = useTodoStore()
 // const todoStore = useTodoStore()
 
 defineProps({
@@ -83,45 +86,25 @@ defineProps({
         type: String,
         default: '',
     },
-    token: {
-        type: String,
-        default: '',
-    },
 })
-
 const userStore = useUserStore() // Pinia 스토어 가져오기
+const route = useRoute()
 const lectureDatas = ref([])
+const isMyProfile = computed(() => userStore.userId === route.params.id)
 
-const loadLectureDatas = async (token, userId) => {
-    console.log('전달받은 토큰', token)
-    // console.log('전달받은 아이디', userId)
-
+const loadLectureDatas = async () => {
     try {
-        const mock_server_url = 'http://localhost:8080'
-        const API_URL = `${mock_server_url}/api/users/${userId}/bookmarks`
-        // const token = 'asdfasdfasdf' // 여기에 Bearer 토큰을 넣어야 함
-
-        const response = await axios.get(API_URL, {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-            },
-        })
-        // console.log('전달된 헤더:', response.config.headers)
-
+        const response = await getLectureDatas(userStore.token, route.params.id)
         lectureDatas.value = response.data
     } catch (error) {
-        console.error('에러:', error)
+        console.error('❌ 칸반섹션 강의 데이터 요청 에러:', error)
     }
 }
 
-const updateStatus = async (el, bookmarkId, token, userId, afterBookmarkId) => {
+// 칸반 섹션 status 변경
+const changeKanbanStatus = async (el, bookmarkId, afterBookmarkId) => {
     try {
-        const mock_server_url = 'http://localhost:8080'
-        const API_URL = `${mock_server_url}/api/users/${userId}/bookmarks/${bookmarkId}`
-
         const parentContainer = el.closest('.container') // 현재 이동된 컨테이너 찾기
-
         // ✅ 드롭된 컨테이너에 따라 상태(status) 값 변경
         let updatedStatus = 1 // 기본값 (todo)
         if (parentContainer) {
@@ -132,55 +115,28 @@ const updateStatus = async (el, bookmarkId, token, userId, afterBookmarkId) => {
             }
         }
 
-        const response = await axios.patch(
-            API_URL,
-            {
-                status: updatedStatus, // 상태 변경
-                nextId: afterBookmarkId,
-            },
-            {
-                headers: {
-                    'Content-Type': 'application/json', //필수 헤더 추가
-                    Authorization: `Bearer ${token}`, // 필요 시 Bearer 토큰 추가
-                },
-            }
+        await updateKanbanStatus(
+            bookmarkId,
+            userStore.token,
+            route.params.id,
+            updatedStatus,
+            afterBookmarkId
         )
-        console.log('응답', response)
+        alert('강의 상태가 변경되었습니다.')
+        await todoStore.getInprogressLecture(userStore.token, route.params.id)
 
+        // ✅ 상태가 in-progress일 때 강의 목록 다시 조회
         // if (updatedStatus === 2) {
-        //     console.log('✅ Status가 2로 업데이트되었습니다:', bookmarkId)
-        //     // console.log('lecture가 뭔데', lectureDatas.value)
-
-        //     // ✅ Pinia Store에 추가
-        //     // if (!todoStore.inprogressLectures.some((lecture) => lecture.id === bookmarkId)) {
-        //     //     todoStore.inprogressLectures.push() // 값 추가
-        //     //     console.log('📚 inprogressLectures에 추가되었습니다.')
-        //     // }
+        //     await todoStore.getInprogressLecture(userStore.token, route.params.id)
         // }
-        // // console.log('가까운 부모컨테이너', parentContainer.dataset.status)
-        // console.log('업데이트 상태:', updatedStatus)
-        // console.log('칸반섹션 데이터', lectureDatas.value)
     } catch (error) {
-        console.error('에러:', error)
+        console.error('❌ 칸반 섹션 상태 변경 에러:', error)
     }
 }
-// onMounted(() => {
-//     loadLectureDatas() // JSON 데이터 가져오기
-// })
 
-watch(
-    () => [userStore.token, userStore.userId], // ✅ 두 값을 동시에 감시
-    async ([newToken, newUserId]) => {
-        if (newToken && newUserId) {
-            // 두 값이 모두 존재할 때만 실행
-            // console.log('✅ 토큰과 userId가 준비되었습니다.')
-            await loadLectureDatas(newToken, newUserId)
-        }
-    },
-    { immediate: true } // 이미 값이 존재할 경우 즉시 실행
-)
-
+// 드래그앤 드랍
 onUpdated(() => {
+    if (!isMyProfile.value) return
     const $ = (select) => document.querySelectorAll(select)
     const draggables = $('.draggable')
     const containers = $('.container')
@@ -216,7 +172,7 @@ onUpdated(() => {
             console.log('북마크의 ID:', bookmarkId) // ✅ dataset 값 확인
 
             if (userStore.token && userStore.userId) {
-                updateStatus(el, bookmarkId, userStore.token, userStore.userId, afterBookmarkId) // ✅ updateStatus 함수 호출
+                changeKanbanStatus(el, bookmarkId, afterBookmarkId) // ✅ updateStatus 함수 호출
             }
         })
     })
@@ -269,14 +225,17 @@ onUpdated(() => {
     })
 })
 
-onMounted(async (token, userId) => {
-    if (token && userId) {
-        console.log('✅ token과 userId가 있습니다.')
-        await loadLectureDatas(token, userId)
-    } else {
-        console.error('❌ token 또는 userId가 아직 정의되지 않았습니다.')
-    }
-})
+watch(
+    () => [userStore.token, userStore.userId], // ✅ 두 값을 동시에 감시
+    async ([newToken, newUserId]) => {
+        if (newToken && newUserId) {
+            // 두 값이 모두 존재할 때만 실행
+            // console.log('✅ 토큰과 userId가 준비되었습니다.')
+            await loadLectureDatas()
+        }
+    },
+    { immediate: true } // 이미 값이 존재할 경우 즉시 실행
+)
 </script>
 
 <style>
