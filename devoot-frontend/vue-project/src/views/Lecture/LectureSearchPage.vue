@@ -24,6 +24,14 @@
         </div>
 
         <p v-else>검색 결과가 없습니다.</p>
+        <!-- 강의 등록 요청 -->
+        <div class="flex flex-row items-center justify-end gap-4">
+            <p class="text-gray-300 text-caption">등록하고 싶은 강의가 있으신가요?</p>
+            <button class="flex flex-row gap-2 button-gray" @click="openLectureCreateModal">
+                <p class="text-gray-500 text-caption">등록하기</p>
+            </button>
+        </div>
+        <LectureCreateModal v-if="isLectureCreateModalOpen" @close="closeLectureCreateModal" />
     </div>
 </template>
 
@@ -31,6 +39,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import LectureCard from '@/components/Lecture/LectureCard.vue'
+import LectureCreateModal from '@/components/Lecture/LectureCreateModal.vue'
 
 // 상태 변수
 const route = useRoute()
@@ -79,6 +88,22 @@ watch(
 onMounted(() => {
     fetchLectures()
 })
+
+//===========================
+// 강의 등록
+//===========================
+
+const isLectureCreateModalOpen = ref(false)
+
+// 모달 열기 함수
+const openLectureCreateModal = () => {
+    isLectureCreateModalOpen.value = true
+}
+
+// 모달 닫기 함수
+const closeLectureCreateModal = () => {
+    isLectureCreateModalOpen.value = false
+}
 </script>
 
 <style scoped>

@@ -122,6 +122,15 @@ const deleteLectureReview = async (token, reviewId) => {
     })
 }
 
+// 강의 등록 요청
+const registerLecture = async (sourceUrl, token) => {
+    return instance.post(
+        `/api/lecture-requests/create`,
+        { sourceUrl }, // body가 필요 없는 경우 빈 객체 `{}` 전달
+        { headers: { Authorization: `Bearer ${token}` } } // ✅ headers를 올바른 위치에 배치
+    )
+}
+
 export {
     addBookmark,
     removeBookmark,
@@ -134,5 +143,6 @@ export {
     editLectureReview,
     reportLectureReview,
     deleteLectureReview,
+    registerLecture,
 }
 export default instance
