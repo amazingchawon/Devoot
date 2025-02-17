@@ -68,7 +68,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, markRaw } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useUserStore } from '@/stores/user' // Pinia의 userStore 가져오기
 import Logo from '@/assets/icons/logo.svg'
@@ -82,15 +82,16 @@ import Logout from '@/assets/icons/logout.svg'
 const userStore = useUserStore() // Pinia 상태 관리
 
 const menuItems = ref([
-    { label: '강의 수정', path: '/edit/request', icon: Edit },
-    { label: '강의 등록', path: '/add/request', icon: Plus },
-    { label: '신고 관리', path: '/admin/report', icon: Report },
-    { label: '오류 관리', path: '/admin/error', icon: Error },
+    { label: '강의 수정', path: '/edit/request', icon: markRaw(Edit) },
+    { label: '강의 등록', path: '/add/request', icon: markRaw(Plus) },
+    { label: '신고 관리', path: '/admin/report', icon: markRaw(Report) },
+    { label: '오류 관리', path: '/admin/error', icon: markRaw(Error) },
 ])
 
 // 로그아웃 함수
 const logout = async () => {
     await userStore.logout()
+    alert('로그아웃 되었습니다.')
 }
 </script>
 

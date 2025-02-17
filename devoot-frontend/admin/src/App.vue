@@ -4,7 +4,7 @@
         <AppNavigation class="fixed z-50" />
 
         <!-- 메인 컨텐츠 영역 -->
-        <div class="relative flex flex-col flex-1 ml-[4.5rem] lg:ml-[13.5rem]">
+        <div class="relative flex flex-col flex-1 ml-[4.5rem] lg:ml-[13.5rem] bg-gray-100">
             <!-- 컨테이너 -->
             <div
                 id="container"
