@@ -1,9 +1,8 @@
 <template>
-    <div class="flex h-scree">
+    <div class="flex h-screen">
         <!-- 네비게이션 바 -->
         <AppNavigation class="fixed z-50" />
 
-        <!-- 메인 컨텐츠 영역 -->
         <div class="relative flex flex-col flex-1 ml-[4.5rem] lg:ml-[13.5rem] bg-gray-100">
             <!-- 컨테이너 -->
             <div
@@ -17,7 +16,16 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
+import { useUserStore } from '@/stores/user'
+
 import AppNavigation from '@/components/AppNavigation.vue'
+
+const userStore = useUserStore()
+
+onMounted(() => {
+    userStore.fetchUser() // 앱이 실행될 때 로그인 유지 확인
+})
 </script>
 
 <style scoped></style>

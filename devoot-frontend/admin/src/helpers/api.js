@@ -46,40 +46,14 @@ const getUserInfo = async (token) => {
     })
 }
 
-// 유저 정보 수정하는 API 함수
-const updateUserInfo = async (token, formData) => {
-    return instance.patch('/api/users/me', formData, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    })
-}
-
-// 유저 회원가입 API 함수
-const registerUser = async (token, formData) => {
-    return instance.post('/api/users/register', formData, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    })
-}
-
-// 회원가입용 유저 ID 중복확인 API 함수
-const checkProfileId = async (token, profileId) => {
-    return instance.get('/api/users/check-profile-id', {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { profileId },
-    })
-}
-
-// 회원정보수정용 유저 ID 중복확인 API 함수
-const checkProfileIdAuthenticated = async (token, profileId) => {
-    return instance.get('/api/users/check-profile-id/authenticated', {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { profileId },
-    })
-}
-
 //===============================================
-export { getUserInfo, updateUserInfo, registerUser, checkProfileId, checkProfileIdAuthenticated }
+// 대시보드 API
+//===============================================
+// 관리자 유저 가져오는 API 함수
+const getAdminUser = async (token) => {
+    return instance.get('/api/users/admin', {
+        headers: { Authorization: `Bearer ${token}` },
+    })
+}
+export { getUserInfo, getAdminUser }
 export default instance

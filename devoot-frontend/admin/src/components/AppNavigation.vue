@@ -7,6 +7,7 @@
         <div
             id="logo"
             class="flex flex-row items-center justify-center h-20 gap-3 cursor-pointer lg:justify-normal lg:px-6"
+            @click="router.push({ name: 'dashBoard' })"
         >
             <!-- 로고 아이콘 (크기 고정) -->
             <div class="flex flex-col items-center justify-center gap-1">
@@ -69,7 +70,7 @@
 
 <script setup>
 import { ref, markRaw } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user' // Pinia의 userStore 가져오기
 import Logo from '@/assets/icons/logo.svg'
 import Edit from '@/assets/icons/edit.svg'
@@ -80,6 +81,7 @@ import LogIn from '@/assets/icons/login.svg'
 import Logout from '@/assets/icons/logout.svg'
 
 const userStore = useUserStore() // Pinia 상태 관리
+const router = useRouter()
 
 const menuItems = ref([
     { label: '강의 수정', path: '/edit/request', icon: markRaw(Edit) },

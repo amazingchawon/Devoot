@@ -117,20 +117,18 @@ export const useUserStore = defineStore('user', {
                 if (user) {
                     this.user = user
                     this.token = await user.getIdToken(true)
-                    // console.log('dfkslfjalsjfklsajfklsjflasfj')
-                    // console.log('dfkslfjalsjfklsajfklsjflasfj', this.token)
 
-                    // API에서 추가 유저 정보 가져오기
                     try {
                         const res = await getUserInfo(this.token)
-                        this.userId = res.data.profileId // 로그인 유지 시에도 userId 설정
+                        this.userId = res.data.profileId
                     } catch (error) {
                         console.error('🚨 유저 정보 가져오기 실패:', error)
                     }
                 } else {
+                    console.log('🚨 로그아웃 상태: user가 null')
                     this.user = null
                     this.token = null
-                    this.userId = null // 로그아웃 시 userId 초기화
+                    this.userId = null
                 }
             })
         },
