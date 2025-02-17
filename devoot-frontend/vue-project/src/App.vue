@@ -1,17 +1,18 @@
+<!-- src\App.vue -->
 <template>
-    <div class="flex h-scree">
+    <div class="flex h-screen">
         <!-- 네비게이션 바 -->
         <AppNavigation class="fixed z-50" />
 
-        <!-- 메인 컨텐츠 영역 -->
-        <div class="relative flex flex-col flex-1 ml-[4.5rem] lg:ml-[13.5rem]">
+        <!-- 전체 컨테이너 -->
+        <div class="relative flex flex-col flex-1 ml-[4.5rem] lg:ml-[13.5rem] px-9">
             <!-- 헤더 -->
-            <AppHeader v-if="shouldShowHeader" :type="headerType" />
+            <AppHeader class="mb-9" v-if="shouldShowHeader" :type="headerType" />
 
-            <!-- 컨테이너 -->
+            <!-- 메인 컨텐츠 영역 -->
             <div
                 id="container"
-                class="flex-1 grid w-full max-w-[1440px] mx-auto grid-cols-12 gap-6 overflow-y-auto px-9 relative z-30"
+                class="flex-1 grid w-full max-w-[1440px] mx-auto grid-cols-12 gap-6 overflow-y-auto relative custom-scrollbar"
             >
                 <router-view class="col-span-12" />
             </div>
@@ -28,11 +29,9 @@ import AppNavigation from './components/Layout/AppNavigation.vue'
 import AppHeader from './components/Layout/AppHeader.vue'
 
 const userStore = useUserStore()
-// const isLoaded = ref(false) // 사용자 정보 로드 상태 변수
 
 onMounted(async () => {
     await userStore.fetchUser()
-    // isLoaded.value = true // 사용자 정보가 모두 로드된 후 isLoaded를 true로 설정
 })
 
 const route = useRoute()

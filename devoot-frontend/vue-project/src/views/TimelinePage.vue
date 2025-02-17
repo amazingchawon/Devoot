@@ -34,16 +34,16 @@ const userStore = useUserStore()
 onMounted(async () => {
     await userStore.fetchUser()
     console.log('유저 정보 fetch 완료')
-    console.log(userStore.token)
+    // console.log(userStore.token)
 })
 
 const fetchActivities = async () => {
     const token = userStore.token
-    console.log('🔑 현재 토큰:', token)
+    // console.log('🔑 현재 토큰:', token)
 
     try {
         const response = await fetchTimelineList(token)
-        console.log('✅ API 응답 데이터:', response.data)
+        // console.log('✅ API 응답 데이터:', response.data)
 
         activities.value = response.data.content.map((item) => ({
             profileId: item.user?.id ?? '', // 사용자 프로필 ID 추가 (없으면 빈 문자열)

@@ -86,6 +86,6 @@ const visiblePages = computed(() => {
 }
 
 .page-button.active {
-    @apply bg-blue-500 text-white font-bold;
+    @apply bg-priamry-500 text-white font-bold;
 }
 </style>

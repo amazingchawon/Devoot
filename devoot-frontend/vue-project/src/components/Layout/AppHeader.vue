@@ -1,38 +1,40 @@
+<!-- src/components/Layout/AppHeader.vue -->
 <template>
-    <header class="flex items-center justify-between h-20 px-4 py-2 bg-white">
+    <header class="flex items-center justify-between w-full h-20 bg-white">
         <!-- type이 'lecture'인 경우 -->
         <template v-if="type === 'lecture'">
-            <div class="relative flex items-center gap-4">
+            <!-- 외부 클릭 감지를 위한 컨테이너에 ref 추가 -->
+            <div class="relative flex" ref="categoryContainer">
                 <!-- 카테고리 버튼 -->
                 <button
-                    class="flex items-center w-[10.75rem] h-[2.75rem] px-4 text-sm font-medium text-gray-500 border rounded hover:bg-gray-100"
+                    class="header-button"
                     aria-label="카테고리 선택"
                     @click="toggleCategoryDropdown"
                 >
-                    <CategoryIcon class="w-5 h-5 mr-2" />
-                    카테고리
+                    <CategoryIcon class="w-6 h-6 mr-2.5" />
+                    <p class="flex-1">카테고리</p>
                 </button>
 
                 <!-- 카테고리 드롭다운 -->
                 <CategoryDropDown
                     v-if="isCategoryDropdownVisible"
-                    class="absolute top-full left-0 mt-2 w-[10.75rem] bg-white border rounded shadow-lg z-10"
+                    class="absolute left-0 z-30 mt-2 overflow-hidden rounded-lg shadow-lg top-full w-44"
                     @closeDropdown="closeCategoryDropdown"
                 />
             </div>
 
             <!-- 검색창 -->
-            <div class="relative w-[47.5rem] h-[2.75rem]">
+            <div class="relative w-full max-w-[47.5rem] h-11">
                 <input
                     type="text"
                     v-model="searchQuery"
                     placeholder="강의명, 강사명, 키워드 검색"
-                    class="w-full h-full px-4 pr-10 text-sm border rounded focus:outline-none bg-gray-50"
+                    class="w-full h-full px-4 pr-10 text-gray-300 bg-gray-100 border border-gray-200 rounded-lg text-body focus:outline-none"
                     @keyup.enter="executeSearch"
                 />
                 <!-- 검색 아이콘 -->
                 <SearchIcon
-                    class="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 cursor-pointer top-1/2 right-3"
+                    class="absolute w-6 h-6 text-black transform -translate-y-1/2 cursor-pointer top-1/2 right-3"
                     @click="executeSearch"
                 />
             </div>
@@ -40,15 +42,11 @@
 
         <!-- type이 'user'인 경우 -->
         <template v-else-if="type === 'user'">
-            <div class="flex items-center gap-4">
+            <div class="relative flex">
                 <!-- 사용자 검색 버튼 -->
-                <button
-                    class="flex items-center w-[10.75rem] h-[2.75rem] px-4 text-sm font-medium text-gray-500 border rounded hover:bg-gray-100"
-                    aria-label="사용자 검색"
-                    @click="openUserSearchModal"
-                >
-                    <UserSearchIcon class="w-5 h-5 mr-2" />
-                    사용자 검색
+                <button class="header-button" aria-label="사용자 검색" @click="openUserSearchModal">
+                    <UserSearchIcon class="w-6 h-6 mr-2.5" />
+                    <p class="flex-1">사용자 검색</p>
                 </button>
             </div>
 
@@ -57,9 +55,9 @@
         </template>
 
         <!-- 오른쪽: 알림 버튼 (공통) -->
-        <div class="flex items-center gap-4">
+        <div class="flex items-center ml-6">
             <button
-                class="relative flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100"
+                class="relative inline-flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100"
                 aria-label="알림"
                 @click="openNotificationModal"
             >
@@ -81,7 +79,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { hasUnread } from '@/helpers/notification'
@@ -89,6 +87,7 @@ import { hasUnread } from '@/helpers/notification'
 import CategoryIcon from '@/assets/icons/category.svg'
 import CategoryDropDown from '@/components/Common/CategoryDropDown.vue'
 import SearchIcon from '@/assets/icons/search.svg'
+import UserSearchIcon from '@/assets/icons/user_search.svg'
 import BellIcon from '@/assets/icons/bell.svg'
 import BellNotificationIcon from '@/assets/icons/bell_notification.svg'
 import NotificationModal from '@/components/Common/NotificationModal.vue'
@@ -133,12 +132,10 @@ const closeUserSearchModal = () => {
     isUserSearchModalOpen.value = false
 }
 
-// 검색 실행 함수
+// 검색 실행 함수 (빈 입력이어도 검색 실행)
 const executeSearch = () => {
     const trimmedQuery = searchQuery.value.trim()
-    if (trimmedQuery) {
-        router.push({ path: '/lecture', query: { q: trimmedQuery } })
-    }
+    router.push({ path: '/lecture', query: { q: trimmedQuery } })
     searchQuery.value = ''
 }
 
@@ -149,7 +146,7 @@ const updateHasUnread = async () => {
     try {
         const response = await hasUnread(userStore.token)
         hasNotifications.value = response.data
-        console.log('🔔 읽지 않은  알림 존재 여부:', response.data)
+        console.log('🔔 읽지 않은 알림 존재 여부:', response.data)
     } catch (error) {
         console.error('❌ 읽지 않은 알림 존재 여부 확인 실패:', error)
     }
@@ -165,15 +162,34 @@ const closeNotificationModal = () => {
     isNotificationModalOpen.value = false
 }
 
-// 페이지 로드 및 토큰 변경 시 알림 존재 여부 확인
+// 카테고리 드롭다운 외부 클릭 감지를 위한 ref
+const categoryContainer = ref(null)
+
+// 외부 클릭 이벤트 핸들러
+const handleClickOutside = (event) => {
+    if (
+        isCategoryDropdownVisible.value &&
+        categoryContainer.value &&
+        !categoryContainer.value.contains(event.target)
+    ) {
+        closeCategoryDropdown()
+    }
+}
+
+// 컴포넌트 마운트 시 외부 클릭 이벤트 등록
 onMounted(() => {
+    document.addEventListener('click', handleClickOutside)
     updateHasUnread()
+})
+
+// 컴포넌트 언마운트 시 이벤트 제거
+onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside)
 })
 
 watch(
     () => userStore.token,
-    (newToken) => {
-        // console.log('🔑 현재 사용자', userStore.userId, '토큰:', newToken)
+    () => {
         updateHasUnread()
     }
 )

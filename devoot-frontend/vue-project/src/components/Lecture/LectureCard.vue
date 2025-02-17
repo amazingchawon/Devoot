@@ -1,10 +1,10 @@
+<!-- src/components/Lecture/LectureCard.vue -->
 <template>
-    <div class="w-[16.875rem] h-[20.0625rem] bg-white rounded-[1.25rem] shadow-md relative">
-        <!-- 북마크 아이콘 -->
-        <button @click="toggleBookmark" class="absolute w-6 h-6 top-2 right-2">
-            <component :is="BookmarkIcon" :class="bookmarkClass" />
-        </button>
-
+    <!-- 카드 컨테이너: 고정 너비(w-[16.875rem])와 고정 높이(h-80)를 유지하며,
+         mx-auto를 사용해 그리드 셀 내에서 중앙 정렬 -->
+    <div
+        class="w-[16.875rem] h-80 bg-white rounded-[1.25rem] shadow-md relative mx-auto flex flex-col"
+    >
         <!-- 강의 썸네일 -->
         <div class="w-full h-[9.5rem] bg-gray-200 rounded-t-[1.25rem]">
             <img
@@ -15,30 +15,45 @@
         </div>
 
         <!-- 강의 정보 -->
-        <div class="px-4 mt-3">
-            <!-- 강의 플랫폼 및 강사명 -->
-            <div class="flex items-center justify-between mb-1 text-gray-400 text-caption">
-                <div class="flex items-center">
-                    <a href="#" target="_blank" rel="noopener noreferrer" class="flex items-center">
-                        <span>{{ lecturer }}</span>
+        <div class="flex-1 px-4 my-3">
+            <!-- 플랫폼 및 강사명 -->
+            <div class="flex items-center justify-between mb-1 text-gray-300 text-caption">
+                <span>{{ lecturer }}</span>
+                <!-- sourceUrl이 있을 경우 a 태그로 감싸 클릭 시 이동 -->
+                <template v-if="sourceUrl">
+                    <a
+                        :href="sourceUrl"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="flex flex-row items-center cursor-pointer"
+                    >
+                        <span class="text-caption">{{ platform }}</span>
+                        <LinkIcon class="w-3 h-3 ml-1 text-gray-300" />
                     </a>
-                </div>
-                <span class="text-gray-400">{{ platform }}</span>
+                </template>
+                <!-- sourceUrl이 없으면 일반 div로 표시 -->
+                <template v-else>
+                    <div class="flex flex-row items-center">
+                        <span class="text-caption">{{ platform }}</span>
+                        <LinkIcon class="w-3 h-3 ml-1 text-gray-300" />
+                    </div>
+                </template>
             </div>
 
             <!-- 강의 제목 -->
-            <h3
-                class="mb-1 font-bold text-black text-body-bold line-clamp-2"
+            <p
+                class="mb-1 text-black text-body-bold"
                 style="
-                    height: 2.625rem;
+                    height: 2.125rem;
                     overflow: hidden;
                     display: -webkit-box;
                     -webkit-line-clamp: 2;
                     -webkit-box-orient: vertical;
+                    text-overflow: ellipsis;
                 "
             >
                 {{ name }}
-            </h3>
+            </p>
 
             <!-- 별점 및 리뷰 수 -->
             <div class="flex items-center mb-1 text-black text-caption">
@@ -50,27 +65,22 @@
 
             <!-- 가격 정보 -->
             <div class="text-right">
-                <!-- 원래 가격 -->
+                <!-- 원래 가격 (취소선) -->
                 <span
-                    v-bind:style="{ visibility: isDiscounted && !isFree ? 'visible' : 'hidden' }"
+                    v-if="isDiscounted && !isFree"
                     class="block text-gray-300 line-through text-caption"
                 >
                     ₩{{ formatPrice(originalPrice) }}
                 </span>
-                <!-- 할인 메시지 및 판매 가격 -->
+
+                <!-- 할인중 / 무료 / 정상가 표시 -->
                 <div v-if="isDiscounted" class="text-red-500 text-body-bold">
-                    할인중
-                    <span class="ml-2 text-black">₩{{ formatPrice(currentPrice) }}</span>
+                    할인중 <span class="ml-2 text-black">₩{{ formatPrice(currentPrice) }}</span>
                 </div>
-                <!-- 무료 메시지 및 판매 가격 -->
-                <div v-if="isFree" class="text-red-500 text-body-bold">
-                    무료
-                    <span class="ml-2 text-black">₩0</span>
+                <div v-else-if="isFree" class="text-red-500 text-body-bold">
+                    무료 <span class="ml-2 text-black">₩0</span>
                 </div>
-                <!-- 판매 가격만 표시 (할인 없음) -->
-                <div v-if="!isDiscounted && !isFree" class="text-black text-body-bold">
-                    ₩{{ formatPrice(currentPrice) }}
-                </div>
+                <div v-else class="text-black text-body-bold">₩{{ formatPrice(currentPrice) }}</div>
             </div>
 
             <!-- 태그 리스트 -->
@@ -78,8 +88,7 @@
                 <span
                     v-for="(tag, index) in limitedTags"
                     :key="index"
-                    style="width: max-content"
-                    class="truncate flex items-center justify-start px-2 h-[22px] bg-gray-100 rounded-[1.25rem] text-caption text-gray-300"
+                    class="truncate tag-gray flex items-center justify-start h-[22px]"
                 >
                     #{{ tag }}
                 </span>
@@ -89,69 +98,31 @@
 </template>
 
 <script>
-import BookmarkDefaultIcon from '@/assets/icons/bookmark_default.svg'
-import BookmarkFilledIcon from '@/assets/icons/bookmark_filled.svg'
 import StarFilledIcon from '@/assets/icons/star_filled.svg'
 import ReviewIcon from '@/assets/icons/review.svg'
+import LinkIcon from '@/assets/icons/link_external.svg'
 
 export default {
     name: 'LectureCard',
     components: {
-        BookmarkDefaultIcon,
-        BookmarkFilledIcon,
         StarFilledIcon,
         ReviewIcon,
+        LinkIcon,
     },
     props: {
-        id: {
-            type: Number,
-            required: true,
-        },
-        name: {
-            type: String,
-            required: true,
-        },
-        lecturer: {
-            type: String,
-            required: true,
-        },
-        platform: {
-            type: String,
-            default: '인프런',
-        },
-        imageUrl: {
-            type: String,
-            required: true,
-        },
-        tags: {
-            type: Array,
-            required: true,
-        },
-        currentPrice: {
-            type: Number,
-            required: true,
-        },
-        originalPrice: {
-            type: Number,
-            required: true,
-        },
-        rating: {
-            type: Number,
-            required: true,
-        },
-        reviewCount: {
-            type: Number,
-            required: true,
-        },
-        isBookmarkedProp: {
-            type: Boolean,
-            default: false, // 기본값은 false
-        },
-    },
-    data() {
-        return {
-            isBookmarked: this.isBookmarkedProp, // 북마크 상태를 로컬 데이터로 관리
-        }
+        id: { type: Number, required: true },
+        name: { type: String, required: true },
+        lecturer: { type: String, required: true },
+        platform: { type: String, default: '인프런' },
+        imageUrl: { type: String, required: true },
+        tags: { type: Array, default: () => [] },
+        currentPrice: { type: Number, required: true },
+        originalPrice: { type: Number, required: true },
+        rating: { type: Number, default: 0 },
+        reviewCount: { type: Number, default: 0 },
+        isBookmarked: { type: Boolean, default: false },
+        // sourceUrl prop 추가 (예: 강의 제공처의 링크)
+        sourceUrl: { type: String, default: '' },
     },
     computed: {
         isDiscounted() {
@@ -160,24 +131,11 @@ export default {
         isFree() {
             return this.currentPrice === 0
         },
-        BookmarkIcon() {
-            return this.isBookmarked ? BookmarkFilledIcon : BookmarkDefaultIcon
-        },
-        bookmarkClass() {
-            return this.isBookmarked ? 'text-primary-500' : 'text-gray-300'
-        },
         limitedTags() {
             return this.tags.slice(0, 3)
         },
     },
     methods: {
-        toggleBookmark() {
-            this.isBookmarked = !this.isBookmarked // 북마크 상태 토글
-            console.log(`강의 ID ${this.id}의 북마크 상태가 ${this.isBookmarked}로 변경되었습니다.`)
-
-            // 서버 동기화가 필요한 경우 API 호출 추가 가능:
-            // fetch(`/api/lectures/${this.id}/bookmark`, { method: 'POST', body: JSON.stringify({ isBookmarked }) })
-        },
         formatPrice(price) {
             return price.toLocaleString()
         },
@@ -185,6 +143,4 @@ export default {
 }
 </script>
 
-<style scoped>
-/* 추가적인 커스텀 스타일이 필요하다면 여기에 작성 */
-</style>
+<style scoped></style>

@@ -1,9 +1,9 @@
 <template>
-    <ul class="category-dropdown bg-white border rounded shadow-lg w-[10.75rem]">
+    <ul class="bg-white border rounded-lg shadow-lg category-dropdown">
         <li
             v-for="(category, index) in categories"
             :key="index"
-            class="flex items-center justify-start w-full h-[2.25rem] px-4 text-body text-gray-700 hover:bg-gray-100 cursor-pointer"
+            class="flex items-center justify-start w-full px-4 cursor-pointer h-9 text-body hover:bg-gray-100"
             @click="selectCategory(category)"
         >
             {{ category }}
@@ -22,7 +22,7 @@ const categories = [
     '프로그래밍 언어',
     '알고리즘 / 자료구조',
     '데이터베이스',
-    '데데브옵스 / 인프라',
+    '데브옵스 / 인프라',
     '게임 개발',
     '데이터 사이언스',
     '인공지능',

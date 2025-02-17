@@ -1,5 +1,5 @@
 <template>
-    <div class="col-span-12 gap-4 lg:col-start-4 lg:col-span-6">
+    <div class="col-span-12 gap-4 lg:col-start-4 lg:col-span-6 mt-28">
         <div class="flex flex-col gap-4 p-16 border border-gray-200 rounded-2xl">
             <!-- 로고 -->
             <div id="logo" class="flex flex-row items-center gap-3">

@@ -28,7 +28,7 @@
                         님이 새로운 강의에 관심을 가지기 시작했습니다.
                     </template>
                     <template v-else-if="type === 'footprint-added'">
-                        님의 발자국이 추가되었습니다.
+                        님의 발자국이 추가되었습니다
                     </template>
                 </p>
             </div>
