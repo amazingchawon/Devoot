@@ -97,50 +97,38 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { computed } from 'vue'
 import StarFilledIcon from '@/assets/icons/star_filled.svg'
 import ReviewIcon from '@/assets/icons/review.svg'
 import LinkIcon from '@/assets/icons/link_external.svg'
 
-export default {
-    name: 'LectureCard',
-    components: {
-        StarFilledIcon,
-        ReviewIcon,
-        LinkIcon,
-    },
-    props: {
-        id: { type: Number, required: true },
-        name: { type: String, required: true },
-        lecturer: { type: String, required: true },
-        platform: { type: String, default: '인프런' },
-        imageUrl: { type: String, required: true },
-        tags: { type: Array, default: () => [] },
-        currentPrice: { type: Number, required: true },
-        originalPrice: { type: Number, required: true },
-        rating: { type: Number, default: 0 },
-        reviewCount: { type: Number, default: 0 },
-        isBookmarked: { type: Boolean, default: false },
-        // sourceUrl prop 추가 (예: 강의 제공처의 링크)
-        sourceUrl: { type: String, default: '' },
-    },
-    computed: {
-        isDiscounted() {
-            return this.currentPrice !== this.originalPrice && this.currentPrice > 0
-        },
-        isFree() {
-            return this.currentPrice === 0
-        },
-        limitedTags() {
-            return this.tags.slice(0, 3)
-        },
-    },
-    methods: {
-        formatPrice(price) {
-            return price.toLocaleString()
-        },
-    },
+const props = defineProps({
+    id: { type: Number, required: true },
+    name: { type: String, required: true },
+    lecturer: { type: String, required: true },
+    platform: { type: String, default: '인프런' },
+    imageUrl: { type: String, required: true },
+    tags: { type: Array, default: () => [] },
+    currentPrice: { type: Number, required: true },
+    originalPrice: { type: Number, required: true },
+    rating: { type: Number, default: 0 },
+    reviewCount: { type: Number, default: 0 },
+    isBookmarked: { type: Boolean, default: false },
+    sourceUrl: { type: String, default: '' },
+})
+
+const isDiscounted = computed(
+    () => props.currentPrice !== props.originalPrice && props.currentPrice > 0
+)
+const isFree = computed(() => props.currentPrice === 0)
+const limitedTags = computed(() => props.tags.slice(0, 3))
+
+function formatPrice(price) {
+    return price.toLocaleString()
 }
+
+// console.log('태그들:', props.tags)
 </script>
 
 <style scoped></style>

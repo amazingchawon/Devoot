@@ -79,7 +79,6 @@ export default {
             router.push(`/lecture/${lectureId}`)
         }
 
-        // ❗ 반드시 두 메서드를 모두 반환해줘야 합니다.
         return { goToProfile, goToLecture }
     },
     props: {

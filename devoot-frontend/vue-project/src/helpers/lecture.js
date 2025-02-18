@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
 
+// axios 인스턴스 생성 및 기본 설정
 const instance = axios.create({
     baseURL: API_BASE_URL,
     headers: {
@@ -8,6 +9,7 @@ const instance = axios.create({
     },
 })
 
+// 응답 인터셉터: 에러 발생 시 콘솔에 출력
 instance.interceptors.response.use(
     (response) => response,
     (error) => {

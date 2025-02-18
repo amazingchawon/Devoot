@@ -34,27 +34,24 @@ const userStore = useUserStore()
 onMounted(async () => {
     await userStore.fetchUser()
     console.log('유저 정보 fetch 완료')
-    // console.log(userStore.token)
 })
 
 const fetchActivities = async () => {
     const token = userStore.token
-    // console.log('🔑 현재 토큰:', token)
-
     try {
         const response = await fetchTimelineList(token)
-        // console.log('✅ API 응답 데이터:', response.data)
-
+        console.log('타임라인 응답 데이터:', response.data)
+        // API 응답에서 강의 정보는 item.log.todo에 있음
         activities.value = response.data.content.map((item) => ({
-            profileId: item.user?.id ?? '', // 사용자 프로필 ID 추가 (없으면 빈 문자열)
+            profileId: item.user?.profileId ?? '',
             type: mapType(item),
             userName: item.user?.nickname ?? '알 수 없는 사용자',
             userImage: item.user?.imageUrl ?? '/src/assets/icons/default-thumbnail.png',
-            lectureTitle: item.log?.lecture?.name ?? '제목 없음',
-            lectureId: item.log?.lecture?.id ?? '', // 강의 ID 추가 (없으면 빈 문자열)
-            imageUrl: item.log?.lecture?.imageUrl ?? '/src/assets/icons/default-thumbnail.png',
-            tags: item.log?.lecture?.tags
-                ? item.log.lecture.tags.split(',').map((tag) => tag.trim())
+            lectureTitle: item.log?.todo?.lectureName ?? '제목 없음',
+            lectureId: item.log?.todo?.lectureId ?? '',
+            imageUrl: item.log?.todo?.imageUrl ?? '/src/assets/icons/default-thumbnail.png',
+            tags: item.log?.todo?.tags
+                ? item.log.todo.tags.split(',').map((tag) => tag.trim())
                 : [],
             beforeStatus: mapStatus(item.log?.beforeStatus),
             afterStatus: mapStatus(item.log?.afterStatus),
@@ -72,7 +69,7 @@ watchEffect(() => {
     fetchActivities()
 })
 
-// `BOOKMARK`와 `TODO` 타입을 매핑
+// BOOKMARK와 TODO 타입을 매핑하는 함수
 const mapType = (item) => {
     if (item.type === 'BOOKMARK') {
         return item.log?.beforeStatus == null ? 'new-lecture-interest' : 'lecture-status-change'
@@ -82,7 +79,7 @@ const mapType = (item) => {
     return 'unknown'
 }
 
-// 상태 코드(1, 2, 3)를 문자열로 변환
+// 상태 코드를 문자열로 매핑하는 함수
 const mapStatus = (status) => {
     switch (status) {
         case 1:
