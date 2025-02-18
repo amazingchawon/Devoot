@@ -7,7 +7,12 @@
                     <p class="text-2xl font-bold">요청 목록</p>
                 </div>
                 <div class="flex gap-2">
-                    <button class="px-3 py-1 bg-blue-500 rounded">등록</button>
+                    <button
+                        class="px-3 py-1 bg-blue-500 rounded cursor-pointer"
+                        @click="goToAddLecturePage"
+                    >
+                        등록
+                    </button>
                 </div>
             </div>
             <div class="w-full border-t border-gray-300"></div>
@@ -45,30 +50,39 @@
 import { ref, watch } from 'vue'
 import { getRequestedLecture, deleteRequestedLecture } from '@/helpers/lecture'
 import { useUserStore } from '@/stores/user'
-import AddLecturePage from './AddLecturePage.vue'
-const userStore = useUserStore() // Pinia 스토어 가져오기
+import { useRouter } from 'vue-router'
 
-const requestedLectures = ref([])
+const userStore = useUserStore() // Pinia 스토어 가져오기
+const router = useRouter() // Vue Router 사용
+
+const requestedLectures = ref([]) // 요청된 강의 정보
 
 // 강의 요청 데이터 불러오기
 const loadRequestedLecture = async () => {
     try {
+        console.log(userStore.token)
         const response = await getRequestedLecture(userStore.token)
         requestedLectures.value = response.data // todo 리스트 저장
-        // console.log('요청 강의 조회', requestedLectures.value)
     } catch (error) {
         console.error('❌ 요청된 강의 불러오기 에러:', error)
     }
 }
 
+// 요청된 강의 삭제하기
 const removeRequestedLecture = async (requestId) => {
     try {
+        const isConfirmed = window.confirm('요청된 강의를 삭제하시겠습니까?')
+
+        if (!isConfirmed) {
+            return // 사용자가 취소하면 아무 동작도 하지 않음
+        }
+
         await deleteRequestedLecture(requestId, userStore.token)
         // ✅ 요청된 ID를 제외한 새로운 배열로 업데이트
         requestedLectures.value = requestedLectures.value.filter(
             (lecture) => lecture.id !== requestId
         )
-        alert('요청된 강의 삭제 완료')
+        alert('삭제 완료')
     } catch (error) {
         console.error('❌ 요청된 강의 삭제 에러:', error)
     }
@@ -83,6 +97,11 @@ watch(
     },
     { immediate: true } // 초기 값도 즉시 확인
 )
+
+// 강의 추가 페이지로 이동
+const goToAddLecturePage = () => {
+    router.push('/add/lecture') // 🔥 해당 경로로 이동
+}
 </script>
 
 <style></style>

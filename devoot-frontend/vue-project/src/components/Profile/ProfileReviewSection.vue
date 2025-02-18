@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col w-full p-6 gap-6 max-h-[400px] overflow-y-auto">
         <ProfileReviewCard
-            v-for="(review, index) in reviews.content"
+            v-for="(review, index) in reviews"
             :key="index"
             :review="review"
             @edit-review="handleEditReview"
