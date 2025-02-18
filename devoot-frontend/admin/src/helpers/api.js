@@ -65,5 +65,17 @@ const getEditRequest = async (token) => {
         headers: { Authorization: `Bearer ${token}` },
     })
 }
-export { getUserInfo, getAdminUser, getEditRequest }
+
+//===============================================
+// 댓글 관리 API
+//===============================================
+// 댓글 신고된 유저 가져오는 API 함수
+const getReportedUsers = async (token, page, size) => {
+    return instance.get('/api/users/reported', {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { page, size },
+    })
+}
+
+export { getUserInfo, getAdminUser, getEditRequest, getReportedUsers }
 export default instance
