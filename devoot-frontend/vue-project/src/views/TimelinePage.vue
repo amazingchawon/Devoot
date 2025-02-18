@@ -1,6 +1,6 @@
 <template>
-    <div class="p-4">
-        <h1 class="mb-4 text-2xl font-bold">타임라인</h1>
+    <div>
+        <h1 class="mb-4 text-2xl text-h1">타임라인</h1>
         <div class="flex flex-col gap-4">
             <TimeLineCard
                 v-for="(activity, index) in activities"

@@ -1,23 +1,25 @@
 <!-- src/components/Lecture/LectureCardGroup.vue -->
 <template>
-    <!-- pb-4: 하단 여백, overflow-x-auto: 가로 스크롤(필요 시) -->
-    <div class="pb-4 overflow-x-auto custom-scrollbar">
-        <!-- 그리드: 모바일은 2열, md 이상은 4열, 카드 간 간격 유지 -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-4">
-            <!-- API로 받아온 전체 강의 데이터를 렌더링 (LectureCard.vue에서 카드 크기, 간격 적용) -->
+    <!-- 외부 컨테이너: pb-4 (아래 여백)와 overflow-x-auto (수평 스크롤) 적용 -->
+    <div class="pb-4 overflow-x-auto">
+        <!-- 내부 그리드 컨테이너:
+           - min-w-max: 내부 콘텐츠 너비를 유지하여 화면이 좁을 경우 스크롤이 생김
+           - grid-cols-4: 1행에 4개씩 배치
+           - gap-x-6: 좌우 간격 24px (6 * 4px = 24px)
+           - gap-y-4: 상하 간격 16px (4 * 4px = 16px)
+      -->
+        <div class="grid grid-cols-4 min-w-max gap-x-6 gap-y-4">
             <LectureCard v-for="lecture in lectures" :key="lecture.id" v-bind="lecture" />
         </div>
     </div>
 </template>
 
 <script setup>
-// LectureCard 컴포넌트 import
-import LectureCard from './LectureCard.vue'
 import { defineProps } from 'vue'
+import LectureCard from './LectureCard.vue'
 
 /**
- * props 정의
- * - lectures: 부모 컴포넌트(HomePage.vue)로부터 전달받은 강의 데이터 배열
+ * 부모 컴포넌트로부터 강의 데이터 배열을 전달받음
  */
 const props = defineProps({
     lectures: {
@@ -28,5 +30,5 @@ const props = defineProps({
 </script>
 
 <style scoped>
-/* 추가 스타일이 필요하면 여기에 작성 */
+/* custom-scrollbar 스타일이 필요하다면 여기에 추가 */
 </style>

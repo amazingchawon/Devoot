@@ -1,9 +1,10 @@
 <!-- src/components/Lecture/LectureCard.vue -->
 <template>
-    <!-- 카드 컨테이너: 고정 너비(w-[16.875rem])와 고정 높이(h-80)를 유지하며,
-         mx-auto를 사용해 그리드 셀 내에서 중앙 정렬 -->
+    <!-- 카드 컨테이너: 고정 너비(w-[16.875rem])와 고정 높이(h-80)를 유지 -->
+    <!-- 전체 카드 클릭 시 goToDetailPage 함수 호출 -->
     <div
-        class="w-[16.875rem] h-80 bg-white rounded-[1.25rem] shadow-md relative mx-auto flex flex-col"
+        @click="goToDetailPage"
+        class="w-[16.875rem] h-80 bg-white border-[0.063rem] border-gray-100 rounded-[1.25rem] relative flex flex-col cursor-pointer"
     >
         <!-- 강의 썸네일 -->
         <div class="w-full h-[9.5rem] bg-gray-200 rounded-t-[1.25rem]">
@@ -19,9 +20,10 @@
             <!-- 플랫폼 및 강사명 -->
             <div class="flex items-center justify-between mb-1 text-gray-300 text-caption">
                 <span>{{ lecturer }}</span>
-                <!-- sourceUrl이 있을 경우 a 태그로 감싸 클릭 시 이동 -->
+                <!-- sourceUrl이 있을 경우 a 태그로 감싸 클릭 시 이동 (클릭 시 부모 클릭 이벤트 전파 방지) -->
                 <template v-if="sourceUrl">
                     <a
+                        @click.stop
                         :href="sourceUrl"
                         target="_blank"
                         rel="noopener noreferrer"
@@ -42,7 +44,7 @@
 
             <!-- 강의 제목 -->
             <p
-                class="mb-1 text-black text-body-bold"
+                class="mb-1 leading-tight text-black text-body-bold"
                 style="
                     height: 2.125rem;
                     overflow: hidden;
@@ -99,10 +101,12 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import StarFilledIcon from '@/assets/icons/star_filled.svg'
 import ReviewIcon from '@/assets/icons/review.svg'
 import LinkIcon from '@/assets/icons/link_external.svg'
 
+// props 정의
 const props = defineProps({
     id: { type: Number, required: true },
     name: { type: String, required: true },
@@ -128,7 +132,14 @@ function formatPrice(price) {
     return price.toLocaleString()
 }
 
-// console.log('태그들:', props.tags)
+// 라우터 인스턴스 사용
+const router = useRouter()
+
+// 강의 카드 클릭 시 LectureDetailPage로 이동 (라우터 네임 및 파라미터는 실제 라우터 설정에 맞게 조정)
+function goToDetailPage() {
+    // 예를 들어, /lecture/9 형태의 경로로 이동
+    router.push(`/lecture/${props.id}`)
+}
 </script>
 
 <style scoped></style>
