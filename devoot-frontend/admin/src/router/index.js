@@ -29,14 +29,14 @@ const router = createRouter({
             component: () => import('@/views/EditRequestPage.vue'),
         },
         {
-            path: '/admin/error',
-            name: 'errorAdmin',
-            component: () => import('@/views/ErrorAdminPage.vue'),
+            path: '/user/report',
+            name: 'reportedUser',
+            component: () => import('@/views/ReportedUserPage.vue'),
         },
         {
-            path: '/admin/report',
-            name: 'reportAdmin',
-            component: () => import('@/views/ReportAdminPage.vue'),
+            path: '/user/admin',
+            name: 'reportedUserAdmin',
+            component: () => import('@/views/ReportedUserAdminPage.vue'),
         },
         {
             path: '/login',

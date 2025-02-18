@@ -49,7 +49,7 @@
             <nav class="py-3">
                 <button
                     v-if="userStore.isAuthenticated"
-                    class="flex flex-row items-center gap-5 px-0 py-4 transition-all rounded-md lg:px-9 hover:bg-gray-200 hover:text-primary-500"
+                    class="flex flex-row items-center gap-5 px-6 py-4 text-gray-600 transition-all rounded-md lg:px-6 hover:bg-gray-200 hover:text-primary-500"
                     @click="logout"
                 >
                     <Logout class="w-6 h-6" />
@@ -58,7 +58,7 @@
                 <RouterLink
                     v-else
                     to="/login"
-                    class="flex flex-row items-center gap-5 px-0 py-4 transition-all rounded-md lg:px-9 hover:bg-gray-200 hover:text-primary-500"
+                    class="flex flex-row items-center gap-5 px-6 py-4 text-gray-600 transition-all rounded-md lg:px-6 hover:bg-gray-200 hover:text-primary-500"
                 >
                     <LogIn class="w-6 h-6" />
                     <span class="hidden text-left text-body lg:block">로그인</span>
@@ -76,7 +76,6 @@ import Logo from '@/assets/icons/logo.svg'
 import Edit from '@/assets/icons/edit.svg'
 import Report from '@/assets/icons/report.svg'
 import Plus from '@/assets/icons/plus.svg'
-import Error from '@/assets/icons/error.svg'
 import LogIn from '@/assets/icons/login.svg'
 import Logout from '@/assets/icons/logout.svg'
 
@@ -86,8 +85,7 @@ const router = useRouter()
 const menuItems = ref([
     { label: '강의 수정', path: '/edit/request', icon: markRaw(Edit) },
     { label: '강의 등록', path: '/add/request', icon: markRaw(Plus) },
-    { label: '신고 관리', path: '/admin/report', icon: markRaw(Report) },
-    { label: '오류 관리', path: '/admin/error', icon: markRaw(Error) },
+    { label: '댓글 관리', path: '/user/report', icon: markRaw(Report) },
 ])
 
 // 로그아웃 함수
