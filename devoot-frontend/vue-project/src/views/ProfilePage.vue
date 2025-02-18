@@ -135,7 +135,7 @@
             />
 
             <div v-if="userToken && isProfileVisible" class="border border-gray-200 rounded-[20px]">
-                <TabMenu v-model="selectedTab" tab-left="북마크한 강의" tab-right="내가 쓴 리뷰" />
+                <TabMenu v-model="selectedTab" tab-left="북마크한 강의" tab-right="작성한 리뷰" />
                 <KanbanSection
                     v-if="userToken && userData && selectedTab === 'left'"
                     :user-id="route.params.id"

@@ -140,8 +140,11 @@ const isOwnReview = computed(() => userId.value === props.review.profileId)
 
 // 날짜 포맷 변경
 const formattedDate = computed(() => {
-    const date = new Date(props.review.createdAt)
-    return `${date.getFullYear()}년 ${String(date.getMonth() + 1).padStart(2, '0')}월 ${String(date.getDate()).padStart(2, '0')}일`
+    if (!props.review.createdAt || props.review.createdAt.length < 6) return '날짜 없음'
+
+    const [year, month, day, hour, minute] = props.review.createdAt
+
+    return `${year}년 ${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 ${String(hour).padStart(2, '0')}시 ${String(minute).padStart(2, '0')}분`
 })
 
 // 별 개수 계산

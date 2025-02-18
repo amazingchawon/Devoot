@@ -11,11 +11,11 @@
                 <!-- 본인 리뷰인 경우 : 수정하기 -->
                 <div
                     v-if="isMyProfile"
-                    class="relative flex flex-row items-center gap-1 cursor-pointer group"
+                    class="relative flex flex-row items-center gap-1 text-gray-300 cursor-pointer group"
                     @click="editReview"
                 >
                     <Edit class="w-4 h-4" />
-                    <p class="hidden text-gray-300 text-caption md:inline">수정하기</p>
+                    <p class="hidden text-caption md:inline">수정하기</p>
                     <!-- 툴팁 -->
                     <div
                         class="absolute px-2 py-1 text-xs text-white transition-opacity transform -translate-x-1/2 -translate-y-2 bg-black rounded opacity-0 cursor-default left-1/2 bottom-full whitespace-nowrap group-hover:opacity-100"
@@ -27,11 +27,11 @@
                 <!-- 삭제하기 -->
                 <div
                     v-if="isMyProfile"
-                    class="relative flex flex-row items-center gap-1 cursor-pointer group"
+                    class="relative flex flex-row items-center gap-1 text-gray-300 cursor-pointer group"
                     @click="deleteReview"
                 >
                     <Trash class="w-4 h-4" />
-                    <p class="hidden text-gray-300 md:inline text-caption">삭제하기</p>
+                    <p class="hidden md:inline text-caption">삭제하기</p>
                     <!-- 툴팁 -->
                     <div
                         class="absolute px-2 py-1 text-xs text-white transition-opacity transform -translate-x-1/2 -translate-y-2 bg-black rounded opacity-0 cursor-default left-1/2 bottom-full whitespace-nowrap group-hover:opacity-100"
@@ -93,12 +93,11 @@ const isMyProfile = computed(() => userStore.userId === route.params.id)
 
 // 날짜 포맷 변경
 const formattedDate = computed(() => {
-    const date = new Date(props.review.createdAt)
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
+    if (!props.review.createdAt || props.review.createdAt.length < 6) return '날짜 없음'
 
-    return `${year}.${month}.${day}`
+    const [year, month, day, hour, minute] = props.review.createdAt
+
+    return `${year}년 ${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 ${String(hour).padStart(2, '0')}시 ${String(minute).padStart(2, '0')}분`
 })
 
 // 별 개수 계산
