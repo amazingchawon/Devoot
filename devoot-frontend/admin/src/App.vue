@@ -23,8 +23,8 @@ import AppNavigation from '@/components/AppNavigation.vue'
 
 const userStore = useUserStore()
 
-onMounted(() => {
-    userStore.fetchUser() // 앱이 실행될 때 로그인 유지 확인
+onMounted(async () => {
+    await userStore.fetchUser() // 로그인 정보가 설정될 때까지 기다림
 })
 </script>
 

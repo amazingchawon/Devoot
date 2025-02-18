@@ -55,5 +55,15 @@ const getAdminUser = async (token) => {
         headers: { Authorization: `Bearer ${token}` },
     })
 }
-export { getUserInfo, getAdminUser }
+
+//===============================================
+// 강의 수정 API
+//===============================================
+// 강의 수정 요청 가져오는 API 함수
+const getEditRequest = async (token) => {
+    return instance.get('/api/lecture-requests/update', {
+        headers: { Authorization: `Bearer ${token}` },
+    })
+}
+export { getUserInfo, getAdminUser, getEditRequest }
 export default instance
