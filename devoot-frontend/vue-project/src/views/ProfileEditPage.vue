@@ -513,7 +513,10 @@ const saveProfile = async () => {
         email: email.value,
         isPublic: isPublic.value,
         tags: selectedTags.value.join(','),
-        links: JSON.stringify({ title: linkTitle.value, url: linkURL.value }),
+        links:
+            linkTitle.value.trim() || linkURL.value.trim()
+                ? JSON.stringify({ title: linkTitle.value, url: linkURL.value })
+                : '',
     }
 
     // FormData 객체 생성
@@ -533,6 +536,12 @@ const saveProfile = async () => {
             await registerUser(userStore.token, formData) // 회원가입 API 호출
             await router.replace({ name: 'home' }) // ✅ 뒤로 가기 방지
         } else {
+            // JSON 데이터 확인
+            console.log('📌 저장할 프로필 데이터:', updatedProfile)
+
+            // FormData 내용 확인 (JSON 데이터)
+            console.log('📌 FormData - user:', await formData.get('user').text())
+
             await updateUserInfo(userStore.token, formData) // 프로필 수정 API 호출
             alert('프로필이 성공적으로 업데이트되었습니다!')
         }
