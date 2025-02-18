@@ -1,12 +1,12 @@
 <template>
     <div class="flex flex-col gap-4">
-        <div class="content-center h-20 text-h3">댓글 관리</div>
+        <div class="content-center h-20 text-h3">리뷰 관리</div>
 
         <div
             id="reported-user-list"
             class="flex flex-col gap-4 p-6 bg-white border-gray-200 rounded-2xl"
         >
-            <div class="text-h3">댓글 신고된 유저 목록</div>
+            <div class="text-h3">리뷰 신고된 유저 목록</div>
 
             <!-- 🚨 에러 메시지 표시 -->
             <div
@@ -21,16 +21,16 @@
                 <thead>
                     <tr class="text-left bg-gray-100">
                         <th class="w-1/4 p-3 border-b border-gray-200">유저 아이디</th>
-                        <!-- 40% -->
+
                         <th class="w-3/4 p-3 border-b border-gray-200">유저 닉네임</th>
-                        <!-- 60% -->
                     </tr>
                 </thead>
                 <tbody>
                     <tr
                         v-for="user in reportedUsers"
                         :key="user.id"
-                        class="border-b border-gray-200 hover:bg-gray-50"
+                        class="border-b border-gray-200 cursor-pointer hover:bg-gray-50"
+                        @click="goToUserDetail(user.profileId)"
                     >
                         <td class="w-2/5 p-3">
                             <div class="flex items-center gap-3">
@@ -49,12 +49,12 @@
                 </tbody>
             </table>
 
-            <div v-else class="text-gray-500">3번 이상 신고된 유저가 없습니다.</div>
+            <div v-else class="text-gray-500">4번 이상 신고된 유저가 없습니다.</div>
 
             <!-- ✅ 페이지네이션 컴포넌트 추가 -->
             <PagenationControl
-                :currentPage="pageIndex"
-                :totalPages="totalPages"
+                :current-page="pageIndex"
+                :total-pages="totalPages"
                 @page-changed="handlePageChange"
             />
         </div>
@@ -63,6 +63,7 @@
 
 <script setup>
 import { ref, watch, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { getReportedUsers } from '@/helpers/api'
 import PagenationControl from '@/components/PagenationControl.vue'
@@ -73,6 +74,7 @@ const reportedUsers = ref([])
 const pageIndex = ref(1)
 const size = ref(10)
 const totalPages = ref(1)
+const router = useRouter()
 
 // 신고된 유저 가져오기
 const fetchReportedUsers = async () => {
@@ -112,6 +114,11 @@ onMounted(() => {
         fetchReportedUsers()
     }
 })
+
+// 특정 유저 댓글 모음 페이지로 이동하는 함수
+const goToUserDetail = (profileId) => {
+    router.push({ name: 'reportedUserAdmin', query: { profileId } })
+}
 </script>
 
 <style scoped></style>

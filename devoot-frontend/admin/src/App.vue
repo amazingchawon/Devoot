@@ -7,7 +7,7 @@
             <!-- 컨테이너 -->
             <div
                 id="container"
-                class="flex-1 grid w-full max-w-[1440px] mx-auto grid-cols-12 gap-6 overflow-y-auto px-9"
+                class="flex-1 grid w-full max-w-[1440px] mx-auto grid-cols-12 gap-6 overflow-y-auto px-9 pb-16"
             >
                 <router-view class="col-span-12" />
             </div>

@@ -77,5 +77,36 @@ const getReportedUsers = async (token, page, size) => {
     })
 }
 
-export { getUserInfo, getAdminUser, getEditRequest, getReportedUsers }
+// 신고된 유저의 모든 리뷰를 가져오는 API 함수
+const getReviewOfUser = async (token, profileId) => {
+    return instance.get(`/api/users/${profileId}/reviews`, {
+        headers: { Authorization: `Bearer ${token}` },
+    })
+}
+
+// 신고된 유저의 모든 리뷰를 지우는 API 함수
+const deleteReviewOfUser = async (token, profileId) => {
+    return instance.delete(`/api/reviews/of/${profileId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+    })
+}
+
+// 리뷰 신고 기록을 지우는 API 함수
+const deleteReportOfUser = async (token, profileId) => {
+    return instance.delete(`/api/reviews/reports/of/${profileId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+    })
+}
+
+// 유저의 모든 댓글을 지우는 API 함수
+
+export {
+    getUserInfo,
+    getAdminUser,
+    getEditRequest,
+    getReportedUsers,
+    getReviewOfUser,
+    deleteReviewOfUser,
+    deleteReportOfUser,
+}
 export default instance
