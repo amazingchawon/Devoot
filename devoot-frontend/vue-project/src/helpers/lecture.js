@@ -9,9 +9,36 @@ const instance = axios.create({
     },
 })
 
-// 응답 인터셉터: 에러 발생 시 콘솔에 출력
+// ------------------------------------------
+// 요청 인터셉터: 호출하는 API 정보와 쿼리 파라미터를 출력
+// ------------------------------------------
+instance.interceptors.request.use(
+    (config) => {
+        // API 호출 전에 method, url, params를 콘솔에 출력 (디버깅용)
+        console.log(
+            `🔍 API 호출: ${config.method.toUpperCase()} ${config.url}`,
+            config.params || {}
+        )
+        return config
+    },
+    (error) => {
+        console.error('API 요청 오류:', error)
+        return Promise.reject(error)
+    }
+)
+
+// ------------------------------------------
+// 응답 인터셉터: 응답 데이터를 콘솔에 출력
+// ------------------------------------------
 instance.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        // 응답 성공 시 method, url, 응답 데이터를 콘솔에 출력 (디버깅용)
+        console.log(
+            `✅ API 응답: ${response.config.method.toUpperCase()} ${response.config.url}`,
+            response.data
+        )
+        return response
+    },
     (error) => {
         if (error.response) {
             console.error(`❌ API 요청 실패 (HTTP ${error.response.status}):`, error.response.data)
@@ -21,6 +48,19 @@ instance.interceptors.response.use(
         return Promise.reject(error) // 호출한 곳에서 추가 처리 가능
     }
 )
+
+// 응답 인터셉터: 에러 발생 시 콘솔에 출력
+// instance.interceptors.response.use(
+//     (response) => response,
+//     (error) => {
+//         if (error.response) {
+//             console.error(`❌ API 요청 실패 (HTTP ${error.response.status}):`, error.response.data)
+//         } else {
+//             console.error('❌ 네트워크 오류 또는 서버 응답 없음:', error)
+//         }
+//         return Promise.reject(error) // 호출한 곳에서 추가 처리 가능
+//     }
+// )
 
 //===============================================
 // 북마크 관련 API

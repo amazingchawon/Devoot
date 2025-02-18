@@ -1,18 +1,20 @@
+<!-- src/views/HomePage.vue -->
 <template>
     <div class="space-y-12">
-        <!-- 인기 강의 -->
+        <!-- 인기 강의 섹션 -->
         <section class="space-y-4">
             <h1 class="text-h1 col-span-full">인기 강의</h1>
+            <!-- API에서 이미 size=8로 받아오기 때문에 LectureCardGroup에서는 전체 배열을 전달 -->
             <LectureCardGroup :lectures="popularLectures" />
         </section>
 
-        <!-- 신규 강의 -->
+        <!-- 신규 강의 섹션 -->
         <section class="space-y-4">
             <h1 class="text-h1 col-span-full">신규 강의</h1>
             <LectureCardGroup :lectures="newestLectures" />
         </section>
 
-        <!-- 무료 강의 -->
+        <!-- 무료 강의 섹션 -->
         <section class="space-y-4">
             <h1 class="text-h1 col-span-full">무료 강의</h1>
             <LectureCardGroup :lectures="freeLectures" />
@@ -21,74 +23,94 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import LectureCardGroup from '@/components/Lecture/LectureCardGroup.vue'
 import { searchLectures } from '@/helpers/lecture.js'
 
-// 강의 데이터를 저장할 ref
-const lectures = ref([])
-
-// 인기 강의: rating 기준 내림차순 정렬 후 상위 8개 선택
-const popularLectures = computed(() => {
-    return [...lectures.value].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 8)
-})
-
-// 신규 강의: 전체 강의 중 마지막 8개를 최신순(역순)으로 선택
-const newestLectures = computed(() => {
-    return [...lectures.value].slice(-8).reverse()
-})
-
-// 무료 강의: currentPrice가 0인 강의들을 최대 8개 선택
-const freeLectures = computed(() => {
-    return lectures.value.filter((lecture) => lecture.currentPrice === 0).slice(0, 8)
-})
-
-// API 호출: 쿼리 파라미터 없이 전체 강의를 조회 (필요한 경우 page와 size만 지정)
-async function fetchLectures() {
-    try {
-        // 필터 조건 없이 모든 강의를 가져오기 위해 최소한의 파라미터만 전달합니다.
-        const params = {
-            page: 1,
-            size: 50, // 충분한 개수를 받아서 프론트엔드에서 분류할 수 있도록
-        }
-        // 혹은 아래와 같이 빈 객체를 전달해도 됩니다.
-        // const response = await searchLectures({});
-        const response = await searchLectures(params)
-        // console.log('서치렉쳐데이터:', response.data)
-        const { content } = response.data
-
-        // LectureCardGroup 컴포넌트에 맞게 데이터 가공 (숫자형 변환 포함)
-        lectures.value = content.map((item, index) => ({
-            id: index,
-            name: item.name,
-            lecturer: item.lecturer,
-            platform: item.sourceName || '인프런',
-            imageUrl: item.imageUrl,
-            tags: item.tags
-                ? item.tags
-                      .split(',')
-                      .map((tag) => tag.trim())
-                      .filter(Boolean)
-                : [],
-            currentPrice: Number(item.currentPrice), // 숫자형으로 변환
-            originalPrice: Number(item.originPrice),
-            rating: Number(item.rating),
-            reviewCount: item.reviewCnt,
-            isBookmarked: false,
-        }))
-
-        console.log('전체 강의 데이터:', lectures.value)
-        console.log('무료 강의 데이터:', freeLectures.value)
-    } catch (error) {
-        console.error('Error fetching lectures:', error)
+/**
+ * 헬퍼 함수: API 응답 데이터를 LectureCard 컴포넌트가 사용하는 형태로 가공
+ * @param {Object} item - API에서 전달된 강의 데이터 객체
+ * @param {number} index - 배열 내 인덱스 (id가 없을 경우 대체)
+ */
+function mapLectureItem(item, index) {
+    return {
+        id: item.id || index,
+        name: item.name,
+        lecturer: item.lecturer,
+        platform: item.sourceName || '인프런',
+        imageUrl: item.imageUrl,
+        tags: item.tags
+            ? item.tags
+                  .split(',')
+                  .map((tag) => tag.trim())
+                  .filter(Boolean)
+            : [],
+        currentPrice: Number(item.currentPrice),
+        originalPrice: Number(item.originPrice),
+        rating: Number(item.rating),
+        reviewCount: item.reviewCnt,
+        isBookmarked: false,
+        sourceUrl: item.sourceUrl || '',
     }
 }
 
+// 반응형 상태: 각 섹션별 강의 데이터 배열
+const popularLectures = ref([])
+const newestLectures = ref([])
+const freeLectures = ref([])
+
+/**
+ * 인기 강의 API 호출
+ * - 쿼리 파라미터: sort=popular, page=1, size=8
+ */
+async function fetchPopularLectures() {
+    try {
+        const params = { sort: 'popular', page: 1, size: 8 }
+        const response = await searchLectures(params)
+        // API 응답 데이터(content)를 가공하여 저장
+        popularLectures.value = response.data.content.map(mapLectureItem)
+    } catch (error) {
+        console.error('Error fetching popular lectures:', error)
+    }
+}
+
+/**
+ * 신규 강의 API 호출
+ * - 쿼리 파라미터: sort=newest, page=1, size=8
+ */
+async function fetchNewestLectures() {
+    try {
+        const params = { sort: 'newest', page: 1, size: 8 }
+        const response = await searchLectures(params)
+        newestLectures.value = response.data.content.map(mapLectureItem)
+    } catch (error) {
+        console.error('Error fetching newest lectures:', error)
+    }
+}
+
+/**
+ * 무료 강의 API 호출
+ * - 무료 강의는 API에 무료 필터가 없으므로, size를 크게 요청한 후
+ *   currentPrice가 0인 강의만 필터링하여 최대 8개만 사용합니다.
+ */
+async function fetchFreeLectures() {
+    try {
+        const params = { sort: 'price_asc', page: 1, size: 8 }
+        const response = await searchLectures(params)
+        freeLectures.value = response.data.content.map(mapLectureItem)
+    } catch (error) {
+        console.error('Error fetching free lectures:', error)
+    }
+}
+
+// 컴포넌트가 마운트되면 세 섹션별 API 호출
 onMounted(() => {
-    fetchLectures()
+    fetchPopularLectures()
+    fetchNewestLectures()
+    fetchFreeLectures()
 })
 </script>
 
 <style scoped>
-/* 필요한 스타일 작성 */
+/* 추가 스타일이 필요한 경우 여기에 작성 */
 </style>
