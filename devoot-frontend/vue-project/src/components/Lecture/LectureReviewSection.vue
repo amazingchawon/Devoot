@@ -20,7 +20,7 @@
                 :current-page="currentPage"
                 :total-pages="totalPages"
                 @page-changed="updatePage"
-            />>
+            />
         </div>
         <p v-else class="text-black text-body-bold">아직 리뷰가 없습니다.</p>
     </div>

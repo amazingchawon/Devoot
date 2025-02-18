@@ -55,9 +55,10 @@
                     <p class="text-body-bold">{{ rating }}</p>
                 </div>
                 <!-- 태그 -->
+                <!-- 태그 -->
                 <div class="flex flex-row items-center gap-1">
                     <div v-for="(tag, index) in tagList" :key="index" class="tag-gray">
-                        # {{ tag }}
+                        # {{ tag.trim() }}
                     </div>
                 </div>
             </div>
@@ -116,7 +117,7 @@ const platformName = computed(() => props.lecture.sourceName || '알 수 없음'
 const lecturer = computed(() => props.lecture.lecturer || '강사 정보 없음')
 const title = computed(() => props.lecture.name || '제목 없음')
 const rating = computed(() => props.lecture.rating?.toFixed(1) || '0.0')
-const tagList = computed(() => props.lecture.tags || []) // 기본값 빈 배열
+const tagList = computed(() => (props.lecture.tags ? props.lecture.tags.split(',') : []))
 
 //===========================
 // 가격 상태
