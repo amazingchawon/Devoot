@@ -1,7 +1,7 @@
 <template>
     <div
         v-if="isOpen"
-        class="fixed inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
         @click="closeModal"
     >
         <div class="z-50 bg-white shadow-lg rounded-lg w-[300px] h-[400px] p-4" @click.stop>
@@ -33,6 +33,8 @@
                             <p class="text-xs text-gray-500">{{ user.nickname }}</p>
                         </div>
                     </li>
+                    <!-- ✅ 감지 트리거 요소 추가 -->
+                    <div ref="scrollTrigger"></div>
                 </ul>
             </div>
         </div>
@@ -40,7 +42,7 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted, onUnmounted } from 'vue'
 import { searchUsers } from '@/helpers/api'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router' // 추가: 라우터 사용
@@ -88,26 +90,66 @@ const navigateToProfile = (user) => {
 
 const users = ref([]) // 팔로워 목록 저장
 
+const page = ref(1) // ✅ 현재 페이지
+const size = ref(10) // ✅ 페이지당 데이터 개수
+const loading = ref(false) // ✅ 로딩 상태
+const hasMore = ref(true) // ✅ 더 가져올 데이터가 있는지 여부
+const scrollTrigger = ref(null)
+
+const loadUsers = async () => {
+    if (loading.value || !hasMore.value) return // ✅ 이미 로딩 중이거나 더 이상 데이터가 없으면 중단
+
+    loading.value = true
+    try {
+        let result
+        if (props.type === 'follower') {
+            result = await readFollowers(userStore.token, props.userId, page.value, size.value)
+        } else {
+            result = await readFollowings(userStore.token, props.userId, page.value, size.value)
+        }
+
+        if (result.content && result.content.length > 0) {
+            users.value.push(...result.content) // ✅ 기존 데이터에 추가
+            page.value++ // ✅ 다음 페이지 증가
+        } else {
+            hasMore.value = false // ✅ 더 이상 불러올 데이터 없음
+        }
+    } catch (error) {
+        console.error('❌ 목록 조회 실패:', error)
+    } finally {
+        loading.value = false
+    }
+}
+const observer = new IntersectionObserver(
+    ([entry]) => {
+        if (entry.isIntersecting) {
+            loadUsers() // ✅ 감지되면 추가 데이터 불러오기
+        }
+    },
+    { threshold: 1.0 }
+)
+
+// ✅ 모달이 열릴 때 자동 감지 시작
+onMounted(() => {
+    if (scrollTrigger.value) {
+        observer.observe(scrollTrigger.value)
+    }
+})
+
+// ✅ 모달이 닫히면 감지 해제
+onUnmounted(() => {
+    observer.disconnect()
+})
+
+// 📌 watch()에서 API 호출하도록 변경
 watch(
     () => [userStore.token, props.userId, props.type],
     async ([newToken, newUserId, newType]) => {
         if (newToken && newUserId) {
-            try {
-                let result
-                console.log('newType', newType)
-                if (newType === 'follower') {
-                    console.log('📌 팔로워 목록 조회')
-                    console.log('타입좀 찍어보자', newType)
-                    result = await readFollowers(newToken, newUserId)
-                } else {
-                    console.log('📌 팔로잉 목록 조회')
-                    result = await readFollowings(newToken, newUserId)
-                }
-
-                users.value = result.content || [] // ✅ 데이터 저장
-            } catch (error) {
-                console.error('❌ 목록 조회 실패:', error)
-            }
+            users.value = [] // ✅ 목록 초기화
+            page.value = 1 // ✅ 첫 페이지로 초기화
+            hasMore.value = true // ✅ 데이터 더 불러올 수 있도록 초기화
+            await loadUsers()
         }
     },
     { immediate: true }

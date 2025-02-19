@@ -1,5 +1,7 @@
 <template>
-    <div class="absolute inset-0 z-40 flex items-center justify-center bg-black bg-opacity-50">
+    <div
+        class="fixed inset-0 z-50 flex items-center justify-center overflow-auto bg-black bg-opacity-50"
+    >
         <!-- 전체 컨테이너: 가운데 정렬, 배경색 적용, 너비 지정 -->
         <div
             class="flex flex-col items-center bg-white w-[1054px] h-fit gap-6 p-6 border border-gray-200 rounded-[20px]"

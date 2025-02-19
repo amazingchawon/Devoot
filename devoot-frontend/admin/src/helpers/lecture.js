@@ -34,6 +34,13 @@ const deleteRequestedLecture = async (requestId, token) => {
     })
 }
 
+// 수정 요청 강의 내용 불러오기
+const getLecture = async (requestId, token) => {
+    return instance.get(`/api/lecture-requests/update/${requestId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+    })
+}
+
 // 강의 등록
 const addLecture = async (lectureData, token) => {
     return instance.post(`/api/lectures`, lectureData, {
@@ -41,5 +48,26 @@ const addLecture = async (lectureData, token) => {
     })
 }
 
-export { getRequestedLecture, deleteRequestedLecture, addLecture }
+// 강의 수정
+const editLecture = async (requestId, lectureData, token) => {
+    return instance.patch(`/api/lectures/${requestId}`, lectureData, {
+        headers: { Authorization: `Bearer ${token}` },
+    })
+}
+
+// 강의 요청 삭제
+const deleteLecture = async (requestId, token) => {
+    return instance.delete(`/api/lecture-requests/update/${requestId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+    })
+}
+
+export {
+    getRequestedLecture,
+    deleteRequestedLecture,
+    addLecture,
+    editLecture,
+    deleteLecture,
+    getLecture,
+}
 export default instance

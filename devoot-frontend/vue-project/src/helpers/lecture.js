@@ -111,8 +111,9 @@ const getLectureDetailWithLogout = async (lectureId) => {
 
 const reportLecture = async (token, lectureId) => {
     return instance.post(
-        `/api/lectures/${lectureId}/report`,
-        {},
+        `/api/lecture-requests/update`,
+        { lectureId },
+
         {
             headers: { Authorization: `Bearer ${token}` },
         }

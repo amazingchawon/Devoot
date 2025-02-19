@@ -2,17 +2,25 @@
     <div class="flex flex-col gap-4">
         <div class="content-center h-20 text-h3">강의 수정 요청</div>
         <div class="grid grid-cols-12 gap-6">
-            <LectureCard v-for="lecture in lectures" :key="lecture.id" :lecture="lecture.lecture" />
+            <LectureCard
+                v-for="lecture in lectures"
+                :key="lecture.id"
+                :lecture="lecture.lecture"
+                class="cursor-pointer"
+                @click="goToEditPage(lecture.id)"
+            />
         </div>
     </div>
 </template>
 
 <script setup>
 import { ref, watch, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import LectureCard from '@/components/LectureCard.vue'
 import { getEditRequest } from '@/helpers/api'
 
+const router = useRouter() // Vue Router 사용
 const userStore = useUserStore()
 const lectures = ref([])
 
@@ -22,6 +30,7 @@ const fetchEditRequests = async () => {
         if (!userStore.token) return // token이 없으면 실행 안 함
         const response = await getEditRequest(userStore.token)
         lectures.value = response.data
+        console.log(lectures.value)
     } catch (error) {
         console.error('강의 수정 요청 목록을 불러오는 데 실패했습니다:', error)
     }
@@ -43,6 +52,14 @@ onMounted(() => {
         fetchEditRequests()
     }
 })
+
+// 강의 수정 페이지로 이동
+const goToEditPage = (requestId) => {
+    router.push({
+        path: '/edit/lecture',
+        query: { requestId },
+    })
+}
 </script>
 
 <style scoped></style>

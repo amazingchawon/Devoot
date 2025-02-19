@@ -1,6 +1,6 @@
 <template>
     <div class="flex justify-between col-span-12 gap-6 p-6 h-fit">
-        <div class="flex flex-col flex-1 h-full gap-[12px]">
+        <div class="flex flex-col flex-1 h-full gap-3">
             <div class="inline-flex w-fit text-caption tag-gray">
                 <p>수강 전</p>
             </div>
@@ -17,7 +17,7 @@
                         v-for="lecture in lectureDatas.todo"
                         :key="lecture.id"
                         :data-id="lecture.id"
-                        class="draggable cursor-grab"
+                        class="flex gap-2 draggable cursor-grab"
                     />
                 </div>
             </div>
@@ -39,7 +39,7 @@
                         draggable="true"
                         :lecture="lecture"
                         :data-id="lecture.id"
-                        class="draggable cursor-grab"
+                        class="flex gap-2 draggable cursor-grab"
                     />
                 </div>
             </div>
@@ -61,7 +61,7 @@
                         draggable="true"
                         :lecture="lecture"
                         :data-id="lecture.id"
-                        class="draggable cursor-grab"
+                        class="flex gap-2 draggable cursor-grab"
                     />
                 </div>
             </div>
@@ -164,12 +164,12 @@ onUpdated(() => {
             let afterBookmarkId = 0 // ✅ 미리 선언
             if (afterElement) {
                 afterBookmarkId = afterElement.dataset.id // ✅ 값 할당
-                console.log('가장 가까운 아래 요소의 북마크 ID:', afterBookmarkId)
-                console.log('북마크의 ID:', bookmarkId) // ✅ dataset 값 확인
+                // console.log('가장 가까운 아래 요소의 북마크 ID:', afterBookmarkId)
+                // console.log('북마크의 ID:', bookmarkId) // ✅ dataset 값 확인
             }
             el.classList.remove('dragging', 'highlight')
-            console.log('가장 가까운 아래 요소의 북마크 ID:', afterBookmarkId)
-            console.log('북마크의 ID:', bookmarkId) // ✅ dataset 값 확인
+            // console.log('가장 가까운 아래 요소의 북마크 ID:', afterBookmarkId)
+            // console.log('북마크의 ID:', bookmarkId) // ✅ dataset 값 확인
 
             if (userStore.token && userStore.userId) {
                 changeKanbanStatus(el, bookmarkId, afterBookmarkId) // ✅ updateStatus 함수 호출
@@ -224,6 +224,7 @@ onUpdated(() => {
         })
     })
 })
+console.log(userStore.token)
 
 watch(
     () => [userStore.token, userStore.userId], // ✅ 두 값을 동시에 감시

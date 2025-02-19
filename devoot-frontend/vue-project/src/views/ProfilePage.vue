@@ -261,11 +261,11 @@ watchEffect(() => {
             ProfileData.value.isPublic ||
             (!ProfileData.value.isPublic && ProfileData.value.followStatus === 'FOLLOWING')
 
-        console.log('📌 프로필 보이는 상태:', isProfileVisible.value)
-        console.log('내프로필인가?', isMyProfile.value)
-        console.log('공개계정인가??', ProfileData.value.isPublic)
-        console.log('팔로잉관계가 뭐임??', ProfileData.value.followStatus)
-        console.log('볼 수 있나?', isProfileVisible.value)
+        // console.log('📌 프로필 보이는 상태:', isProfileVisible.value)
+        // console.log('내프로필인가?', isMyProfile.value)
+        // console.log('공개계정인가??', ProfileData.value.isPublic)
+        // console.log('팔로잉관계가 뭐임??', ProfileData.value.followStatus)
+        // console.log('볼 수 있나?', isProfileVisible.value)
     }
 })
 

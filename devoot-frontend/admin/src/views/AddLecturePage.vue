@@ -148,7 +148,8 @@ const registerLecture = async () => {
         console.log('📌 전송할 강의 데이터:', lectureData) // ✅ 디버깅 로그
 
         await addLecture(lectureData, userStore.token)
-        console.log('성공!!')
+        // console.log('성공!!')
+        router.push('/add/request')
     } catch (error) {
         console.error('🚨 강의 등록:', error)
     }

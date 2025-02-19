@@ -1,53 +1,57 @@
 <template>
-    <div
-        v-if="lecture"
-        class="bg-white flex w-full h-[6rem] border border-gray-200 rounded-lg overflow-hidden"
-    >
-        <!-- Thumbnail Container -->
-        <div class="w-[7.5rem] h-full bg-gray-300 flex-shrink-0 relative">
-            <img :src="lecture.lecture.imageUrl" alt="강의 썸네일" class="w-full h-full" />
-            <Move class="absolute w-6 h-6 text-white top-[33.6px]" />
-        </div>
+    <a :href="lecture.lecture.sourceUrl">
+        <div
+            v-if="lecture"
+            class="bg-white flex w-full h-[6rem] border border-gray-200 rounded-lg overflow-hidden"
+        >
+            <!-- Thumbnail Container -->
+            <div class="w-[7.5rem] h-full bg-gray-300 flex-shrink-0 relative">
+                <img :src="lecture.lecture.imageUrl" alt="강의 썸네일" class="w-full h-full" />
+                <Move class="absolute w-6 h-6 text-white top-[33.6px]" />
+            </div>
 
-        <!-- Info Container -->
-        <div class="flex flex-col w-full h-full gap-2 px-3 py-2">
-            <!-- Title Section -->
-            <div class="flex items-center justify-between w-full h-full gap-x-0.5">
-                <div class="flex flex-col justify-center w-full h-full">
-                    <p class="text-gray-400 text-caption-sm">{{ lecture.lecture.sourceName }}</p>
-                    <p
-                        class="text-black cursor-pointer text-overflow text-body"
-                        :title="lecture.lecture.name"
-                    >
-                        {{ lecture.lecture.name }}
-                    </p>
+            <!-- Info Container -->
+            <div class="flex flex-col w-full h-full gap-2 px-3 py-2">
+                <!-- Title Section -->
+                <div class="flex items-center justify-between w-full h-full gap-x-0.5">
+                    <div class="flex flex-col justify-center w-full h-full">
+                        <p class="text-gray-400 text-caption-sm">
+                            {{ lecture.lecture.sourceName }}
+                        </p>
+                        <p
+                            class="text-black cursor-pointer text-overflow text-body"
+                            :title="lecture.lecture.name"
+                        >
+                            {{ lecture.lecture.name }}
+                        </p>
+                    </div>
+                    <!-- 관심 강의 추가 -->
+                    <div v-if="isMyProfile" @click="toggleBookmark(lecture.lecture.id, lecture.id)">
+                        <component
+                            :is="isBookmarked ? BookmarkFill : BookmarkDefault"
+                            class="w-6 h-6 cursor-pointer text-primary-500"
+                        />
+                    </div>
                 </div>
-                <!-- 관심 강의 추가 -->
-                <div v-if="isMyProfile" @click="toggleBookmark(lecture.lecture.id, lecture.id)">
-                    <component
-                        :is="isBookmarked ? BookmarkFill : BookmarkDefault"
-                        class="w-6 h-6 cursor-pointer text-primary-500"
-                    />
-                </div>
-            </div>
-            <!-- Tag Section -->
-            <div class="flex gap-1.5 w-full">
-                <div
-                    v-for="tag in lecture.lecture.tags.split(',')"
-                    :key="tag"
-                    class="inline-flex gap-1 text-caption-sm tag-gray max-w-[60px]"
-                >
-                    <p>#</p>
-                    <p
-                        class="overflow-hidden cursor-pointer text-ellipsis whitespace-nowrap"
-                        :title="tag"
+                <!-- Tag Section -->
+                <div class="flex gap-1.5 w-full">
+                    <div
+                        v-for="tag in lecture.lecture.tags.split(',')"
+                        :key="tag"
+                        class="inline-flex gap-1 text-caption-sm tag-gray max-w-[60px]"
                     >
-                        {{ tag }}
-                    </p>
+                        <p>#</p>
+                        <p
+                            class="overflow-hidden cursor-pointer text-ellipsis whitespace-nowrap"
+                            :title="tag"
+                        >
+                            {{ tag }}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </a>
 </template>
 
 <script setup>
