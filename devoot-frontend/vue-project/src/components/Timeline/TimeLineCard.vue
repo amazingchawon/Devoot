@@ -1,11 +1,9 @@
 <template>
-    <!-- (1) 발자국(footprint-added) 타입 UI -->
     <div
       v-if="type === 'footprint-added'"
       class="p-6 mb-4 bg-white border border-gray-200 rounded-2xl w-[72rem] flex flex-col gap-4 cursor-pointer"
       @click="goToProfile(profileId)"
     >
-      <!-- 상단 영역: 아바타 + "발자국이 추가되었습니다" + 아이콘 + 날짜 -->
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
           <img
@@ -13,7 +11,6 @@
             alt="프로필 사진"
             class="object-cover w-10 h-10 bg-gray-200 rounded-full"
           />
-          <!-- 한 줄에 사용자명, 문구, 아이콘 -->
           <p class="flex items-center gap-2 text-body">
             <span class="text-body-bold">{{ userName }}</span>
             님의 발자국이 추가되었습니다
@@ -25,32 +22,29 @@
         </span>
       </div>
   
-      <!-- 하단 영역: 강의 정보 (좌: 강의제목 / 우: 하위 강의명) -->
       <div class="flex items-center justify-between h-[4.25rem] px-6 py-3 border border-gray-200 rounded-lg">
         <div class="flex items-center gap-4">
-            <p class="text-body-bold">
-          {{ lectureTitle }}  
-        </p>
-        <p class="text-body">-</p>
-        <p class="text-body">
-         {{ subLectureName }}
-        </p>
+          <p class="text-body-bold">
+            {{ lectureTitle }}  
+          </p>
+          <p class="text-body">-</p>
+          <p class="text-body">
+            {{ subLectureName }}
+          </p>
         </div>
         <button @click.stop="toggleBookmark" class="p-2 focus:outline-none">
-            <component
+          <component
             :is="isBookmarked ? BookmarkFill : BookmarkDefault"
             class="w-6 h-6 text-primary-500"
-            />
+          />
         </button>
       </div>
     </div>
   
-    <!-- (2) 그 외 타입(BOOKMARK 관련) UI: 기존 코드 유지 -->
     <div
       v-else
       class="p-6 mb-4 bg-white border border-gray-200 rounded-2xl w-[72rem]"
     >
-      <!-- 카드 헤더 -->
       <div class="flex items-center justify-between">
         <div class="flex items-center">
           <img
@@ -58,26 +52,18 @@
             alt="프로필 사진"
             class="object-cover w-10 h-10 bg-gray-200 rounded-full"
           />
-          <p
-            class="flex items-center ml-3 text-sm text-gray-700 cursor-pointer"
-            @click="goToProfile(profileId)"
-          >
+          <p class="flex items-center ml-3 text-sm text-gray-700 cursor-pointer"
+             @click="goToProfile(profileId)">
             <div class="text-body-bold">{{ userName }}</div>
             <div v-if="type === 'lecture-status-change'">
               님이
-              <span
-                v-if="beforeStatus"
-                class="h-6 px-2 py-1 bg-gray-100 rounded-full"
-                :class="statusColor(beforeStatus)"
-              >
+              <span v-if="beforeStatus" class="h-6 px-2 py-1 bg-gray-100 rounded-full"
+                    :class="statusColor(beforeStatus)">
                 {{ beforeStatus }}
               </span>
               <span v-if="beforeStatus" class="text-body-bold"> &gt; </span>
-              <span
-                v-if="afterStatus"
-                class="h-6 px-2 py-1 bg-gray-100 rounded-full"
-                :class="statusColor(afterStatus)"
-              >
+              <span v-if="afterStatus" class="h-6 px-2 py-1 bg-gray-100 rounded-full"
+                    :class="statusColor(afterStatus)">
                 {{ afterStatus }}
               </span>
               강의 상태를 변경하였습니다.
@@ -90,43 +76,42 @@
         <span class="text-gray-400 text-caption">{{ formattedDate }}</span>
       </div>
   
-      <!-- 강의 정보 (BOOKMARK & TODO) -->
-      <div
-        class="flex mt-4 border border-gray-200 cursor-pointer rounded-xl"
-        @click="goToLecture(lectureId)"
-      >
+      <div class="flex mt-4 border border-gray-200 cursor-pointer rounded-xl"
+           @click="goToLecture(lectureId)">
         <img
           :src="imageUrl"
           alt="강의 썸네일"
           class="object-cover rounded-l-xl w-[16.75rem] h-[10rem]"
         />
-        <div class="flex flex-col w-full h-full mx-6 mt-5">
-          <!-- 사이트명(sourceName) 표시 -->
-          <div class="mb-1 text-gray-400 text-body" v-if="sourceName">
-            {{ sourceName }}
-          </div>
-  
-          <!-- 강의 타이틀 + 북마크 아이콘 (아이콘만 표시) -->
-          <div class="flex items-center justify-between">
-            <p class="text-h3">{{ lectureTitle }}</p>
+        <div class="flex flex-col justify-between w-full h-[10rem] px-6 py-5">
+          <div class="flex flex-col justify-between h-full">
+            <!-- 위쪽: 사이트명, 강의제목, 북마크 -->
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="mb-1 text-gray-400 text-body">{{ sourceName }}</p>
+                <p class="text-h3">{{ lectureTitle }}</p>
+              </div>
             <button @click.stop="toggleBookmark" class="p-2 focus:outline-none">
-              <component
+                <component
                 :is="isBookmarked ? BookmarkFill : BookmarkDefault"
                 class="w-6 h-6 text-primary-500"
-              />
-            </button>
-          </div>
+                />
+            </button> 
+            </div>
   
-          <!-- 태그 영역 -->
-          <div v-if="tags.length" class="flex mb-5 space-x-2 mt-7">
-            <span v-for="(tag, index) in tags" :key="index" class="tag-gray">
-              #{{ tag }}
-            </span>
+            <!-- 아래쪽: 태그 영역 -->
+            <div v-if="tags.length" class="flex space-x-2">
+              <span v-for="(tag, index) in tags" :key="index" class="tag-gray">
+                #{{ tag }}
+              </span>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </template>
+  
+
   
   <script setup>
   import { computed, ref, onMounted } from 'vue'
