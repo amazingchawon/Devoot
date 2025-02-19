@@ -1,7 +1,7 @@
 <template>
-    <div class="lecture-search-page">
+    <div class="flex flex-col lecture-search-page">
         <!-- 검색 결과 헤더 -->
-        <div class="flex flex-row items-baseline gap-2 mb-6">
+        <div class="flex flex-row items-baseline gap-2 mb-4">
             <p class="text-h1" v-if="searchQuery">"{{ searchQuery }}" 에 대한 검색 결과</p>
             <p class="text-h1" v-else-if="selectedCategory">
                 "{{ selectedCategory }}" 카테고리에 대한 검색 결과
@@ -11,16 +11,16 @@
         </div>
 
         <!-- 태그 선택 영역 -->
-        <div class="flex flex-col w-full gap-12 mb-6">
+        <div class="flex flex-col w-full gap-6 mb-4">
             <div class="flex-1">
-                <div class="flex flex-wrap w-full max-w-[1440px] gap-2 p-4">
+                <div class="flex flex-wrap w-full max-w-[1440px] gap-2 py-4">
                     <button
                         v-for="tag in displayedTags"
                         :key="tag"
                         type="button"
                         :class="{
-                            'tag-gray py-1 px-2': !isTagSelected(tag),
-                            'tag-primary py-1 px-2': isTagSelected(tag),
+                            'tag-gray text-primary-500 py-1 px-2 rounded-full': !isTagSelected(tag),
+                            'tag-primary py-1 px-2 text-white rounded-full': isTagSelected(tag),
                         }"
                         @click="toggleTag(tag)"
                     >
@@ -33,8 +33,33 @@
             </div>
         </div>
 
+        <!-- 정렬 드롭다운 (오른쪽 정렬) -->
+        <div class="flex justify-end">
+            <div class="relative">
+                <!-- 정렬 버튼 -->
+                <button @click="toggleDropdown" class="w-32 px-3 py-2 bg-white border rounded-lg">
+                    {{ sortOptions.find((opt) => opt.value === selectedSort)?.label }}
+                </button>
+
+                <!-- 드롭다운 목록 -->
+                <ul
+                    v-if="isDropdownOpen"
+                    class="absolute right-0 z-10 w-32 mt-1 overflow-hidden bg-white border rounded-lg top-full"
+                >
+                    <li
+                        v-for="option in sortOptions"
+                        :key="option.value"
+                        @click="selectSort(option.value)"
+                        class="p-3 text-center cursor-pointer hover:bg-gray-100"
+                    >
+                        {{ option.label }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         <!-- 강의 목록 -->
-        <div v-if="lectures.length" class="pb-4 overflow-x-auto">
+        <div v-if="lectures.length" class="pb-4 mt-4 overflow-x-auto">
             <div class="grid grid-cols-4 min-w-max gap-x-6 gap-y-4">
                 <LectureCard
                     v-for="(lecture, index) in lectures"
@@ -58,15 +83,17 @@
 
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import LectureCard from '@/components/Lecture/LectureCard.vue'
 import PaginationControl from '@/components/Common/PaginationControl.vue'
 import { searchLectures } from '@/helpers/lecture.js'
 
 const route = useRoute()
+const router = useRouter()
+
 const searchQuery = ref(route.query.q || '')
 const selectedCategory = ref(route.query.category || '')
-const selectedSort = ref(route.query.sort || 'newest')
+const selectedSort = ref(route.query.sort || 'popular') // 기본값을 popular로 설정
 
 const lectures = ref([])
 const page = ref(1)
@@ -109,7 +136,7 @@ const allTags = [
 const selectedTags = ref([])
 const presetTags = ref([])
 
-// 검색어나 카테고리가 없으면 `allTags`, 있으면 `presetTags` 사용
+// 검색어나 카테고리가 없으면 allTags, 있으면 presetTags 사용
 const displayedTags = computed(() => {
     return searchQuery.value || selectedCategory.value ? presetTags.value : allTags
 })
@@ -119,10 +146,10 @@ function toggleTag(tag) {
     if (isTagSelected(tag)) {
         selectedTags.value = selectedTags.value.filter((t) => t !== tag)
     } else {
-        selectedTags.value.push(tag) // 선택 개수 제한 제거
+        selectedTags.value.push(tag)
     }
     page.value = 1
-    fetchLectures(false) // 태그 선택 시 API 호출 (presetTags 갱신 X)
+    fetchLectures(false)
 }
 
 // 태그 선택 여부 확인
@@ -135,8 +162,8 @@ const fetchLectures = async (updatePresetTags = true) => {
     try {
         const params = {
             category: selectedCategory.value || undefined,
-            tag: selectedTags.value.length > 0 ? selectedTags.value.join(',') : undefined, // 선택한 태그들 전달
-            sort: selectedSort.value,
+            tag: selectedTags.value.length > 0 ? selectedTags.value.join(',') : undefined,
+            sort: selectedSort.value, // 정렬 방식 반영
             query: searchQuery.value || undefined,
             page: page.value,
             size: size.value,
@@ -158,7 +185,6 @@ const fetchLectures = async (updatePresetTags = true) => {
             isBookmarked: false,
         }))
 
-        // 검색어 및 카테고리가 변경될 때만 presetTags 업데이트
         if (updatePresetTags) {
             presetTags.value = Object.keys(response.data.aggregations.preset_tags || {})
         }
@@ -167,10 +193,16 @@ const fetchLectures = async (updatePresetTags = true) => {
     }
 }
 
+// 정렬 변경 이벤트 핸들러
+const onSortChange = () => {
+    page.value = 1
+    fetchLectures(false)
+}
+
 // 페이지 변경 이벤트
 const onPageChange = (newPage) => {
     page.value = newPage
-    fetchLectures(false) // 페이지네이션 시 API 호출
+    fetchLectures(false)
 }
 
 // URL 변경 감지
@@ -179,9 +211,9 @@ watch(
     ([newQ, newCat, newSort]) => {
         searchQuery.value = newQ || ''
         selectedCategory.value = newCat || ''
-        selectedSort.value = newSort || 'newest'
+        selectedSort.value = newSort || 'relevance'
         page.value = 1
-        fetchLectures(true) // 검색어/카테고리 변경 시 presetTags 업데이트
+        fetchLectures(true)
     }
 )
 
@@ -189,16 +221,24 @@ watch(
 onMounted(() => {
     fetchLectures()
 })
+
+const isDropdownOpen = ref(false)
+
+const sortOptions = [
+    { value: 'relevance', label: '정확도순' },
+    { value: 'popular', label: '인기순' },
+    { value: 'newest', label: '최신순' },
+    { value: 'price_desc', label: '높은 가격순' },
+    { value: 'price_asc', label: '낮은 가격순' },
+]
+
+const toggleDropdown = () => {
+    isDropdownOpen.value = !isDropdownOpen.value
+}
+
+const selectSort = (value) => {
+    selectedSort.value = value
+    isDropdownOpen.value = false
+    fetchLectures() // API 호출
+}
 </script>
-
-<style scoped>
-/* 선택 가능한 태그 스타일 */
-.tag-gray {
-    @apply bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer;
-}
-
-/* 선택된 태그 스타일 */
-.tag-primary {
-    @apply bg-blue-500 text-white;
-}
-</style>
