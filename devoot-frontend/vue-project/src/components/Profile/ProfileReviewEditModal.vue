@@ -43,7 +43,7 @@
 
                 <textarea
                     v-model="text"
-                    class="w-full px-4 py-2 mt-4 overflow-y-auto bg-gray-200 border border-gray-200 rounded-lg resize-none text-body h-52 focus:border-2 focus:border-primary-500 focus:outline-none custom-scrollbar"
+                    class="w-full px-4 py-2 mt-4 overflow-y-auto bg-gray-100 border border-gray-200 rounded-lg resize-none text-body h-52 focus:border-2 focus:border-primary-500 focus:outline-none"
                     placeholder="댓글을 입력하세요"
                 ></textarea>
             </div>
@@ -196,21 +196,4 @@ const gotoLectureDetail = (id) => {
 }
 </script>
 
-<style scoped>
-/* Tailwind 클래스를 적용한 스크롤바 스타일 */
-.custom-scrollbar::-webkit-scrollbar {
-    @apply w-2; /* 스크롤바 너비 */
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-    @apply bg-gray-100 rounded-lg; /* 트랙 배경 */
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-gray-200 rounded-lg; /* 스크롤 핸들 색상 */
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    @apply bg-primary-100; /* 마우스 호버 시 색상 */
-}
-</style>
+<style scoped></style>

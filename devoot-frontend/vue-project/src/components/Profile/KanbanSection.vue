@@ -240,16 +240,6 @@ watch(
 </script>
 
 <style>
-::-webkit-scrollbar {
-    width: 6px; /* 세로축 스크롤바 폭 너비 */
-}
-
-::-webkit-scrollbar-thumb {
-    background: #e8ebee; /* 스크롤바 막대 색상 */
-    border: 1px solid #f4f6f8; /* 스크롤바 막대 테두리 설정  */
-    border-radius: 12px 12px 12px 12px;
-}
-
 .dragging {
     opacity: 0.5; /* 반투명 효과 */
     transform: scale(1.05); /* 살짝 확대 */

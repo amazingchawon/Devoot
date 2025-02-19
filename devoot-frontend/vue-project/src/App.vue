@@ -7,12 +7,12 @@
         <!-- 전체 컨테이너 -->
         <div class="relative flex flex-col flex-1 ml-[4.5rem] lg:ml-[13.5rem] px-9">
             <!-- 헤더 -->
-            <AppHeader class="mb-9" v-if="shouldShowHeader" :type="headerType" />
+            <AppHeader v-if="shouldShowHeader" class="z-40 mb-9" :type="headerType" />
 
             <!-- 메인 컨텐츠 영역 -->
             <div
                 id="container"
-                class="flex-1 grid w-full max-w-[1440px] mx-auto grid-cols-12 gap-6 overflow-y-auto relative custom-scrollbar"
+                class="flex-1 grid w-full max-w-[1440px] mx-auto grid-cols-12 gap-6 relative custom-scrollbar"
             >
                 <router-view class="col-span-12" />
             </div>
@@ -56,4 +56,20 @@ const shouldShowHeader = computed(() => {
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+html,
+body {
+    height: 100%;
+    overflow: auto;
+}
+
+#container {
+    min-height: 100vh;
+}
+
+router-view {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+</style>

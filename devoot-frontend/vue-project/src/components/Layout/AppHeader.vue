@@ -42,7 +42,7 @@
 
         <!-- type이 'user'인 경우 -->
         <template v-else-if="type === 'user'">
-            <div class="relative flex">
+            <div>
                 <!-- 사용자 검색 버튼 -->
                 <button class="header-button" aria-label="사용자 검색" @click="openUserSearchModal">
                     <UserSearchIcon class="w-6 h-6 mr-2.5" />
@@ -51,30 +51,38 @@
             </div>
 
             <!-- 사용자 검색 모달 -->
-            <UserSearchModal :isOpen="isUserSearchModalOpen" @close="closeUserSearchModal" />
+            <UserSearchModal :is-open="isUserSearchModalOpen" @close="closeUserSearchModal" />
         </template>
 
         <!-- 오른쪽: 알림 버튼 (공통) -->
-        <div class="flex items-center ml-6">
+        <div class="relative flex items-center ml-6">
             <button
-                class="relative inline-flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100"
+                class="relative inline-flex items-center justify-center w-10 h-10 transition-all duration-150 rounded-full hover:bg-gray-100"
                 aria-label="알림"
-                @click="openNotificationModal"
+                :class="{ 'translate-y-[2px]': isClicked }"
+                @click="
+                    () => {
+                        handleClick()
+                        openNotificationModal()
+                    }
+                "
             >
                 <!-- 알림 여부에 따라 아이콘 변경 -->
                 <component
                     :is="hasNotifications ? BellNotificationIcon : BellIcon"
-                    class="w-6 h-6"
+                    class="w-6 h-6 transition-transform duration-150"
+                    :class="{ 'translate-y-[2px]': isClicked }"
                 />
             </button>
-        </div>
 
-        <!-- 알림 모달 -->
-        <NotificationModal
-            :isOpen="isNotificationModalOpen"
-            :token="userStore.token"
-            @close="closeNotificationModal"
-        />
+            <!-- 알림 모달 -->
+            <NotificationModal
+                :is-open="isNotificationModalOpen"
+                :token="userStore.token"
+                class="absolute right-0 mt-2 top-full"
+                @close="closeNotificationModal"
+            />
+        </div>
     </header>
 </template>
 
@@ -125,6 +133,7 @@ const closeCategoryDropdown = () => {
 // 사용자 검색 모달 열기
 const openUserSearchModal = () => {
     isUserSearchModalOpen.value = true
+    console.log('사용자 모달 열림')
 }
 
 // 사용자 검색 모달 닫기
@@ -160,6 +169,16 @@ const openNotificationModal = () => {
 // 알림 모달 닫기
 const closeNotificationModal = () => {
     isNotificationModalOpen.value = false
+}
+
+// 알림 모달 열기 애니메이션
+const isClicked = ref(false)
+
+const handleClick = () => {
+    isClicked.value = true
+    setTimeout(() => {
+        isClicked.value = false // 0.2초 후 원래 위치로 복귀
+    }, 200)
 }
 
 // 카테고리 드롭다운 외부 클릭 감지를 위한 ref

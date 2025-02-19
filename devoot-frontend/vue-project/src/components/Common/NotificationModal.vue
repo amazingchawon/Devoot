@@ -1,14 +1,14 @@
 <template>
     <div
         v-if="isOpen"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+        class="absolute right-0 mt-2 w-[16.25rem] bg-white rounded-2xl border border-gray-200 shadow-lg ring-0 overflow-hidden"
         @click="closeModal"
     >
         <div class="px-4 py-6 bg-white rounded-lg shadow-lg w-[16.25rem]" @click.stop>
             <!-- 헤더 -->
             <div class="flex items-center justify-between mb-4">
                 <p class="text-h2">알림 보기</p>
-                <button @click="closeModal" class="text-h2">&times;</button>
+                <button class="text-h2" @click="closeModal">&times;</button>
             </div>
 
             <!-- 알림 목록 -->
@@ -55,8 +55,8 @@
                     <!-- 아래쪽: 팔로우 요청 수락 버튼 -->
                     <button
                         v-if="notification.pending"
-                        @click="acceptFollow(notification.followId)"
                         class="w-[13.25rem] h-6 mt-3 text-center text-white rounded-lg bg-primary-500 text-body-bold hover:bg-blue-600"
+                        @click="acceptFollow(notification.followId)"
                     >
                         팔로우 수락
                     </button>
@@ -151,6 +151,4 @@ watch(
 )
 </script>
 
-<style scoped>
-/* 추가 스타일이 있다면 여기에 작성 */
-</style>
+<style scoped></style>

@@ -49,7 +49,7 @@
             <nav class="py-3">
                 <button
                     v-if="userStore.isAuthenticated"
-                    class="flex flex-row items-center gap-5 px-6 py-4 text-gray-600 transition-all rounded-md lg:px-6 hover:bg-gray-200 hover:text-primary-500"
+                    class="flex flex-row items-center w-full gap-5 px-6 py-4 text-gray-600 transition-all rounded-md lg:px-6 hover:bg-gray-200 hover:text-primary-500"
                     @click="logout"
                 >
                     <Logout class="w-6 h-6" />

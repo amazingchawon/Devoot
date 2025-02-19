@@ -1,48 +1,49 @@
 <template>
-    <div v-if="isOpen" class="fixed inset-0 z-40" @click="closeModal">
-        <div
-            class="absolute top-20 left-[4.5rem] lg:left-[13.5rem] z-50 bg-white shadow-lg rounded-r-lg w-[22.9375rem] h-[calc(100vh-5rem)]"
-            @click.stop
-        >
-            <!-- 헤더 -->
-            <div class="flex flex-col h-full p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <p class="text-h2">사용자 검색</p>
-                    <button @click="closeModal" class="text-h2">&times;</button>
-                </div>
+    <transition name="slide">
+        <div v-if="isOpen" class="fixed inset-0 z-40" @click.self="closeModal">
+            <div
+                class="absolute top-20 left-[4.5rem] lg:left-[13.5rem] z-50 bg-white shadow-xl border border-l-0 border-gray-200 rounded-r-lg w-[22.9375rem] h-[calc(100vh-5rem)]"
+            >
+                <!-- 헤더 -->
+                <div class="flex flex-col h-full p-6 ml-3">
+                    <div class="flex items-center justify-between mb-4">
+                        <p class="text-h2">사용자 검색</p>
+                        <button class="text-h2" @click="closeModal">&times;</button>
+                    </div>
 
-                <!-- 검색창 -->
-                <div class="relative h-10">
-                    <input
-                        v-model="searchQuery"
-                        type="text"
-                        placeholder="검색"
-                        class="w-full py-2 pl-4 pr-8 text-gray-300 border rounded-lg text-body bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    />
-                </div>
-
-                <!-- 검색 결과 -->
-                <ul class="flex-1 mt-8 overflow-y-auto no-scrollbar">
-                    <li
-                        v-for="user in users"
-                        :key="user.id"
-                        class="flex items-center p-2 space-x-3 border-b cursor-pointer last:border-none hover:bg-gray-100"
-                        @click="navigateToProfile(user)"
-                    >
-                        <img
-                            :src="user.imageUrl || defaultImage"
-                            alt="profile"
-                            class="object-cover w-10 h-10 rounded-full"
+                    <!-- 검색창 -->
+                    <div class="relative h-10">
+                        <input
+                            v-model="searchQuery"
+                            type="text"
+                            placeholder="검색"
+                            class="w-full py-2 pl-4 pr-8 text-gray-300 border rounded-lg text-body bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
-                        <div class="flex flex-col">
-                            <p class="text-body-bold">{{ user.profileId }}</p>
-                            <p class="text-body">{{ user.nickname }}</p>
-                        </div>
-                    </li>
-                </ul>
+                    </div>
+
+                    <!-- 검색 결과 -->
+                    <ul class="flex-1 mt-8 overflow-y-auto no-scrollbar">
+                        <li
+                            v-for="user in users"
+                            :key="user.id"
+                            class="flex items-center p-2 space-x-3 border-b cursor-pointer last:border-none hover:bg-gray-100"
+                            @click="navigateToProfile(user)"
+                        >
+                            <img
+                                :src="user.imageUrl || defaultImage"
+                                alt="profile"
+                                class="object-cover w-10 h-10 rounded-full"
+                            />
+                            <div class="flex flex-col">
+                                <p class="text-body-bold">{{ user.profileId }}</p>
+                                <p class="text-body">{{ user.nickname }}</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
+    </transition>
 </template>
 
 <script setup>
@@ -97,6 +98,31 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 모달 슬라이드 애니메이션 */
+.slide-enter-active,
+.slide-leave-active {
+    transition:
+        transform 0.4s ease-out,
+        opacity 0.35s ease-out;
+}
+.slide-enter-from {
+    transform: translateX(-30%);
+    opacity: 0.2;
+}
+.slide-enter-to {
+    transform: translateX(0);
+    opacity: 1;
+}
+.slide-leave-from {
+    transform: translateX(0);
+    opacity: 1;
+}
+.slide-leave-to {
+    transform: translateX(-30%);
+    opacity: 0;
+}
+
+/* 스크롤바 숨기기 */
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }
