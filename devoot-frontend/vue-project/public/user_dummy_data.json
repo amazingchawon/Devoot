@@ -1,0 +1,44 @@
+[
+    {
+        "id": 1,
+        "email": "user1@example.com",
+        "profileId": "user_1",
+        "nickname": "nickname_1",
+        "links": {
+            "github": "https://github.com/user1"
+        },
+        "isPublic": true,
+        "imageUrl": "https://via.placeholder.com/150",
+        "uid": "uid_1",
+        "tags": "tag1, tag2",
+        "createdAt": "2025-02-04T00:00:00Z"
+    },
+    {
+        "id": 2,
+        "email": "user2@example.com",
+        "profileId": "user_2",
+        "nickname": "nickname_2",
+        "links": {
+            "github": "https://github.com/user2"
+        },
+        "isPublic": true,
+        "imageUrl": "https://via.placeholder.com/150",
+        "uid": "uid_2",
+        "tags": "tag1, tag2",
+        "createdAt": "2025-02-04T00:00:00Z"
+    },
+    {
+        "id": 3,
+        "email": "user3@example.com",
+        "profileId": "user_3",
+        "nickname": "nickname_3",
+        "links": {
+            "github": "https://github.com/user3"
+        },
+        "isPublic": true,
+        "imageUrl": "https://via.placeholder.com/150",
+        "uid": "uid_3",
+        "tags": "tag1, tag2",
+        "createdAt": "2025-02-04T00:00:00Z"
+    }
+]

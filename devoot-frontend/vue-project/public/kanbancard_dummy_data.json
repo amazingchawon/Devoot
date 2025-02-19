@@ -1,0 +1,41 @@
+[
+    {
+        "siteName": "인프런",
+        "courseName": "프로그래밍 시작하기 : 도전! 45가지 파이썬 기초 문법 실습 (Inflearn Original)",
+        "tags": ["파이썬", "프로그래밍 기초", "코딩"],
+        "imageUrl": "https://picsum.photos/200/300?random=1",
+        "isFavorite": true
+    },
+    {
+        "siteName": "유데미",
+        "courseName": "피그마(Figma)를 활용한 UI디자인 입문부터 실전까지 A to Z",
+        "tags": [
+            "웹 디자인인데 글자 ",
+            "웹 디자인인데 글자 수가 길어요",
+            "웹 디자인인데 글자 수가 길어요"
+        ],
+        "imageUrl": "https://picsum.photos/200/300?random=2",
+        "isFavorite": true
+    },
+    {
+        "siteName": "구름",
+        "courseName": "자바스크립트",
+        "tags": ["JavaScript", "프론트엔드", "웹 개발"],
+        "imageUrl": "https://picsum.photos/200/300?random=3",
+        "isFavorite": true
+    },
+    {
+        "siteName": "인프런",
+        "courseName": "C++로 배우는 객체 지향 프로그래밍",
+        "tags": ["C++", "객체 지향", "프로그래밍"],
+        "imageUrl": "https://picsum.photos/200/300?random=4",
+        "isFavorite": true
+    },
+    {
+        "siteName": "유데미",
+        "courseName": "React와 Redux를 활용한 웹 애플리케이션 개발",
+        "tags": ["React", "Redux", "프론트엔드"],
+        "imageUrl": "https://picsum.photos/200/300?random=5",
+        "isFavorite": true
+    }
+]

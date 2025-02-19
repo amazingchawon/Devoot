@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    /* tag class */
+    /* tag-배경색 */
+    /* 폰트 컬러를 바꾸고 싶다면 vue 파일에서 class 적용할 때 !(important) 사용 */
+    /* ex ) <span class="tag-gray !text-primary-500">Primary</span> */
+    .tag-gray {
+        @apply px-2 py-1 text-gray-400 bg-gray-100 rounded-full text-caption;
+    }
+
+    .tag-primary {
+        @apply px-2 py-1 text-white rounded-full bg-primary-500 text-caption;
+    }
+
+    .button-line {
+        @apply inline-flex items-center justify-center text-black bg-white rounded text-body;
+        @apply px-3 py-1 border border-gray-200;
+    }
+
+    .button-primary {
+        @apply inline-flex items-center justify-center text-white rounded bg-primary-500 text-body;
+        @apply px-3 py-1;
+    }
+
+    .button-gray {
+        @apply inline-flex items-center justify-center text-black bg-gray-100 rounded text-body;
+        @apply px-3 py-1 border border-gray-200;
+    }
+
+    .header-button {
+        @apply inline-flex items-center justify-center text-black bg-white rounded-lg text-body;
+        @apply px-4 py-2 mr-6 border border-gray-200 h-11 w-44 hover:bg-gray-100;
+    }
+}
+
+@layer base {
+    ::-webkit-scrollbar {
+        @apply w-2 h-2; /* 스크롤바 너비 */
+    }
+
+    ::-webkit-scrollbar-track {
+        @apply bg-gray-100 rounded-lg; /* 트랙 배경 */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply bg-gray-200 rounded-lg; /* 스크롤 핸들 색상 */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        @apply bg-primary-300; /* 마우스 호버 시 색상 */
+    }
+}

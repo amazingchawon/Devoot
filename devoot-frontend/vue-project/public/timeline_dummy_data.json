@@ -1,0 +1,145 @@
+{
+    "totalElements": 6,
+    "totalPages": 1,
+    "content": [
+        {
+            "id": 350,
+            "type": "BOOKMARK",
+            "createdAt": "2025-02-18T13:09:31.00000",
+            "user": {
+                "id": 7,
+                "profileId": "devoot",
+                "nickname": "테스트유저",
+                "imageUrl": "https://devoot-profile-image.s3.amazonaws.com/profile/7-8f54410.jpg"
+            },
+            "log": {
+                "beforeStatus": null,
+                "afterStatus": 1,
+                "lecture": {
+                    "id": 3100,
+                    "name": "탈중앙화 eBay 개발!: 실리콘밸리 개발자와 함께 강의 | Mahesh",
+                    "sourceName": "inflearn",
+                    "tags": "JavaScript,Node.js,스마트 계약",
+                    "imageUrl": "https://cdn.inflearn.com/wp-content/uploads/ethereum4_programmers.jpg"
+                }
+            }
+        },
+        {
+            "id": 349,
+            "type": "BOOKMARK",
+            "createdAt": "2025-02-18T13:09:24.00000",
+            "user": {
+                "id": 7,
+                "profileId": "devoot",
+                "nickname": "테스트유저",
+                "imageUrl": "https://devoot-profile-image.s3.amazonaws.com/profile/7-8f54410.jpg"
+            },
+            "log": {
+                "beforeStatus": 1,
+                "afterStatus": 2,
+                "lecture": {
+                    "id": 3000,
+                    "name": "Firebase 서버를 통한 Android앱 개발 지침서 강의 | 하울",
+                    "sourceName": "inflearn",
+                    "tags": "Kotlin,Android,클라우드",
+                    "imageUrl": "https://cdn.inflearn.com/wp-content/uploads/android_firebase.jpg"
+                }
+            }
+        },
+        {
+            "id": 348,
+            "type": "TODO",
+            "createdAt": "2025-02-18T13:08:19.00000",
+            "user": {
+                "id": 7,
+                "profileId": "devoot",
+                "nickname": "테스트유저",
+                "imageUrl": "https://devoot-profile-image.s3.amazonaws.com/profile/7-8f54410.jpg"
+            },
+            "log": {
+                "todo": {
+                    "id": 127,
+                    "userId": 7,
+                    "lectureId": 2151,
+                    "date": "2025-02-18",
+                    "lectureName": "마이크로소프트 365 코파일럿 고급 활용법, 남들보다 100배 더 잘 쓰는 M365 Copilot 활용법",
+                    "subLectureName": "0201 새로운 생산성의 시대",
+                    "sourceUrl": "https://edu.goorm.io/lecture/52225/마이크로소프트-365-코파일럿-고급-활용법-남들보다-100배-더-잘-쓰는-m365-copilot-활용법",
+                    "finished": true,
+                    "nextId": 0
+                }
+            }
+        },
+        {
+            "id": 218,
+            "type": "TODO",
+            "createdAt": "2025-02-14T11:21:55.00000",
+            "user": {
+                "id": 7,
+                "profileId": "devoot",
+                "nickname": "테스트유저",
+                "imageUrl": "https://devoot-profile-image.s3.amazonaws.com/profile/7-8f54410.jpg"
+            },
+            "log": {
+                "todo": {
+                    "id": 60,
+                    "userId": 7,
+                    "lectureId": 2149,
+                    "date": "2025-02-14",
+                    "lectureName": "Orange를 활용한 코딩 없는 AI 데이터 분석 – Lv.5 군집화와 차원 축소",
+                    "subLectureName": "0101 학습 내용 안내",
+                    "sourceUrl": "https://edu.goorm.io/lecture/53264/orange를-활용한-코딩-없는-ai-데이터-분석-lv-5-군집화와-차원-축소",
+                    "finished": true,
+                    "nextId": 0
+                }
+            }
+        },
+        {
+            "id": 129,
+            "type": "BOOKMARK",
+            "createdAt": "2025-02-12T22:33:25.00000",
+            "user": {
+                "id": 7,
+                "profileId": "devoot",
+                "nickname": "테스트유저",
+                "imageUrl": "https://devoot-profile-image.s3.amazonaws.com/profile/7-8f54410.jpg"
+            },
+            "log": {
+                "beforeStatus": null,
+                "afterStatus": 1,
+                "lecture": {
+                    "id": 2150,
+                    "name": "제로베이스도 따라만 하면 배우기 쉬운 ChatGPT 활용 방법",
+                    "sourceName": "goorm",
+                    "tags": "",
+                    "imageUrl": "https://grm-project-template-bucket.s3.ap-northeast-2.amazonaws.com/lecture/lec_flfbc_1727680495577/coverImage.png?_=1729045670148"
+                }
+            }
+        },
+        {
+            "id": 82,
+            "type": "TODO",
+            "createdAt": "2025-02-12T13:05:30.00000",
+            "user": {
+                "id": 7,
+                "profileId": "devoot",
+                "nickname": "테스트유저",
+                "imageUrl": "https://devoot-profile-image.s3.amazonaws.com/profile/7-8f54410.jpg"
+            },
+            "log": {
+                "todo": {
+                    "id": 9,
+                    "userId": 4,
+                    "lectureId": 2351,
+                    "date": "2025-02-10",
+                    "lectureName": "온라인 코딩 파티 - 파이썬 데이터 분석 및 시각화!!!",
+                    "subLectureName": "for 반복문",
+                    "sourceUrl": "https://edu.goorm.io//lecture/24790/온라인-코딩-파티-파이썬-데이터-분석-및-시각화",
+                    "finished": true,
+                    "nextId": 10
+                }
+            }
+        }
+    ],
+    "aggregations": null
+}
