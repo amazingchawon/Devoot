@@ -129,9 +129,15 @@ const toggleCategoryDropdown = () => {
     isCategoryDropdownVisible.value = !isCategoryDropdownVisible.value
 }
 
-// 카테고리 드롭다운 닫기
+// // 카테고리 드롭다운 닫기
+// const closeCategoryDropdown = () => {
+//     isCategoryDropdownVisible.value = false
+// }
+
+// 카테고리 드롭다운 닫기 (카테고리 선택 시 검색어 초기화)
 const closeCategoryDropdown = () => {
     isCategoryDropdownVisible.value = false
+    searchQuery.value = '' // 카테고리 선택 시 검색어 초기화
 }
 
 // 사용자 검색 모달 열기
@@ -145,11 +151,17 @@ const closeUserSearchModal = () => {
     isUserSearchModalOpen.value = false
 }
 
-// 검색 실행 함수 (빈 입력이어도 검색 실행)
+// // 검색 실행 함수 (빈 입력이어도 검색 실행)
+// const executeSearch = () => {
+//     const trimmedQuery = searchQuery.value.trim()
+//     router.push({ path: '/lecture', query: { q: trimmedQuery } })
+//     searchQuery.value = ''
+// }
+
+// 검색 실행 함수 (검색 후 검색어 유지)
 const executeSearch = () => {
     const trimmedQuery = searchQuery.value.trim()
     router.push({ path: '/lecture', query: { q: trimmedQuery } })
-    searchQuery.value = ''
 }
 
 // 알림 존재 여부 확인 후 아이콘 변경

@@ -144,16 +144,16 @@ const displayedTags = computed(() => {
     return searchQuery.value || selectedCategory.value ? presetTags.value : allTags
 })
 
-// 태그 선택/해제 후 API 호출
-function toggleTag(tag) {
-    if (isTagSelected(tag)) {
-        selectedTags.value = selectedTags.value.filter((t) => t !== tag)
-    } else {
-        selectedTags.value.push(tag)
-    }
-    page.value = 1
-    fetchLectures(false)
-}
+// // 태그 선택/해제 후 API 호출
+// function toggleTag(tag) {
+//     if (isTagSelected(tag)) {
+//         selectedTags.value = selectedTags.value.filter((t) => t !== tag)
+//     } else {
+//         selectedTags.value.push(tag)
+//     }
+//     page.value = 1
+//     fetchLectures(false)
+// }
 
 // 태그 선택 여부 확인
 function isTagSelected(tag) {
@@ -161,40 +161,40 @@ function isTagSelected(tag) {
 }
 
 // 강의 검색 API 호출
-const fetchLectures = async (updatePresetTags = true) => {
-    try {
-        const params = {
-            category: selectedCategory.value || undefined,
-            tag: selectedTags.value.length > 0 ? selectedTags.value.join(',') : undefined,
-            sort: selectedSort.value, // 정렬 방식 반영
-            query: searchQuery.value || undefined,
-            page: page.value,
-            size: size.value,
-        }
-        const response = await searchLectures(params)
-        totalElements.value = response.data.totalElements
-        totalPages.value = response.data.totalPages
-        lectures.value = response.data.content.map((item, index) => ({
-            id: item.id || index,
-            name: item.name,
-            lecturer: item.lecturer,
-            platform: item.sourceName || '인프런',
-            imageUrl: item.imageUrl,
-            tags: item.tags ? item.tags.split(',').map((tag) => tag.trim()) : [],
-            currentPrice: Number(item.currentPrice),
-            originalPrice: Number(item.originPrice),
-            rating: Number(item.rating),
-            reviewCount: item.reviewCnt,
-            isBookmarked: false,
-        }))
+// const fetchLectures = async (updatePresetTags = true) => {
+//     try {
+//         const params = {
+//             category: selectedCategory.value || undefined,
+//             tag: selectedTags.value.length > 0 ? selectedTags.value.join(',') : undefined,
+//             sort: selectedSort.value, // 정렬 방식 반영
+//             query: searchQuery.value || undefined,
+//             page: page.value,
+//             size: size.value,
+//         }
+//         const response = await searchLectures(params)
+//         totalElements.value = response.data.totalElements
+//         totalPages.value = response.data.totalPages
+//         lectures.value = response.data.content.map((item, index) => ({
+//             id: item.id || index,
+//             name: item.name,
+//             lecturer: item.lecturer,
+//             platform: item.sourceName || '인프런',
+//             imageUrl: item.imageUrl,
+//             tags: item.tags ? item.tags.split(',').map((tag) => tag.trim()) : [],
+//             currentPrice: Number(item.currentPrice),
+//             originalPrice: Number(item.originPrice),
+//             rating: Number(item.rating),
+//             reviewCount: item.reviewCnt,
+//             isBookmarked: false,
+//         }))
 
-        if (updatePresetTags) {
-            presetTags.value = Object.keys(response.data.aggregations.preset_tags || {})
-        }
-    } catch (error) {
-        console.error('강의 검색 API 호출 실패:', error)
-    }
-}
+//         if (updatePresetTags) {
+//             presetTags.value = Object.keys(response.data.aggregations.preset_tags || {})
+//         }
+//     } catch (error) {
+//         console.error('강의 검색 API 호출 실패:', error)
+//     }
+// }
 
 // 정렬 변경 이벤트 핸들러
 const onSortChange = () => {
@@ -244,4 +244,65 @@ const selectSort = (value) => {
     isDropdownOpen.value = false
     fetchLectures() // API 호출
 }
+
+// 태그 선택/해제 후 API 호출
+function toggleTag(tag) {
+    if (isTagSelected(tag)) {
+        selectedTags.value = selectedTags.value.filter((t) => t !== tag)
+    } else {
+        selectedTags.value.push(tag)
+    }
+    page.value = 1
+    fetchLectures(false) // 태그 선택 시 검색어 유지
+}
+
+// 강의 검색 API 호출
+const fetchLectures = async (updatePresetTags = true) => {
+    try {
+        const params = {
+            category: selectedCategory.value || undefined,
+            tag: selectedTags.value.length > 0 ? selectedTags.value.join(',') : undefined,
+            sort: selectedSort.value, // 정렬 방식 반영
+            query: searchQuery.value || undefined, // 검색어 유지
+            page: page.value,
+            size: size.value,
+        }
+        const response = await searchLectures(params)
+        totalElements.value = response.data.totalElements
+        totalPages.value = response.data.totalPages
+        lectures.value = response.data.content.map((item, index) => ({
+            id: item.id || index,
+            name: item.name,
+            lecturer: item.lecturer,
+            platform: item.sourceName || '인프런',
+            imageUrl: item.imageUrl,
+            tags: item.tags ? item.tags.split(',').map((tag) => tag.trim()) : [],
+            currentPrice: Number(item.currentPrice),
+            originalPrice: Number(item.originPrice),
+            rating: Number(item.rating),
+            reviewCount: item.reviewCnt,
+            isBookmarked: false,
+        }))
+
+        if (updatePresetTags) {
+            presetTags.value = Object.keys(response.data.aggregations.preset_tags || {})
+        }
+    } catch (error) {
+        console.error('강의 검색 API 호출 실패:', error)
+    }
+}
+
+// URL 변경 감지 (카테고리 변경 시 검색어 초기화)
+watch(
+    () => [route.query.q, route.query.category, route.query.sort],
+    ([newQ, newCat, newSort]) => {
+        if (newCat !== selectedCategory.value) {
+            searchQuery.value = '' // 카테고리 변경 시 검색어 초기화
+        }
+        selectedCategory.value = newCat || ''
+        selectedSort.value = newSort || 'relevance'
+        page.value = 1
+        fetchLectures(true)
+    }
+)
 </script>
