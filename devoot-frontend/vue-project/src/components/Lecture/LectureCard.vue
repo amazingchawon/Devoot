@@ -21,8 +21,7 @@
         <!-- 강의 정보 -->
         <div class="flex-1 px-4 my-3">
             <!-- 플랫폼 및 강사명 -->
-            <div class="flex items-center justify-between mb-1 text-gray-300 text-caption">
-                <span>{{ lecturer }}</span>
+            <div class="flex items-center justify-between mb-1 text-black text-caption">
                 <!-- sourceUrl이 있을 경우 a 태그로 감싸 클릭 시 이동 (클릭 시 부모 클릭 이벤트 전파 방지) -->
                 <template v-if="sourceUrl">
                     <a
@@ -43,6 +42,7 @@
                         <LinkIcon class="w-3 h-3 ml-1 text-gray-300" />
                     </div>
                 </template>
+                <span class="text-gray-300">{{ lecturer }}</span>
             </div>
 
             <!-- 강의 제목 -->
