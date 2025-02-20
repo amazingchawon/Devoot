@@ -4,7 +4,7 @@
         class="absolute z-50 flex items-center justify-center mt-2 shadow-lg rounded-xl top-full"
         @click="closeModal"
     >
-        <div class="z-50 bg-white rounded-lg w-[300px] h-[400px] p-4" @click.stop>
+        <div class="z-50 bg-white shadow-lg rounded-lg w-[300px] h-[400px] p-4" @click.stop>
             <div class="flex flex-col h-full">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-h2">{{ modalTitle }}</h2>
@@ -16,22 +16,18 @@
                     </button>
                 </div>
 
-                <ul class="flex-1 mt-4 overflow-y-auto">
+                <ul class="flex-1 mt-4 overflow-y-auto no-scrollbar">
                     <li
                         v-for="user in users"
                         :key="user.id"
                         @click="navigateToProfile(user)"
-                        class="flex items-center py-2 space-x-3 border-b cursor-pointer last:border-none hover:bg-gray-100"
+                        class="flex items-center p-2 space-x-3 border-b cursor-pointer last:border-none hover:bg-gray-100"
                     >
                         <img
-                            :src="
-                                user.imageUrl ||
-                                'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png'
-                            "
+                            :src="user.imageUrl || defaultImage"
                             alt="profile"
                             class="object-cover w-10 h-10 rounded-full"
                         />
-
                         <div class="flex flex-col">
                             <p class="text-sm font-medium">{{ user.profileId }}</p>
                             <p class="text-xs text-gray-500">{{ user.nickname }}</p>
@@ -47,6 +43,7 @@
 
 <script setup>
 import { ref, watch, computed, onMounted, onUnmounted } from 'vue'
+import { searchUsers } from '@/helpers/api'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router' // 추가: 라우터 사용
 import { readFollowers, readFollowings } from '@/helpers/follow'

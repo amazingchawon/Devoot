@@ -244,7 +244,7 @@ onUpdated(() => {
 })
 
 watch(
-    () => [userStore.token, userStore.userId], // ✅ 두 값을 동시에 감시
+    () => [userStore.token, userStore.userId, route.params.id], // ✅ 두 값을 동시에 감시
     async ([newToken, newUserId]) => {
         if (newToken && newUserId) {
             // 두 값이 모두 존재할 때만 실행

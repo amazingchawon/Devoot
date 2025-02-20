@@ -4,11 +4,7 @@
             <div class="flex justify-center col-span-12 gap-7 pb-11">
                 <div class="p-3 w-fit h-fit">
                     <img
-                        :src="
-                            ProfileData.imageUrl !== null
-                                ? ProfileData.imageUrl
-                                : 'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png'
-                        "
+                        :src="ProfileData.imageUrl"
                         alt="이미지"
                         class="bg-gray-200 w-[144px] h-[144px] rounded-full border border-gray-200"
                     />
@@ -34,46 +30,44 @@
                                             }}
                                         </p>
                                     </div>
-
-                                    <div
-                                        class="relative flex items-center gap-2 cursor-pointer"
-                                        @click="openFollowerModal"
-                                    >
-                                        <p class="text-gray-400 text-caption">팔로워</p>
-                                        <p class="text-body-bold">
-                                            {{
-                                                ProfileData.followerCnt > 99
-                                                    ? '99+'
-                                                    : ProfileData.followerCnt
-                                            }}
-                                        </p>
+                                    <div class="relative">
+                                        <div class="flex gap-6">
+                                            <div
+                                                class="flex items-center gap-2 cursor-pointer"
+                                                @click="openModal('follower')"
+                                            >
+                                                <p class="text-gray-400 text-caption">팔로워</p>
+                                                <p class="text-body-bold">
+                                                    {{
+                                                        ProfileData.followerCnt > 99
+                                                            ? '99+'
+                                                            : ProfileData.followerCnt
+                                                    }}
+                                                </p>
+                                            </div>
+                                            <div
+                                                class="relative flex items-center gap-2 cursor-pointer"
+                                                @click="openModal('following')"
+                                            >
+                                                <p class="text-gray-400 text-caption">팔로잉</p>
+                                                <p class="cursor-pointer text-body-bold">
+                                                    {{
+                                                        ProfileData.followingCnt > 99
+                                                            ? '99+'
+                                                            : ProfileData.followingCnt
+                                                    }}
+                                                </p>
+                                            </div>
+                                        </div>
                                         <FollowerFollowingModal
-                                            v-if="isFollowerModalOpen"
-                                            type="follower"
+                                            v-if="isModalOpen"
+                                            :type="modalType"
+                                            :users="
+                                                modalType === 'follower' ? followers : followings
+                                            "
                                             :user-id="route.params.id"
-                                            :is-open="isFollowerModalOpen"
-                                            @close="isFollowerModalOpen = false"
-                                        />
-                                    </div>
-
-                                    <div
-                                        class="relative flex items-center gap-2 cursor-pointer"
-                                        @click="openFollowingModal"
-                                    >
-                                        <p class="text-gray-400 text-caption">팔로잉</p>
-                                        <p class="text-body-bold">
-                                            {{
-                                                ProfileData.followingCnt > 99
-                                                    ? '99+'
-                                                    : ProfileData.followingCnt
-                                            }}
-                                        </p>
-                                        <FollowerFollowingModal
-                                            v-if="isFollowingModalOpen"
-                                            type="following"
-                                            :user-id="route.params.id"
-                                            :is-open="isFollowingModalOpen"
-                                            @close="isFollowingModalOpen = false"
+                                            :is-open="isModalOpen"
+                                            @close="isModalOpen = false"
                                         />
                                     </div>
                                 </div>
@@ -208,16 +202,13 @@ defineProps({
 //===============================================
 // 팔로워/팔로잉 모달 관련 API
 //===============================================
+const isModalOpen = ref(false)
+const modalType = ref(null) // 초기값 follower
 
-const isFollowerModalOpen = ref(false)
-const isFollowingModalOpen = ref(false)
-
-const openFollowerModal = () => {
-    isFollowerModalOpen.value = true
-}
-
-const openFollowingModal = () => {
-    isFollowingModalOpen.value = true
+const openModal = (type) => {
+    modalType.value = type
+    isModalOpen.value = true
+    // console.log(modalType.value)
 }
 
 //===============================================
@@ -365,7 +356,6 @@ watch(
     },
     { immediate: true } // 이미 값이 존재할 경우 즉시 실행
 )
-console.log('확인', ProfileData.imageUrl)
 
 // const followers = ref([]) // 팔로워 목록
 </script>
