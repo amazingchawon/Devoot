@@ -9,7 +9,10 @@
         <!-- 강의 썸네일 -->
         <div class="w-full h-[9.5rem] bg-gray-200 rounded-t-[1.25rem]">
             <img
-                :src="imageUrl"
+                :src="
+                    imageUrl ||
+                    'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png'
+                "
                 alt="Lecture Thumbnail"
                 class="w-full h-full object-cover rounded-t-[1.25rem]"
             />

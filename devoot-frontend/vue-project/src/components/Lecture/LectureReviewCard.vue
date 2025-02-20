@@ -12,7 +12,15 @@
                 @click="goToProfile"
             >
                 <!-- 프로필 이미지 -->
-                <img :src="review.imageUrl" alt="프로필 이미지" class="w-10 h-10 rounded-full" />
+                <img
+                    :src="
+                        review.imageUrl ||
+                        'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png'
+                    "
+                    alt="프로필 이미지"
+                    class="w-10 h-10 rounded-full"
+                />
+
                 <div class="flex flex-col min-w-0 gap-1 overflow-hidden">
                     <!-- 프로필 아이디/닉네임 -->
                     <div id="reviewer-name" class="flex flex-row gap-1">

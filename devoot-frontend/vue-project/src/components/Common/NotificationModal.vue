@@ -26,10 +26,15 @@
                     <div class="flex items-center space-x-3">
                         <!-- 프로필 이미지 -->
                         <img
-                            :src="notification.fromUserImageUrl"
+                            :src="
+                                notification.fromUserImageUrl !== null
+                                    ? notification.fromUserImageUrl
+                                    : 'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png'
+                            "
                             alt="User Image"
                             class="w-10 h-10 rounded-full"
                         />
+
                         <!-- 알림 내용 -->
                         <div class="text-body">
                             <p>

@@ -24,10 +24,14 @@
                         class="flex items-center py-2 space-x-3 border-b cursor-pointer last:border-none hover:bg-gray-100"
                     >
                         <img
-                            :src="user.imageUrl || defaultImage"
+                            :src="
+                                user.imageUrl ||
+                                'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png'
+                            "
                             alt="profile"
                             class="object-cover w-10 h-10 rounded-full"
                         />
+
                         <div class="flex flex-col">
                             <p class="text-sm font-medium">{{ user.profileId }}</p>
                             <p class="text-xs text-gray-500">{{ user.nickname }}</p>

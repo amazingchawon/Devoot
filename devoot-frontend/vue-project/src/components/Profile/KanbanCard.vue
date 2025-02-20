@@ -5,7 +5,15 @@
     >
         <!-- Thumbnail Container -->
         <div class="w-[7.5rem] h-full bg-gray-300 flex-shrink-0 relative">
-            <img :src="lecture.lecture.imageUrl" alt="강의 썸네일" class="w-full h-full" />
+            <img
+                :src="
+                    lecture.lecture.imageUrl ||
+                    'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png'
+                "
+                alt="강의 썸네일"
+                class="w-full h-full"
+            />
+
             <Move class="absolute w-6 h-6 text-white top-[33.6px] cursor-grab" />
         </div>
 

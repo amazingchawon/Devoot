@@ -74,12 +74,15 @@ function mapActivity(item) {
         profileId: item.user?.profileId ?? '',
         type: mapType(item),
         userName: item.user?.nickname ?? '알 수 없는 사용자',
-        userImage: item.user?.imageUrl ?? '/src/assets/icons/default-thumbnail.png',
+        userImage:
+            item.user?.imageUrl ??
+            'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png',
         lectureTitle: lectureData?.name || lectureData?.lectureName || '제목 없음',
         lectureId: lectureData?.id?.toString() || '',
         imageUrl: isBookmark
-            ? lectureData?.imageUrl || '/src/assets/icons/default-thumbnail.png'
-            : '/src/assets/icons/default-thumbnail.png',
+            ? lectureData?.imageUrl ||
+              'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png'
+            : 'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png',
         tags:
             isBookmark && lectureData?.tags
                 ? lectureData.tags.split(',').map((tag) => tag.trim())

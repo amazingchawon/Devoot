@@ -6,7 +6,10 @@
                 <!-- 프로필 이미지 -->
                 <div class="overflow-hidden rounded-full w-36 h-36">
                     <img
-                        :src="profileImage"
+                        :src="
+                            profileImage ||
+                            'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png'
+                        "
                         alt="프로필 이미지"
                         class="object-cover w-full h-full border border-gray-200"
                     />
@@ -271,7 +274,6 @@ import {
     checkProfileIdAuthenticated,
 } from '@/helpers/api' // API 함수 가져오기
 
-import defaultProfileImage from '/default_profile_image.png'
 import Delete from '@/assets/icons/delete.svg'
 import router from '@/router'
 
@@ -283,7 +285,9 @@ const watchEnabled = ref(false) // watch 활성화 여부 플래그
 const isEmailStored = ref(false) // 이메일 수정 불가 여부
 
 // 프로필 데이터
-const profileImage = ref(defaultProfileImage)
+const profileImage = ref(
+    'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png'
+)
 const email = ref('')
 const id = ref('')
 const nickname = ref('')
@@ -310,7 +314,9 @@ onMounted(async () => {
             id.value = originalId.value
             nickname.value = data.nickname || ''
             isPublic.value = data.isPublic ?? true
-            profileImage.value = data.imageUrl || defaultProfileImage
+            profileImage.value =
+                data.imageUrl ||
+                'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png'
             selectedTags.value = data.tags ? data.tags.split(',') : []
 
             isEmailStored.value = !!data.email || !!userStore.user.email // DB에서 가져온 이메일이 있으면 true

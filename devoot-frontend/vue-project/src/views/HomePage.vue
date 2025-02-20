@@ -3,10 +3,11 @@
     <div class="space-y-12">
         <!-- 추천 강의 섹션 (로그인한 사용자만 표시) -->
         <section v-if="userStore.isAuthenticated" class="space-y-4">
-            <p class="flex items-center gap-1 text-h1 col-span-full">
-                <LogoIcon class="items-center h-7 w-7 text-primary-500" />
+            <p class="flex items-center text-h1 col-span-full">
+                <DevootPuppy class="items-center w-9 h-9 fill-primary-500" />
                 {{ userStore.userNickname }}님을 위한 추천 강의
             </p>
+
             <div class="flex gap-1.5 w-full">
                 <div
                     v-for="tag in (userStore.userTags || '').split(',')"
@@ -62,6 +63,7 @@ import { useUserStore } from '@/stores/user'
 
 import LectureCardGroup from '@/components/Lecture/LectureCardGroup.vue'
 import LogoIcon from '@/assets/icons/logo.svg'
+import DevootPuppy from '@/assets/icons/devoot_mascotte.svg'
 
 const userStore = useUserStore()
 

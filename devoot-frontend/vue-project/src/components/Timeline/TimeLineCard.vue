@@ -7,10 +7,11 @@
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
           <img
-            :src="userImage"
-            alt="프로필 사진"
-            class="object-cover w-10 h-10 bg-gray-200 rounded-full"
-          />
+  :src="userImage || 'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png'"
+  alt="프로필 사진"
+  class="object-cover w-10 h-10 bg-gray-200 rounded-full"
+/>
+
           <p class="flex items-center gap-1 text-body">
             <span class="text-body-bold">{{ userName }}</span>
             님이 발자국이 추가했습니다
@@ -48,10 +49,11 @@
       <div class="flex items-center justify-between">
         <div class="flex items-center">
           <img
-            :src="userImage"
-            alt="프로필 사진"
-            class="object-cover w-10 h-10 bg-gray-200 rounded-full"
-          />
+  :src="userImage || 'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png'"
+  alt="프로필 사진"
+  class="object-cover w-10 h-10 bg-gray-200 rounded-full"
+/>
+
           <p class="flex items-center ml-3 text-sm text-gray-700 cursor-pointer"
              @click="goToProfile(profileId)">
             <div class="text-body-bold">{{ userName }}</div>

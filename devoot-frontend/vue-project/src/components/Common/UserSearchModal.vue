@@ -30,10 +30,14 @@
                             @click="navigateToProfile(user)"
                         >
                             <img
-                                :src="user.imageUrl || defaultImage"
+                                :src="
+                                    user.imageUrl ||
+                                    'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png'
+                                "
                                 alt="profile"
                                 class="object-cover w-10 h-10 rounded-full"
                             />
+
                             <div class="flex flex-col">
                                 <p class="text-body-bold">{{ user.profileId }}</p>
                                 <p class="text-body">{{ user.nickname }}</p>

@@ -4,7 +4,11 @@
             <div class="flex justify-center col-span-12 gap-7 pb-11">
                 <div class="p-3 w-fit h-fit">
                     <img
-                        :src="ProfileData.imageUrl"
+                        :src="
+                            ProfileData.imageUrl !== null
+                                ? ProfileData.imageUrl
+                                : 'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png'
+                        "
                         alt="이미지"
                         class="bg-gray-200 w-[144px] h-[144px] rounded-full border border-gray-200"
                     />
@@ -345,6 +349,7 @@ watch(
     },
     { immediate: true } // 이미 값이 존재할 경우 즉시 실행
 )
+console.log('확인', ProfileData.imageUrl)
 
 // const followers = ref([]) // 팔로워 목록
 </script>

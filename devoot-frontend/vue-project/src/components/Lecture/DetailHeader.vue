@@ -5,7 +5,14 @@
     >
         <!-- 강의 사진 -->
         <div id="lecture-image" class="w-[50%] min-w-[300px]">
-            <img :src="imageUrl" alt="강의 이미지" class="object-cover h-full" />
+            <img
+                :src="
+                    imageUrl ||
+                    'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png'
+                "
+                alt="강의 이미지"
+                class="object-cover h-full"
+            />
         </div>
 
         <!-- 강의 설명 -->
