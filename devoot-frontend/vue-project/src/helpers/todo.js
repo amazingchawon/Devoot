@@ -77,11 +77,11 @@ const getTodos = async (token, userId, date) => {
 
 // 투두 상태 변경(완료/미완료)
 const updateTodoStatus = async (todoId, token, userId, finishedStatus, nextId) => {
-    console.log('todoId', todoId)
-    console.log('token', token)
-    console.log('userId', userId)
-    console.log('finishedStatus', finishedStatus)
-    console.log('nextId', nextId)
+    // console.log('todoId', todoId)
+    // console.log('token', token)
+    // console.log('userId', userId)
+    // console.log('finishedStatus', finishedStatus)
+    // console.log('nextId', nextId)
 
     return instance.patch(
         `/api/users/${userId}/todos/${todoId}/status`,

@@ -152,7 +152,7 @@ const changeTodoStatus = async (todo) => {
         )
         // console.log('상태업데이트', todo)
         if (updatedFinishedStatus) {
-            alert('발자국을 남겼습니다!')
+            // alert('발자국을 남겼습니다!')
         }
         const response = await getContributions(selectedYear, userStore.token, route.params.id)
         todoStore.updateContributions(response.data)
@@ -229,6 +229,7 @@ const draggedItemIndex = ref(null) // ✅ 현재 드래그 중인 요소의 인�
 
 // 드래그 시작 시 실행되는 함수
 const dragStart = (event, index) => {
+    if (!isMyProfile.value) return
     if (index === undefined) {
         console.warn('⚠ dragStart()에서 index가 undefined입니다.')
         return

@@ -118,6 +118,11 @@ const fullStars = computed(() => Math.floor(props.review.rating))
 const hasHalfStar = computed(() => props.review.rating % 1 !== 0)
 const emptyStars = computed(() => 5 - fullStars.value - (hasHalfStar.value ? 1 : 0))
 
+console.log('리뷰 평점 확인', props.review.rating) // 리뷰 평점 확인
+console.log('꽉 찬 별 개수', fullStars.value) // 꽉 찬 별 개수
+console.log('true이면 반개 별 표시', hasHalfStar.value) // true이면 반개 별 표시
+console.log('빈 별 개수', emptyStars.value) // 빈 별 개수
+
 //==========================
 // 리뷰 삭제 / 수정 / 신고
 //==========================
@@ -132,4 +137,8 @@ const deleteReview = () => {
 }
 </script>
 
-<style></style>
+<style>
+.clip-half {
+    clip-path: inset(0 50% 0 0); /* 상, 우, 하, 좌 */
+}
+</style>

@@ -118,11 +118,11 @@ const toggleBookmark = async (lectureId, bookmarkId) => {
                 try {
                     await removeBookmark(token, profileId, bookmarkId)
                     console.log('✅ 북마크 해제 성공')
-                    alert('북마크가 해제되었습니다.')
+                    // alert('북마크가 해제되었습니다.')
                     emit('updateLectureDatas', lectureId)
                 } catch (error) {
                     console.error('❌ 북마크 해제 중 오류 발생:', error)
-                    alert('북마크 해제에 실패했습니다. 나중에 다시 시도해주세요.')
+                    // alert('북마크 해제에 실패했습니다. 나중에 다시 시도해주세요.')
                 }
             }
             // await removeBookmark(token, profileId, bookmarkId)

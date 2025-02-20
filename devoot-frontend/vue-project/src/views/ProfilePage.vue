@@ -339,11 +339,11 @@ const deleteReview = async (review) => {
         try {
             await deleteLectureReview(userStore.token, review.id)
             console.log('✅ 리뷰 삭제 성공')
-            alert('리뷰가 삭제되었습니다.')
+            // alert('리뷰가 삭제되었습니다.')
             loadUserReviews(userStore.token, userStore.userId)
         } catch (error) {
             console.error('❌ 리뷰 삭제 중 오류 발생:', error)
-            alert('삭제에 실패했습니다. 나중에 다시 시도해주세요.')
+            // alert('삭제에 실패했습니다. 나중에 다시 시도해주세요.')
         }
     }
 }

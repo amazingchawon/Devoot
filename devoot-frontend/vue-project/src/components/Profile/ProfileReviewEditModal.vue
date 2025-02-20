@@ -134,11 +134,11 @@ const getClipPath = (index) => {
 // 저장 및 수정 함수
 const handleReview = async () => {
     if (!text.value.trim()) {
-        alert('댓글을 입력해주세요!')
+        // alert('댓글을 입력해주세요!')
         return
     }
     if (rating.value === 0) {
-        alert('별점을 선택해주세요!')
+        // alert('별점을 선택해주세요!')
         return
     }
 
@@ -152,7 +152,7 @@ const handleReview = async () => {
                 text.value,
                 rating.value
             )
-            alert('리뷰가 수정되었습니다.')
+            // alert('리뷰가 수정되었습니다.')
         } else {
             // 리뷰 작성
             await writeLectureReview(
@@ -161,7 +161,7 @@ const handleReview = async () => {
                 text.value,
                 rating.value
             )
-            alert('리뷰가 등록되었습니다.')
+            // alert('리뷰가 등록되었습니다.')
         }
 
         emit('update-reviews') // ✅ 부모에게 리뷰 목록 갱신 요청
@@ -175,7 +175,7 @@ const handleReview = async () => {
         console.log('모달에 들어갈 텍스트 ', text.value)
         console.log('모달에 들어갈 강의 데이터 ', props.lecture.lectureId)
 
-        alert('리뷰 저장/수정에 실패했습니다.')
+        // alert('리뷰 저장/수정에 실패했습니다.')
     }
 }
 
