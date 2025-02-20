@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="pb-20">
         <!-- 로딩 중 -->
         <div v-if="isLoading" class="relative z-10 space-y-4 animate-pulse">
             <div class="h-12 bg-gray-200 rounded"></div>
@@ -62,7 +62,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watchEffect } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import {
@@ -99,7 +99,7 @@ onMounted(async () => {
 })
 
 // ✅ watchEffect 대신 watch 사용 (로그인 시 다시 실행)
-watchEffect(
+watch(
     () => userStore.token,
     async () => {
         await fetchLectureDetail()
@@ -115,10 +115,12 @@ const fetchLectureDetail = async () => {
             const response = await getLectureDetail(userStore.token, route.params.id)
             lecture.value = response.data.lectureDetail
             await refreshReviews() // 리뷰도 가져오기
+            console.log('강의정보', lecture.value)
         } else {
             const response = await getLectureDetailWithLogout(route.params.id)
             lecture.value = response.data.lectureDetail
             await refreshReviews()
+            console.log('강의정보시래이ㅏㄻ러ㅣㅁㄹ')
         }
     } catch (error) {
         console.error('❌ 강의 정보 불러오기 실패:', error)

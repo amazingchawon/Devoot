@@ -93,7 +93,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { addBookmark, removeBookmark } from '@/helpers/lecture'
 import { useUserStore } from '@/stores/user'
 
@@ -109,24 +109,35 @@ const props = defineProps({
     },
 })
 
-//===========================
-// api 호출로 받아올 변수 : props.lecture를 활용한 computed 값 설정
-//===========================
-const imageUrl = computed(() => props.lecture.imgUrl || null)
-const platformName = computed(() => props.lecture.sourceName || '알 수 없음')
-const lecturer = computed(() => props.lecture.lecturer || '강사 정보 없음')
-const title = computed(() => props.lecture.name || '제목 없음')
-const rating = computed(() => props.lecture.rating?.toFixed(1) || '0.0')
-const tagList = computed(() => (props.lecture.tags ? props.lecture.tags.split(',') : []))
+// ✅ lecture를 반응형 상태로 관리
+const lectureData = ref(props.lecture)
+
+// ✅ props.lecture가 변경될 때 lectureData 업데이트
+watch(
+    () => props.lecture,
+    (newLecture) => {
+        console.log('🔄 lecture 변경 감지, 업데이트 실행')
+        lectureData.value = newLecture
+    },
+    { deep: true, immediate: true } // ✅ lecture 내부 속성까지 감지 + 즉시 실행
+)
 
 //===========================
-// 가격 상태
+// API 호출로 받아올 데이터 : lectureData를 활용한 computed 값 설정
 //===========================
+const imageUrl = computed(() => lectureData.value.imgUrl || null)
+const platformName = computed(() => lectureData.value.sourceName || '알 수 없음')
+const lecturer = computed(() => lectureData.value.lecturer || '강사 정보 없음')
+const title = computed(() => lectureData.value.name || '제목 없음')
+const rating = computed(() => lectureData.value.rating?.toFixed(1) || '0.0')
+const tagList = computed(() => (lectureData.value.tags ? lectureData.value.tags.split(',') : []))
 
+//===========================
+// 가격 관련
+//===========================
 // 가격
-const originalPrice = computed(() => props.lecture.originPrice || 0)
-const currentPrice = computed(() => props.lecture.currentPrice || 0)
-
+const originalPrice = computed(() => lectureData.value.originPrice || 0)
+const currentPrice = computed(() => lectureData.value.currentPrice || 0)
 // 할인 중 여부 (originalPrice와 currentPrice가 다를 때)
 const isDiscounted = computed(
     () => originalPrice.value > 0 && originalPrice.value !== currentPrice.value
@@ -137,6 +148,7 @@ const showOriginalPrice = computed(() => isDiscounted.value)
 
 // 1000 단위 콤마 추가된 가격 문자열을 computed에서 생성
 const formattedOriginalPrice = computed(() => originalPrice.value.toLocaleString())
+
 // 가격 텍스트 (무료 or 할인 가격)
 const formattedCurrentPrice = computed(() => {
     if (originalPrice.value === 0 || currentPrice.value === 0) {
@@ -151,32 +163,36 @@ const formattedCurrentPrice = computed(() => {
 const userStore = useUserStore()
 
 // ✅ 북마크 상태 로컬 관리
-const isBookmarked = ref(props.lecture.isBookmarked || false)
-const bookmarkId = ref(props.lecture.bookmarkId || null) // 북마크 ID 저장
+const isBookmarked = ref(lectureData.value.isBookmarked || false)
+const bookmarkId = ref(lectureData.value.bookmarkId || null)
 
 // ✅ props 값 변경 시 동기화
-onMounted(() => {
-    isBookmarked.value = props.lecture.isBookmarked || false
-    bookmarkId.value = props.lecture.bookmarkId || null
-})
+watch(
+    () => lectureData.value,
+    (newLecture) => {
+        isBookmarked.value = newLecture.isBookmarked || false
+        bookmarkId.value = newLecture.bookmarkId || null
+    },
+    { deep: true, immediate: true }
+)
 
 const toggleBookmark = async () => {
     try {
         if (!isBookmarked.value) {
-            // 북마크 추가 요청
-            const response = await addBookmark(userStore.token, userStore.userId, props.lecture.id)
+            const response = await addBookmark(
+                userStore.token,
+                userStore.userId,
+                lectureData.value.id
+            )
             bookmarkId.value = response.data.id
-
             console.log('✅ 북마크 추가 성공:', bookmarkId.value)
         } else {
-            // 북마크 삭제 요청
             if (bookmarkId.value) {
                 await removeBookmark(userStore.token, userStore.userId, bookmarkId.value)
                 console.log('✅ 북마크 삭제 성공')
                 bookmarkId.value = null
             }
         }
-
         // 북마크 상태 토글
         isBookmarked.value = !isBookmarked.value
     } catch (error) {

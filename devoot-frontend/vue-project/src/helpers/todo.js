@@ -76,21 +76,21 @@ const getTodos = async (token, userId, date) => {
 }
 
 // 투두 상태 변경(완료/미완료)
-const updateTodoStatus = async (todoId, token, userId, finishedStatus, nextId = 0) => {
+const updateTodoStatus = async (todoId, token, userId, finishedStatus, nextId) => {
     console.log('todoId', todoId)
     console.log('token', token)
     console.log('userId', userId)
     console.log('finishedStatus', finishedStatus)
     console.log('nextId', nextId)
 
-    // return instance.patch(
-    //     `/api/users/${userId}/todos/${todoId}/status`,
-    //     {
-    //         finished: finishedStatus, // 상태 변경
-    //         nextId: nextId,
-    //     },
-    //     { headers: { Authorization: `Bearer ${token}` } }
-    // )
+    return instance.patch(
+        `/api/users/${userId}/todos/${todoId}/status`,
+        {
+            finished: finishedStatus, // 상태 변경
+            nextId: nextId,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+    )
 }
 
 // 투두 삭제

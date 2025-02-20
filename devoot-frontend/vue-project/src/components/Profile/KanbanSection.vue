@@ -17,7 +17,7 @@
                         v-for="lecture in lectureDatas.todo"
                         :key="lecture.id"
                         :data-id="lecture.id"
-                        class="flex gap-2 draggable cursor-grab"
+                        class="flex gap-2 draggable"
                     />
                 </div>
             </div>
@@ -39,7 +39,7 @@
                         draggable="true"
                         :lecture="lecture"
                         :data-id="lecture.id"
-                        class="flex gap-2 draggable cursor-grab"
+                        class="flex gap-2 draggable"
                     />
                 </div>
             </div>
@@ -61,7 +61,7 @@
                         draggable="true"
                         :lecture="lecture"
                         :data-id="lecture.id"
-                        class="flex gap-2 draggable cursor-grab"
+                        class="flex gap-2 draggable"
                     />
                 </div>
             </div>
@@ -122,7 +122,7 @@ const changeKanbanStatus = async (el, bookmarkId, afterBookmarkId) => {
             updatedStatus,
             afterBookmarkId
         )
-        alert('강의 상태가 변경되었습니다.')
+
         await todoStore.getInprogressLecture(userStore.token, route.params.id)
 
         // ✅ 상태가 in-progress일 때 강의 목록 다시 조회
@@ -224,7 +224,6 @@ onUpdated(() => {
         })
     })
 })
-console.log(userStore.token)
 
 watch(
     () => [userStore.token, userStore.userId], // ✅ 두 값을 동시에 감시

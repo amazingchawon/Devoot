@@ -18,7 +18,7 @@
                         ]"
                         @click="(submitTodo(token, userId), $emit('close'))"
                     >
-                        강의 추가
+                        할 일 추가
                     </div>
                     <Delete class="w-6 h-6 bg-white cursor-pointer" @click="$emit('close')" />
                 </div>
