@@ -18,6 +18,7 @@
                         :key="lecture.id"
                         :data-id="lecture.id"
                         class="flex gap-2 draggable"
+                        @updateLectureDatas="updateLectureDatas"
                     />
                 </div>
             </div>
@@ -96,6 +97,7 @@ const loadLectureDatas = async () => {
     try {
         const response = await getLectureDatas(userStore.token, route.params.id)
         lectureDatas.value = response.data
+        console.log('북마크강의목록', lectureDatas.value)
     } catch (error) {
         console.error('❌ 칸반섹션 강의 데이터 요청 에러:', error)
     }
@@ -132,6 +134,22 @@ const changeKanbanStatus = async (el, bookmarkId, afterBookmarkId) => {
     } catch (error) {
         console.error('❌ 칸반 섹션 상태 변경 에러:', error)
     }
+}
+
+// 특정 강의 ID에 해당하는 북마크 해제 시, lectureDatas에서 업데이트하는 함수
+const updateLectureDatas = async (lectureId) => {
+    Object.keys(lectureDatas.value).forEach((status) => {
+        lectureDatas.value[status] = lectureDatas.value[status].map((lecture) =>
+            lecture.lecture.id === lectureId
+                ? { ...lecture, lecture: { ...lecture.lecture, isBookmarked: false } }
+                : lecture
+        )
+    })
+
+    console.log('✅ 북마크 해제됨, 강의 데이터 새로 로드')
+
+    // ✅ API에서 최신 데이터 다시 불러오기
+    await loadLectureDatas()
 }
 
 // 드래그앤 드랍

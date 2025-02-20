@@ -179,7 +179,7 @@ const rescheduleTodo = async () => {
         const formattedDate = todoStore.selectedDate.toISOString().split('T')[0]
         const response = await moveUndoneTodos(userStore.token, route.params.id, formattedDate)
 
-        alert('할 일이 성공적으로 내일로 이동되었습니다!')
+        // alert('할 일이 성공적으로 내일로 이동되었습니다!')
         console.log('미완료 투두 이동완료')
         // 새로운 todo 추가
         // ✅ 현재 날짜의 미완료 할 일 제거

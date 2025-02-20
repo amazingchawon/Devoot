@@ -21,7 +21,7 @@
                 @close-modal="gotoLectureDetail(props.review.lectureId)"
             />
 
-            <div id="text-container" class="flex flex-col gap-1">
+            <div id="text-container" class="flex flex-col gap-3">
                 <div class="flex items-center gap-1" @mouseleave="resetHover">
                     <div id="star-container" class="flex flex-row">
                         <div

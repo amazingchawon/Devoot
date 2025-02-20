@@ -245,7 +245,7 @@ const loadProfileDatas = async () => {
     try {
         const response = await getUserDatas(userStore.token, route.params.id)
         ProfileData.value = response.data
-        console.log(ProfileData.value)
+        // console.log(ProfileData.value)
     } catch (error) {
         console.error('❌ 팔로워 정보 에러 발생:', error)
     }
