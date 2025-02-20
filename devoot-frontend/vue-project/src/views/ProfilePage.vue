@@ -34,9 +34,10 @@
                                             }}
                                         </p>
                                     </div>
+
                                     <div
-                                        class="flex items-center gap-2 cursor-pointer"
-                                        @click="openModal('follower')"
+                                        class="relative flex items-center gap-2 cursor-pointer"
+                                        @click="openFollowerModal"
                                     >
                                         <p class="text-gray-400 text-caption">팔로워</p>
                                         <p class="text-body-bold">
@@ -46,28 +47,35 @@
                                                     : ProfileData.followerCnt
                                             }}
                                         </p>
+                                        <FollowerFollowingModal
+                                            v-if="isFollowerModalOpen"
+                                            type="follower"
+                                            :user-id="route.params.id"
+                                            :is-open="isFollowerModalOpen"
+                                            @close="isFollowerModalOpen = false"
+                                        />
                                     </div>
+
                                     <div
-                                        class="flex items-center gap-2 cursor-pointer"
-                                        @click="openModal('following')"
+                                        class="relative flex items-center gap-2 cursor-pointer"
+                                        @click="openFollowingModal"
                                     >
                                         <p class="text-gray-400 text-caption">팔로잉</p>
-                                        <p class="cursor-pointer text-body-bold">
+                                        <p class="text-body-bold">
                                             {{
                                                 ProfileData.followingCnt > 99
                                                     ? '99+'
                                                     : ProfileData.followingCnt
                                             }}
                                         </p>
+                                        <FollowerFollowingModal
+                                            v-if="isFollowingModalOpen"
+                                            type="following"
+                                            :user-id="route.params.id"
+                                            :is-open="isFollowingModalOpen"
+                                            @close="isFollowingModalOpen = false"
+                                        />
                                     </div>
-                                    <FollowerFollowingModal
-                                        v-if="isModalOpen"
-                                        :type="modalType"
-                                        :users="modalType === 'follower' ? followers : followings"
-                                        :user-id="route.params.id"
-                                        :is-open="isModalOpen"
-                                        @close="isModalOpen = false"
-                                    />
                                 </div>
                                 <button
                                     v-if="ProfileData?.followStatus !== null"
@@ -200,13 +208,16 @@ defineProps({
 //===============================================
 // 팔로워/팔로잉 모달 관련 API
 //===============================================
-const isModalOpen = ref(false)
-const modalType = ref(null) // 초기값 follower
 
-const openModal = (type) => {
-    modalType.value = type
-    isModalOpen.value = true
-    // console.log(modalType.value)
+const isFollowerModalOpen = ref(false)
+const isFollowingModalOpen = ref(false)
+
+const openFollowerModal = () => {
+    isFollowerModalOpen.value = true
+}
+
+const openFollowingModal = () => {
+    isFollowingModalOpen.value = true
 }
 
 //===============================================
