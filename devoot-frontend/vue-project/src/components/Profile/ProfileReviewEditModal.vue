@@ -1,62 +1,58 @@
 <template>
     <!-- 오버레이 배경 -->
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-        <div
-            class="relative flex flex-col w-full max-w-lg gap-6 bg-white border border-gray-200 rounded-lg shadow-lg px-9 py-7"
-        >
-            <div id="modal-header" class="flex flex-row">
-                <p class="text-h2">
-                    {{ review ? '댓글 수정하기' : '댓글 작성하기' }}
-                </p>
-                <div class="flex-1"></div>
-                <Delete
-                    class="w-6 h-6 cursor-pointer hover:text-primary-500"
-                    @click="emit('closeModal')"
-                />
-            </div>
-
-            <!-- 강의 카드 -->
-            <ReviewEditModalLectureCard
-                :lecture="lecture"
-                @close-modal="gotoLectureDetail(props.review.lectureId)"
+    <div class="flex flex-col gap-6 border border-gray-200 shadow-lg px-9 py-7">
+        <div id="modal-header" class="flex flex-row">
+            <p class="text-h2">
+                {{ review ? '댓글 수정하기' : '댓글 작성하기' }}
+            </p>
+            <div class="flex-1"></div>
+            <Delete
+                class="w-6 h-6 cursor-pointer hover:text-primary-500"
+                @click="emit('closeModal')"
             />
+        </div>
 
-            <div id="text-container" class="flex flex-col gap-3">
-                <div class="flex items-center gap-1" @mouseleave="resetHover">
-                    <div id="star-container" class="flex flex-row">
-                        <div
-                            v-for="index in 5"
-                            :key="'star-' + index"
-                            class="relative w-6 h-6 cursor-pointer"
-                            @mousemove="setHover(index, $event)"
-                            @click="setRating(index, $event)"
-                        >
-                            <Star class="absolute top-0 left-0 w-full h-full text-gray-200" />
-                            <Star
-                                class="absolute top-0 left-0 w-full h-full text-yellow-300"
-                                :style="{ clipPath: getClipPath(index) }"
-                            />
-                        </div>
+        <!-- 강의 카드 -->
+        <ReviewEditModalLectureCard
+            :lecture="lecture"
+            @close-modal="gotoLectureDetail(props.review.lectureId)"
+        />
+
+        <div id="text-container" class="flex flex-col gap-3">
+            <div class="flex items-center gap-1" @mouseleave="resetHover">
+                <div id="star-container" class="flex flex-row">
+                    <div
+                        v-for="index in 5"
+                        :key="'star-' + index"
+                        class="relative w-6 h-6 cursor-pointer"
+                        @mousemove="setHover(index, $event)"
+                        @click="setRating(index, $event)"
+                    >
+                        <Star class="absolute top-0 left-0 w-full h-full text-gray-200" />
+                        <Star
+                            class="absolute top-0 left-0 w-full h-full text-yellow-300"
+                            :style="{ clipPath: getClipPath(index) }"
+                        />
                     </div>
-                    <p class="text-black text-body">{{ rating }}점</p>
                 </div>
-                <div class="flex flex-col gap-[2px]">
-                    <textarea
-                        v-model="text"
-                        class="w-full px-4 py-2 overflow-y-auto bg-gray-100 border border-gray-200 rounded-lg resize-none text-body h-52 focus:border-2 focus:border-primary-500 focus:outline-none"
-                        placeholder="댓글을 입력하세요"
-                    ></textarea>
-                    <p class="flex justify-start text-gray-400 text-caption">
-                        *최대 500자까지 입력 가능합니다.
-                    </p>
-                </div>
+                <p class="text-black text-body">{{ rating }}점</p>
             </div>
-            <!-- 저장 버튼 -->
-            <div class="flex justify-end">
-                <button class="button-primary" @click="handleReview">
-                    {{ review ? '수정하기' : '저장하기' }}
-                </button>
+            <div class="flex flex-col gap-[2px]">
+                <textarea
+                    v-model="text"
+                    class="w-full px-4 py-2 overflow-y-auto bg-gray-100 border border-gray-200 rounded-lg resize-none text-body h-52 focus:border-2 focus:border-primary-500 focus:outline-none"
+                    placeholder="댓글을 입력하세요"
+                ></textarea>
+                <p class="flex justify-start text-gray-400 text-caption">
+                    *최대 500자까지 입력 가능합니다.
+                </p>
             </div>
+        </div>
+        <!-- 저장 버튼 -->
+        <div class="flex justify-end">
+            <button class="button-primary" @click="handleReview">
+                {{ review ? '수정하기' : '저장하기' }}
+            </button>
         </div>
     </div>
 </template>

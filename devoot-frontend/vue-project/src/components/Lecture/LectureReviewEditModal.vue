@@ -1,5 +1,5 @@
 <template>
-    <div class="relative flex flex-col gap-6 border border-gray-200 shadow-lg px-9 py-7">
+    <div class="flex flex-col gap-6 border border-gray-200 shadow-lg px-9 py-7">
         <div id="modal-header" class="flex flex-row">
             <p class="text-h2">
                 {{ selfReview ? '댓글 수정하기' : '댓글 작성하기' }}

@@ -18,7 +18,8 @@
                     @click="todoStore.navigateDay(-1)"
                 />
                 <span class="text-h3"
-                    >{{ todoStore.selectedDate.getMonth() + 1 }}월
+                    >{{ todoStore.selectedDate.getFullYear() }}년
+                    {{ todoStore.selectedDate.getMonth() + 1 }}월
                     {{ todoStore.selectedDate.getDate() }}일</span
                 >
                 <NavigateRight
@@ -326,7 +327,7 @@ const dragEnd = async (event) => {
 
 /* ✅ 드래그 가능한 요소에 마우스를 올릴 때 */
 .draggable:hover {
-    transform: scale(1.02);
+    transform: scale(1.01);
     transition: transform 0.15s ease-in-out;
 }
 

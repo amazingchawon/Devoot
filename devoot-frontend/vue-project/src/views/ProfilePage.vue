@@ -65,7 +65,7 @@
                                         :type="modalType"
                                         :users="modalType === 'follower' ? followers : followings"
                                         :user-id="route.params.id"
-                                        :isOpen="isModalOpen"
+                                        :is-open="isModalOpen"
                                         @close="isModalOpen = false"
                                     />
                                 </div>
@@ -143,7 +143,7 @@
                 <KanbanSection
                     v-if="userToken && userData && selectedTab === 'left'"
                     :user-id="route.params.id"
-                    @closeModal="handleCloseModal"
+                    @close-modal="handleCloseModal"
                 />
                 <ProfileReviewSection
                     v-if="userToken && userData && selectedTab === 'right'"
@@ -152,13 +152,18 @@
                     @edit-review="openReviewModal"
                     @delete-review="deleteReview"
                 />
-                <ProfileReviewEditModal
+                <div
                     v-if="isReviewModalOpen"
-                    :review="reviewForEdit"
-                    @close-modal="handleCloseModal"
-                    @close="isReviewModalOpen = false"
-                    @update-reviews="loadUserReviews(userStore.token, userStore.userId)"
-                />
+                    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+                    @click.self="handleCloseModal"
+                >
+                    <ProfileReviewEditModal
+                        class="w-full max-w-2xl p-6 bg-white shadow-lg rounded-2xl"
+                        :review="reviewForEdit"
+                        @close-modal="isReviewModalOpen = false"
+                        @update-reviews="loadUserReviews(userStore.token, userStore.userId)"
+                    />
+                </div>
             </div>
         </div>
     </div>

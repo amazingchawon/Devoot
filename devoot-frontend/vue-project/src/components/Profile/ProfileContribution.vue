@@ -116,14 +116,11 @@ const todoStore = useTodoStore()
 // const contributions = computed(() => todoStore.contributions);
 
 // 0. 상태 변수 정의
-const year = ref(null) // 현재 연도를 저장하는 반응형 변수
+const year = computed(() => todoStore.year) // ✅ store에서 year 사용
 
 // 년도 조절 함수
 const navigateYear = (offset) => {
-    const newYear = year.value + offset
-    if (newYear !== year.value) {
-        year.value = newYear
-    }
+    todoStore.navigateYear(offset) // ✅ 연도 변경 시 store에서 관리
 }
 
 // 1. 데이터와 상태를 정의

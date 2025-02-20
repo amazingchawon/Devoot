@@ -28,6 +28,7 @@ const userStore = useUserStore() // Pinia 스토어 가져오기
 
 export const useTodoStore = defineStore('todo', () => {
     const todos = ref([]) // 할 일 목록
+    const year = ref(new Date().getFullYear()) // ✅ 연도 상태 추가 (현재 연도로 기본 설정)
     const inprogressLectures = ref([])
     const selectedDate = ref(new Date()) // 기본 날짜를 오늘 날짜로 설정
 
@@ -59,7 +60,18 @@ export const useTodoStore = defineStore('todo', () => {
         }
     }
 
-    // 날짜 이동
+    // 년도 이동(잔디)
+    const navigateYear = (offset) => {
+        const newYear = year.value + offset // ✅ 연도 이동 처리
+        year.value = newYear
+
+        // ✅ 선택된 날짜도 연도에 맞춰 변경
+        const newDate = new Date(selectedDate.value)
+        newDate.setFullYear(newYear)
+        selectedDate.value = newDate
+    }
+
+    // 날짜 이동(투두)
     const navigateDay = (day) => {
         const newDate = new Date(selectedDate.value)
         newDate.setDate(newDate.getDate() + day)
@@ -77,6 +89,13 @@ export const useTodoStore = defineStore('todo', () => {
     const contributions = ref([])
 
     const updateContributions = (data) => {
+        if (data.length > 0) {
+            const latestYear = new Date(data[0].date).getFullYear()
+            if (year.value !== latestYear) {
+                console.log(`✅ 잔디 데이터 변경됨, 연도 업데이트: ${latestYear}`)
+                year.value = latestYear // ✅ 최신 연도로 반응형 업데이트
+            }
+        }
         const updatedData = data.map((item) => ({
             ...item,
             level: getLevel(item.cnt), // ✅ level 추가
@@ -99,11 +118,13 @@ export const useTodoStore = defineStore('todo', () => {
 
     return {
         todos,
+        year,
         getInprogressLecture,
         inprogressLectures,
         addTodo,
-        selectedDate,
         navigateDay,
+        selectedDate,
+        navigateYear,
         updateSelectedDate,
         contributions,
         updateContributions,

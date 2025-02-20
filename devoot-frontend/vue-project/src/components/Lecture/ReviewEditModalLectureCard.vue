@@ -22,7 +22,7 @@
             <div class="flex flex-col justify-center w-full h-full" @click="closeModal">
                 <p class="text-gray-400 text-caption-sm">{{ lecture.sourceName }}</p>
                 <p
-                    class="w-full min-w-0 overflow-hidden text-black cursor-default max-w-72 text-ellipsis whitespace-nowrap"
+                    class="w-full max-w-md min-w-0 overflow-hidden text-black cursor-default text-ellipsis whitespace-nowrap"
                     :title="lecture.name"
                 >
                     {{ lecture.name }}
