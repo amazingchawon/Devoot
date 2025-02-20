@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col gap-4">
-        <h1 class="content-center h-20 text-h2">대시보드</h1>
+        <div class="content-center h-20 text-h3">대시보드</div>
 
         <div
             id="admin-user-list"

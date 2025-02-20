@@ -1,115 +1,125 @@
 <template>
-    <div class="flex flex-col gap-5 p-10" v-if="lectureData">
-        <p class="text-5xl font-bold">강의 수정</p>
-        <div class="flex flex-col justify-center gap-3">
-            <div class="flex items-center justify-between">
-                <div class="flex flex-col items-center justify-center">
-                    <p class="text-2xl font-bold">강의 정보</p>
-                </div>
-                <div class="flex gap-2">
-                    <button
-                        class="px-3 py-1 bg-red-500 rounded cursor-pointer w-fit h-fit"
-                        @click="removeEditRequest"
-                    >
-                        삭제
-                    </button>
-                    <button class="px-3 py-1 bg-blue-500 rounded" @click="updateLecture">
-                        수정
-                    </button>
-                </div>
-            </div>
-            <div class="w-full border-t border-gray-300"></div>
+    <div class="flex flex-col gap-4">
+        <div class="content-center h-20 text-h3">강의 수정</div>
+
+        <div class="flex flex-col gap-4 p-6 bg-white border-gray-200 rounded-2xl">
+            <div class="text-h3">강의 정보 입력</div>
 
             <!-- 입력 폼 -->
-            <div class="flex flex-col gap-2">
+            <div class="grid grid-cols-1 gap-4">
                 <div class="flex flex-col gap-1">
-                    <p>카테고리</p>
+                    <label class="text-gray-600 text-body">카테고리</label>
                     <input
                         v-model="category"
                         type="text"
-                        class="w-full px-6 py-4 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200 placeholder:text-body placeholder:text-gray-300"
+                        class="w-full px-6 py-3 placeholder-gray-300 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200"
+                        placeholder="카테고리를 입력하세요."
                     />
                 </div>
                 <div class="flex flex-col gap-1">
-                    <p>제목</p>
+                    <label class="text-gray-600 text-body">제목</label>
                     <input
                         v-model="lectureTitle"
                         type="text"
-                        class="w-full px-6 py-4 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200 placeholder:text-body placeholder:text-gray-300"
+                        class="w-full px-6 py-3 placeholder-gray-300 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200"
+                        placeholder="강의 제목을 입력하세요."
                     />
                 </div>
                 <div class="flex flex-col gap-1">
-                    <p>강의자</p>
+                    <label class="text-gray-600 text-body">강의자</label>
                     <input
                         v-model="lecturerName"
                         type="text"
-                        class="w-full px-6 py-4 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200 placeholder:text-body placeholder:text-gray-300"
+                        class="w-full px-6 py-3 placeholder-gray-300 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200"
+                        placeholder="강의자를 입력하세요."
                     />
                 </div>
                 <div class="flex flex-col gap-1">
-                    <p>이미지 링크</p>
+                    <label class="text-gray-600 text-body">이미지 링크</label>
                     <input
                         v-model="imageUrl"
                         type="text"
-                        class="w-full px-6 py-4 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200 placeholder:text-body placeholder:text-gray-300"
+                        class="w-full px-6 py-3 placeholder-gray-300 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200"
+                        placeholder="이미지 링크를 입력하세요."
                     />
                 </div>
                 <div class="flex flex-col gap-1">
-                    <p>강의 링크</p>
+                    <label class="text-gray-600 text-body">강의 링크</label>
                     <input
                         v-model="lectureUrl"
                         type="text"
-                        class="w-full px-6 py-4 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200 placeholder:text-body placeholder:text-gray-300"
+                        class="w-full px-6 py-3 placeholder-gray-300 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200"
+                        placeholder="강의 링크를 입력하세요."
                     />
                 </div>
-                <div class="flex flex-col gap-1">
-                    <p>정가</p>
-                    <input
-                        v-model="originalPrice"
-                        type="text"
-                        class="w-full px-6 py-4 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200 placeholder:text-body placeholder:text-gray-300"
-                    />
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-gray-600 text-body">정가</label>
+                        <input
+                            v-model="originalPrice"
+                            type="text"
+                            class="w-full px-6 py-3 placeholder-gray-300 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200"
+                            placeholder="정가를 입력하세요."
+                        />
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-gray-600 text-body">할인가</label>
+                        <input
+                            v-model="discountPrice"
+                            type="text"
+                            class="w-full px-6 py-3 placeholder-gray-300 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200"
+                            placeholder="할인가를 입력하세요."
+                        />
+                    </div>
                 </div>
                 <div class="flex flex-col gap-1">
-                    <p>할인가</p>
-                    <input
-                        v-model="discountPrice"
-                        type="text"
-                        class="w-full px-6 py-4 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200 placeholder:text-body placeholder:text-gray-300"
-                    />
-                </div>
-
-                <div class="flex flex-col gap-1">
-                    <p>도메인 이름</p>
+                    <label class="text-gray-600 text-body">도메인 이름</label>
                     <input
                         v-model="domainName"
                         type="text"
-                        class="w-full px-6 py-4 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200 placeholder:text-body placeholder:text-gray-300"
+                        class="w-full px-6 py-3 placeholder-gray-300 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200"
+                        placeholder="도메인 이름을 입력하세요."
                     />
                 </div>
                 <div class="flex flex-col gap-1">
-                    <p>태그</p>
+                    <label class="text-gray-600 text-body">태그</label>
                     <input
                         v-model="tags"
                         type="text"
-                        class="w-full px-6 py-4 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200 placeholder:text-body placeholder:text-gray-300"
+                        class="w-full px-6 py-3 placeholder-gray-300 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200"
+                        placeholder="태그를 입력하세요."
                     />
                 </div>
                 <div class="flex flex-col gap-1">
-                    <p>커리큘럼</p>
-                    <input
+                    <label class="text-gray-600 text-body">커리큘럼</label>
+                    <textarea
                         v-model="curriculumString"
-                        type="text"
-                        class="w-full px-6 py-4 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200 placeholder:text-body placeholder:text-gray-300"
+                        class="w-full px-6 py-3 placeholder-gray-300 bg-white border border-gray-200 rounded-lg h-fit focus:outline-primary-200"
+                        placeholder='{"1": {"majorTitle": "섹션 1", "subLectures": [{"title": "강의 제목", "time": "00:00"}]}}'
+                        rows="6"
                     />
                 </div>
+            </div>
+
+            <div class="flex justify-end gap-2">
+                <button
+                    class="inline-flex items-center justify-center px-3 py-1 text-white bg-red-500 rounded cursor-pointer w-fit h-fit"
+                    @click="removeEditRequest"
+                >
+                    삭제
+                </button>
+                <button
+                    class="inline-flex items-center justify-center px-3 py-1 text-white rounded bg-primary-500 text-body"
+                    @click="updateLecture"
+                >
+                    수정
+                </button>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-console.log('잘 왔음')
 import { ref, onMounted, watchEffect } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useRoute } from 'vue-router'
