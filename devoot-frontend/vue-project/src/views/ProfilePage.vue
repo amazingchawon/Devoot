@@ -337,10 +337,10 @@ const deleteReview = async (review) => {
 }
 
 watch(
-    () => [userStore.token, userStore.userId], // ✅ 두 값을 동시에 감시
-    async ([newToken, newUserId]) => {
+    () => [userStore.token, userStore.userId, route.params.id], // ✅ 두 값을 동시에 감시
+    async ([newToken, newUserId, newProfileId]) => {
         if (newToken && newUserId) {
-            await loadUserReviews(newToken, newUserId)
+            await loadUserReviews(newToken, newProfileId)
         }
     },
     { immediate: true } // 이미 값이 존재할 경우 즉시 실행

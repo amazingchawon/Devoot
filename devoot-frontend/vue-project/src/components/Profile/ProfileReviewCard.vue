@@ -2,10 +2,12 @@
     <div class="flex flex-col w-full gap-3 p-6 border border-gray-200 rounded-2xl">
         <div class="flex justify-between">
             <div class="flex gap-[5px]">
-                <p class="flex items-center text-gray-300 text-caption">구름</p>
+                <p class="flex items-center text-gray-300 text-caption">{{ review.sourceName }}</p>
                 <span class="mx-1 text-gray-300">·</span>
 
-                <p class="flex items-center text-gray-300 text-caption">소프트웨어강의</p>
+                <p class="flex items-center text-gray-300 text-caption">
+                    <a :href="review.sourceUrl">{{ review.reviewName }}</a>
+                </p>
             </div>
             <div class="flex gap-2">
                 <!-- 본인 리뷰인 경우 : 수정하기 -->

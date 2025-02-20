@@ -40,12 +40,16 @@
                     </div>
                     <p class="text-black text-body">{{ rating }}점</p>
                 </div>
-
-                <textarea
-                    v-model="text"
-                    class="w-full px-4 py-2 mt-4 overflow-y-auto bg-gray-100 border border-gray-200 rounded-lg resize-none text-body h-52 focus:border-2 focus:border-primary-500 focus:outline-none"
-                    placeholder="댓글을 입력하세요"
-                ></textarea>
+                <div class="flex flex-col gap-[2px]">
+                    <textarea
+                        v-model="text"
+                        class="w-full px-4 py-2 overflow-y-auto bg-gray-100 border border-gray-200 rounded-lg resize-none text-body h-52 focus:border-2 focus:border-primary-500 focus:outline-none"
+                        placeholder="댓글을 입력하세요"
+                    ></textarea>
+                    <p class="flex justify-start text-gray-400 text-caption">
+                        *최대 500자까지 입력 가능합니다.
+                    </p>
+                </div>
             </div>
             <!-- 저장 버튼 -->
             <div class="flex justify-end">
