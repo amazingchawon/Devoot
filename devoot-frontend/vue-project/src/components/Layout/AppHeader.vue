@@ -179,6 +179,7 @@ const updateHasUnread = async () => {
 
 // 알림 모달 열기
 const openNotificationModal = () => {
+    hasNotifications.value = false
     isNotificationModalOpen.value = true
 }
 
