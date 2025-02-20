@@ -21,7 +21,7 @@ instance.interceptors.response.use(
 const fetchTimelineList = async (token) => {
     return instance.get('/api/timeline', {
         headers: { Authorization: `Bearer ${token}` },
-        params: { page: 1, size: 500 }, // ✅ 기본 페이지 설정 추가
+        params: { page: 1, size: 10 }, // ✅ 기본 페이지 설정 추가
     })
 }
 

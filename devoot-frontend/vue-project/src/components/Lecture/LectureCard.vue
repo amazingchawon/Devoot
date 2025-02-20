@@ -90,7 +90,8 @@
                 <span
                     v-for="(tag, index) in limitedTags"
                     :key="index"
-                    class="truncate tag-gray flex items-center justify-start h-[22px]"
+                    class="overflow-hidden cursor-pointer tag-gray text-ellipsis whitespace-nowrap"
+                    :title="tag"
                 >
                     #{{ tag }}
                 </span>

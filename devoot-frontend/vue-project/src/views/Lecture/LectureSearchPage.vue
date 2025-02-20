@@ -37,20 +37,23 @@
         <div class="flex justify-end">
             <div class="relative">
                 <!-- 정렬 버튼 -->
-                <button @click="toggleDropdown" class="w-32 px-3 py-2 bg-white border rounded-lg">
+                <button
+                    @click="toggleDropdown"
+                    class="w-20 px-2 py-1 bg-white border rounded-md text-caption"
+                >
                     {{ sortOptions.find((opt) => opt.value === selectedSort)?.label }}
                 </button>
 
                 <!-- 드롭다운 목록 -->
                 <ul
                     v-if="isDropdownOpen"
-                    class="absolute right-0 z-10 w-32 mt-1 overflow-hidden bg-white border rounded-lg top-full"
+                    class="absolute right-0 z-10 w-20 mt-1 overflow-hidden bg-white border rounded-md top-full"
                 >
                     <li
                         v-for="option in sortOptions"
                         :key="option.value"
                         @click="selectSort(option.value)"
-                        class="p-3 text-center cursor-pointer hover:bg-gray-100"
+                        class="px-2 py-1 text-center cursor-pointer text-caption hover:bg-gray-100"
                     >
                         {{ option.label }}
                     </li>
@@ -93,7 +96,7 @@ const router = useRouter()
 
 const searchQuery = ref(route.query.q || '')
 const selectedCategory = ref(route.query.category || '')
-const selectedSort = ref(route.query.sort || 'popular') // 기본값을 popular로 설정
+const selectedSort = ref(route.query.sort || 'relevance') // 기본값을 popular로 설정
 
 const lectures = ref([])
 const page = ref(1)

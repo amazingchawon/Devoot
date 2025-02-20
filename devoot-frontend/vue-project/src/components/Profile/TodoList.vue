@@ -4,7 +4,7 @@
             <p class="text-h3">할 일 목록</p>
             <button
                 v-if="followStatus === null"
-                class="flex gap-1 p-1 button-primary"
+                class="flex gap-1 p-1 pr-2 button-primary"
                 @click="$emit('open-add-modal')"
             >
                 <Plus class="w-[1.125rem] h-[1.125rem]" />
@@ -28,7 +28,7 @@
             </div>
             <button
                 v-if="followStatus === null"
-                class="flex gap-1 p-1 button-line"
+                class="flex gap-1 p-1 pr-2 button-line"
                 @click="rescheduleTodo(selectedDate, token, userId)"
             >
                 <Arrow class="w-[1.125rem] h-[1.125rem]" />
@@ -37,40 +37,46 @@
         </div>
 
         <!-- 강의카드 -->
-        <div
-            v-for="(todo, index) in todos"
-            :key="todo.id"
-            class="flex items-center draggable w-full h-[4.25rem] rounded-lg border border-gray-200 px-1 cursor-default"
-            draggable="true"
-            @dragstart="(event) => dragStart(event, index)"
-            @dragover.prevent
-            @dragend="dragEnd"
-            @drop="drop(index)"
-        >
-            <div>
-                <Move class="w-6 h-6 text-gray-300 cursor-grab" />
-            </div>
-            <div class="flex items-center gap-3 w-full h-full py-2.5 pr-4 border-r border-gray-200">
-                <div
-                    v-if="isMyProfile"
-                    class="flex items-center justify-center w-5 h-5 border border-gray-200 rounded cursor-pointer"
-                    :class="todo.finished ? 'bg-primary-500 ' : 'bg-white'"
-                    @click="changeTodoStatus(todo)"
-                >
-                    <Check v-if="todo.finished" class="w-[1.125rem] h-[1.125rem] text-white" />
+        <div class="flex flex-col w-full gap-2">
+            <div
+                v-for="(todo, index) in todos"
+                :key="todo.id"
+                class="flex items-center draggable w-full h-[4.25rem] rounded-lg border border-gray-200 px-1 cursor-default"
+                draggable="true"
+                @dragstart="(event) => dragStart(event, index)"
+                @dragover.prevent
+                @dragend="dragEnd"
+                @drop="drop(index)"
+            >
+                <div>
+                    <Move class="w-6 h-6 text-gray-300 cursor-grab" />
                 </div>
-                <p class="text-body">{{ todo.lectureName }}</p>
-                <a :href="todo.sourceUrl" class="text-gray-300 text-caption-sm whitespace-nowrap"
-                    >강의 상세로 이동</a
+                <div
+                    class="flex items-center gap-3 w-full h-full py-2.5 pr-4 border-r border-gray-200"
                 >
-            </div>
-            <div class="flex items-center justify-between w-full px-4">
-                <p class="text-body">{{ todo.subLectureName }}</p>
-                <Delete
-                    v-if="isMyProfile"
-                    class="w-6 h-6 cursor-pointer"
-                    @click="removeTodo(todo)"
-                />
+                    <div
+                        v-if="isMyProfile"
+                        class="flex items-center justify-center w-5 h-5 border border-gray-200 rounded cursor-pointer"
+                        :class="todo.finished ? 'bg-primary-500 ' : 'bg-white'"
+                        @click="changeTodoStatus(todo)"
+                    >
+                        <Check v-if="todo.finished" class="w-[1.125rem] h-[1.125rem] text-white" />
+                    </div>
+                    <p class="text-body">{{ todo.lectureName }}</p>
+                    <a
+                        :href="todo.sourceUrl"
+                        class="text-gray-300 text-caption-sm whitespace-nowrap"
+                        >강의 상세로 이동</a
+                    >
+                </div>
+                <div class="flex items-center justify-between w-full px-4">
+                    <p class="text-body">{{ todo.subLectureName }}</p>
+                    <Delete
+                        v-if="isMyProfile"
+                        class="w-6 h-6 cursor-pointer"
+                        @click="removeTodo(todo)"
+                    />
+                </div>
             </div>
         </div>
     </div>
@@ -294,9 +300,7 @@ const dragEnd = async (event) => {
         )
 
         console.log('✅ Todo ', draggedItem.id, '위치 변경 완료. 새로운 nextId:', nextId)
-        setTimeout(() => {
-            alert('위치 옮기기 성공')
-        }, 200) // 스타일이 제거될 시간을 충분히 확보 (200ms 정도)
+        setTimeout(() => {}, 200) // 스타일이 제거될 시간을 충분히 확보 (200ms 정도)
     } catch (error) {
         console.error('❌ Todo 순서 변경 실패:', error)
     }

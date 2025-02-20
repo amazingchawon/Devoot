@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="pb-20">
         <!-- 로딩 중 -->
         <div v-if="isLoading" class="relative z-10 space-y-4 animate-pulse">
             <div class="h-12 bg-gray-200 rounded"></div>

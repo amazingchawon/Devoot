@@ -14,7 +14,7 @@ export default defineConfig({
     define: {
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
         '__BACKEND_URL__': JSON.stringify(
-            process.env.NODE_ENV === 'production' ? 'http://i12a209.p.ssafy.io' : 'http://localhost:8080'
+            process.env.NODE_ENV === 'production' ? 'http://i12a209.p.ssafy.io:8100' : 'http://localhost:8080'
         ),
     },
     plugins: [vue(), vueDevTools(), tailwindcss(), svgLoader()],

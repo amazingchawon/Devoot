@@ -1,5 +1,5 @@
 <template>
-    <div v-if="userStore.user">
+    <div v-if="userStore.user" class="pb-20">
         <div v-if="ProfileData" class="flex relative flex-col gap-y-8 min-w-[1150px]">
             <div class="flex justify-center col-span-12 gap-7 pb-11">
                 <div class="p-3 w-fit h-fit">
@@ -105,7 +105,7 @@
                         <div
                             v-for="tag in (ProfileData?.tags || '').split(',')"
                             :key="tag"
-                            class="inline-flex gap-1 text-caption-sm tag-gray"
+                            class="inline-flex gap-1 text-blue-500 text-caption tag-gray"
                         >
                             <p>#</p>
                             <p
@@ -246,6 +246,8 @@ const loadProfileDatas = async () => {
         const response = await getUserDatas(userStore.token, route.params.id)
         ProfileData.value = response.data
         console.log(ProfileData.value)
+
+        console.log(userStore.token)
     } catch (error) {
         console.error('❌ 팔로워 정보 에러 발생:', error)
     }
@@ -260,12 +262,6 @@ watchEffect(() => {
             isMyProfile.value ||
             ProfileData.value.isPublic ||
             (!ProfileData.value.isPublic && ProfileData.value.followStatus === 'FOLLOWING')
-
-        // console.log('📌 프로필 보이는 상태:', isProfileVisible.value)
-        // console.log('내프로필인가?', isMyProfile.value)
-        // console.log('공개계정인가??', ProfileData.value.isPublic)
-        // console.log('팔로잉관계가 뭐임??', ProfileData.value.followStatus)
-        // console.log('볼 수 있나?', isProfileVisible.value)
     }
 })
 
@@ -343,10 +339,10 @@ const deleteReview = async (review) => {
 }
 
 watch(
-    () => [userStore.token, userStore.userId], // ✅ 두 값을 동시에 감시
-    async ([newToken, newUserId]) => {
+    () => [userStore.token, userStore.userId, route.params.id], // ✅ 두 값을 동시에 감시
+    async ([newToken, newUserId, newProfileId]) => {
         if (newToken && newUserId) {
-            await loadUserReviews(newToken, newUserId)
+            await loadUserReviews(newToken, newProfileId)
         }
     },
     { immediate: true } // 이미 값이 존재할 경우 즉시 실행
@@ -355,5 +351,4 @@ watch(
 // const followers = ref([]) // 팔로워 목록
 </script>
 
-<style scoped></style>
 <style scoped></style>
