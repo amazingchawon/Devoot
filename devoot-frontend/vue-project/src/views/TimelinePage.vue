@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col gap-4 overflow-y-auto max-height-80vh" ref="timelineContainer">
+    <div class="flex flex-col gap-4 timeline-container" ref="timelineContainer">
         <TimeLineCard
             v-for="(activity, index) in activities"
             :key="index"
@@ -21,15 +21,20 @@
             :bookmarkId="activity.bookmarkId"
             :subLectureName="activity.subLectureName"
         />
-        <div v-if="loading" class="py-4 text-center">Loading...</div>
+
+        <div v-if="loading" class="flex items-center py-4 text-center text-h3">
+            Loading...
+            <LogoIcon class="w-4 h-4 text-primary-500" />
+        </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watchEffect, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { fetchTimelineList } from '@/helpers/timeline'
 import TimeLineCard from '@/components/Timeline/TimeLineCard.vue'
+import LogoIcon from '@/assets/icons/logo.svg'
 
 const activities = ref([])
 const userStore = useUserStore()
@@ -91,29 +96,23 @@ function mapActivity(item) {
     }
 }
 
-async function loadDataFromAPI() {
-    const token = userStore.token
-    try {
-        const response = await fetchTimelineList(token)
-        console.log('API 데이터 응답:', response.data)
-        activities.value = response.data.content.map(mapActivity)
-    } catch (error) {
-        console.error('API 데이터 로드 실패:', error)
-    }
-}
-
 async function loadMoreData() {
     if (!hasMore.value || loading.value) return
 
     loading.value = true
     const token = userStore.token
+    const requestUrl = `/api/timeline?page=${page.value}&size=10`
+    console.log(`📡 요청 URL: ${requestUrl}`)
     try {
+        // 현재 페이지 번호(page.value)를 인자로 전달
         const response = await fetchTimelineList(token, page.value)
         if (response.data.content.length > 0) {
             activities.value.push(...response.data.content.map(mapActivity))
             page.value++
+            console.log(`페이지 ${page.value - 1} 데이터 로드 완료`)
         } else {
             hasMore.value = false
+            console.log('추가 데이터 없음')
         }
     } catch (error) {
         console.error('API 데이터 로드 실패:', error)
@@ -125,7 +124,9 @@ async function loadMoreData() {
 function handleScroll() {
     if (!timelineContainer.value) return
     const { scrollTop, scrollHeight, clientHeight } = timelineContainer.value
+    console.log('스크롤 이벤트 발생:', { scrollTop, clientHeight, scrollHeight })
     if (scrollTop + clientHeight >= scrollHeight - 10) {
+        console.log('바닥에 도달함 - loadMoreData 호출')
         loadMoreData()
     }
 }
@@ -134,10 +135,12 @@ onMounted(async () => {
     await userStore.fetchUser()
     console.log('유저 정보 fetch 완료')
     if (USE_DUMMY_DATA) {
-        loadDataFromDummy()
+        // 더미 데이터를 사용하는 경우의 로직 처리
+        // loadDataFromDummy()
     } else {
-        loadDataFromAPI()
+        loadMoreData()
     }
+    console.log('timelineContainer:', timelineContainer.value)
     if (timelineContainer.value) {
         timelineContainer.value.addEventListener('scroll', handleScroll)
     }
@@ -151,8 +154,12 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* 스크롤이 발생하려면 높이가 제한되어야 합니다. */
 .timeline-container {
     overflow-y: auto;
     max-height: 80vh;
+    /* 필요 시 height를 고정값으로 설정해 테스트 해보세요.
+       height: 80vh;
+    */
 }
 </style>

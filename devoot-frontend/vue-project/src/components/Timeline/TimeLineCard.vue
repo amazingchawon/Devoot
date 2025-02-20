@@ -13,8 +13,8 @@
           />
           <p class="flex items-center gap-1 text-body">
             <span class="text-body-bold">{{ userName }}</span>
-            님의 발자국이 추가되었습니다
-            <FootprintIcon class="w-4 h-4 text-primary-500" />
+            님이 발자국이 추가했습니다
+            <LogoIcon class="w-4 h-4 text-primary-500" />
           </p>
         </div>
         <span class="text-gray-400 text-caption">
@@ -120,6 +120,7 @@
   import BookmarkDefault from '@/assets/icons/bookmark_default.svg'
   import BookmarkFill from '@/assets/icons/bookmark_filled.svg'
   import FootprintIcon from '@/assets/icons/footprint.svg'
+  import LogoIcon from '@/assets/icons/logo.svg'
   import { addBookmark, removeBookmark } from '@/helpers/lecture'
   import { useUserStore } from '@/stores/user'
   

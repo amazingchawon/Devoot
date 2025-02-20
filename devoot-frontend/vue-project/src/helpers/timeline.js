@@ -13,15 +13,15 @@ instance.interceptors.response.use(
         } else {
             console.error('❌ 네트워크 오류 또는 서버 응답 없음:', error)
         }
-        return Promise.reject(error) // 호출한 곳에서 추가 처리 가능
+        return Promise.reject(error)
     }
 )
 
-// 유저 정보 가져오는 API 함수
-const fetchTimelineList = async (token) => {
+// page 인자를 추가하여 동적으로 페이지 번호를 전달
+const fetchTimelineList = async (token, page) => {
     return instance.get('/api/timeline', {
         headers: { Authorization: `Bearer ${token}` },
-        params: { page: 1, size: 10 }, // ✅ 기본 페이지 설정 추가
+        params: { page, size: 10 },
     })
 }
 
