@@ -81,7 +81,7 @@ import Trash from '@/assets/icons/trash.svg'
 import Star from '@/assets/icons/star_filled.svg'
 import { useUserStore } from '@/stores/user'
 import { useRoute } from 'vue-router'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 const userStore = useUserStore() // Pinia 스토어 가져오기
 const route = useRoute()
 const props = defineProps({
@@ -94,12 +94,23 @@ const props = defineProps({
 const isMyProfile = computed(() => userStore.userId === route.params.id)
 
 // 날짜 포맷 변경
+const createdAt = ref(props.review.createdAt) // Example ISO date string from the backend
+const timezone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone) // Get browser's timezone
 const formattedDate = computed(() => {
-    if (!props.review.createdAt || props.review.createdAt.length < 6) return '날짜 없음'
+    const date = new Date(createdAt.value)
 
-    const [year, month, day, hour, minute] = props.review.createdAt
+    const options = {
+        timeZone: timezone.value,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+    }
 
-    return `${year}년 ${String(month).padStart(2, '0')}월 ${String(day).padStart(2, '0')}일 ${String(hour).padStart(2, '0')}시 ${String(minute).padStart(2, '0')}분`
+    return new Intl.DateTimeFormat('ko-KR', options).format(date)
 })
 
 // 별 개수 계산
