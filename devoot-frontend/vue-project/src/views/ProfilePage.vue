@@ -105,7 +105,7 @@
                         <div
                             v-for="tag in (ProfileData?.tags || '').split(',')"
                             :key="tag"
-                            class="inline-flex gap-1 text-caption-sm tag-gray"
+                            class="inline-flex gap-1 text-blue-500 text-caption tag-gray"
                         >
                             <p>#</p>
                             <p
@@ -349,5 +349,4 @@ watch(
 // const followers = ref([]) // 팔로워 목록
 </script>
 
-<style scoped></style>
 <style scoped></style>

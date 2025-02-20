@@ -93,7 +93,7 @@ const navigateToProfile = (user) => {
 }
 
 onMounted(() => {
-    console.log('현재 Firebase 토큰:', userStore.token)
+    // console.log('현재 Firebase 토큰:', userStore.token)
 })
 </script>
 

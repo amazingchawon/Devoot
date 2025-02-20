@@ -11,7 +11,7 @@
             alt="프로필 사진"
             class="object-cover w-10 h-10 bg-gray-200 rounded-full"
           />
-          <p class="flex items-center gap-2 text-body">
+          <p class="flex items-center gap-1 text-body">
             <span class="text-body-bold">{{ userName }}</span>
             님의 발자국이 추가되었습니다
             <FootprintIcon class="w-4 h-4 text-primary-500" />
@@ -55,7 +55,7 @@
           <p class="flex items-center ml-3 text-sm text-gray-700 cursor-pointer"
              @click="goToProfile(profileId)">
             <div class="text-body-bold">{{ userName }}</div>
-            <div v-if="type === 'lecture-status-change'">
+            <div v-if="type === 'lecture-status-change'" class="gap-1">
               님이
               <span v-if="beforeStatus" class="h-6 px-2 py-1 bg-gray-100 rounded-full"
                     :class="statusColor(beforeStatus)">
@@ -165,8 +165,8 @@
   function statusColor(status) {
     switch (status) {
       case '수강 전': return 'text-gray-400'
-      case '수강 중': return 'text-[#FDE03A]'
-      case '수강 완료': return 'text-[#0EDB8C]'
+      case '수강 중': return 'text-[#0EDB8C]'
+      case '수강 완료': return 'text-primary-500'
       default: return ''
     }
   }

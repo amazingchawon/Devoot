@@ -1,36 +1,101 @@
 <!-- src/views/HomePage.vue -->
 <template>
     <div class="space-y-12">
+        <!-- 추천 강의 섹션 -->
+        <section class="space-y-4">
+            <p class="flex items-center gap-1 text-h1 col-span-full">
+                <LogoIcon class="items-center h-7 w-7 text-primary-500" />
+                {{ userStore.userNickname }}님을 위한 추천 강의
+            </p>
+            <div class="flex gap-1.5 w-full">
+                <div
+                    v-for="tag in (userStore.userTags || '').split(',')"
+                    :key="tag"
+                    class="inline-flex gap-1 text-caption tag-gray text-primary-500"
+                >
+                    <p>#</p>
+                    <p
+                        class="overflow-hidden cursor-default text-ellipsis whitespace-nowrap"
+                        :title="tag"
+                    >
+                        {{ tag }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- API에서 이미 size=8로 받아오기 때문에 LectureCardGroup에서는 전체 배열을 전달 -->
+            <LectureCardGroup :lectures="recommendLectures" />
+        </section>
+
         <!-- 인기 강의 섹션 -->
         <section class="space-y-4">
-            <h1 class="text-h1 col-span-full">인기 강의</h1>
+            <p class="flex items-center gap-1 text-h1 col-span-full">
+                인기 강의
+                <LogoIcon class="items-center h-7 w-7 text-primary-500" />
+            </p>
             <!-- API에서 이미 size=8로 받아오기 때문에 LectureCardGroup에서는 전체 배열을 전달 -->
             <LectureCardGroup :lectures="popularLectures" />
         </section>
 
         <!-- 신규 강의 섹션 -->
         <section class="space-y-4">
-            <h1 class="text-h1 col-span-full">신규 강의</h1>
+            <p class="flex items-center gap-1 text-h1 col-span-full">
+                신규 강의
+                <LogoIcon class="items-center h-7 w-7 text-primary-500" />
+            </p>
             <LectureCardGroup :lectures="newestLectures" />
         </section>
 
         <!-- 무료 강의 섹션 -->
         <section class="space-y-4">
-            <h1 class="text-h1 col-span-full">무료 강의</h1>
+            <p class="flex items-center gap-1 text-h1 col-span-full">
+                무료 강의 <LogoIcon class="items-center h-7 w-7 text-primary-500" />
+            </p>
             <LectureCardGroup :lectures="freeLectures" />
         </section>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import LectureCardGroup from '@/components/Lecture/LectureCardGroup.vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { searchLectures } from '@/helpers/lecture.js'
+import { useUserStore } from '@/stores/user'
+
+import LectureCardGroup from '@/components/Lecture/LectureCardGroup.vue'
+import LogoIcon from '@/assets/icons/logo.svg'
+
+const userStore = useUserStore()
+
+// 로그인한 사용자의 tags 가져오기
+const userTags = computed(() => {
+    if (userStore.isUserLoaded && userStore.userTags) {
+        return userStore.userTags.split(',').map((tag) => tag.trim()) // 쉼표 기준으로 배열 변환
+    }
+    return []
+})
+
+// `userStore.userTags` 변경 감지 후 콘솔 출력 + 추천 강의 다시 불러오기
+watch(
+    userTags,
+    (newTags) => {
+        if (newTags.length > 0) {
+            console.log('✅ 로그인한 사용자의 tags:', newTags)
+            fetchRecommendLectures()
+        }
+    },
+    { immediate: true } // 컴포넌트 마운트 시 바로 실행
+)
+
+onMounted(async () => {
+    await userStore.fetchUser() // ✅ 유저 정보 로드 완료 후 실행
+
+    fetchPopularLectures()
+    fetchNewestLectures()
+    fetchFreeLectures()
+})
 
 /**
  * 헬퍼 함수: API 응답 데이터를 LectureCard 컴포넌트가 사용하는 형태로 가공
- * @param {Object} item - API에서 전달된 강의 데이터 객체
- * @param {number} index - 배열 내 인덱스 (id가 없을 경우 대체)
  */
 function mapLectureItem(item, index) {
     return {
@@ -54,63 +119,62 @@ function mapLectureItem(item, index) {
     }
 }
 
-// 반응형 상태: 각 섹션별 강의 데이터 배열
+const recommendLectures = ref([])
 const popularLectures = ref([])
 const newestLectures = ref([])
 const freeLectures = ref([])
 
-/**
- * 인기 강의 API 호출
- * - 쿼리 파라미터: sort=popular, page=1, size=8
- */
+// 추천 강의 API 호출
+async function fetchRecommendLectures() {
+    if (userTags.value.length === 0) {
+        console.warn('⚠️ 추천 강의를 가져오려면 태그가 필요합니다.')
+        return
+    }
+
+    const tagQuery = userTags.value.join(',')
+    const params = { sort: 'relevance', page: 1, size: 8, tag: tagQuery }
+
+    try {
+        const response = await searchLectures(params)
+        recommendLectures.value = response.data.content.map(mapLectureItem)
+    } catch (error) {
+        console.error('❌ Error fetching recommend lectures:', error)
+    }
+}
+
+// 인기 강의 API 호출
 async function fetchPopularLectures() {
     try {
         const params = { sort: 'popular', page: 1, size: 8 }
         const response = await searchLectures(params)
-        // API 응답 데이터(content)를 가공하여 저장
         popularLectures.value = response.data.content.map(mapLectureItem)
     } catch (error) {
-        console.error('Error fetching popular lectures:', error)
+        console.error('❌ Error fetching popular lectures:', error)
+        console.error('❌ Error fetching popular lectures:', error)
     }
 }
 
-/**
- * 신규 강의 API 호출
- * - 쿼리 파라미터: sort=newest, page=1, size=8
- */
+// 신규 강의 API 호출
 async function fetchNewestLectures() {
     try {
         const params = { sort: 'newest', page: 1, size: 8 }
         const response = await searchLectures(params)
         newestLectures.value = response.data.content.map(mapLectureItem)
     } catch (error) {
-        console.error('Error fetching newest lectures:', error)
+        console.error('❌ Error fetching newest lectures:', error)
+        console.error('❌ Error fetching newest lectures:', error)
     }
 }
 
-/**
- * 무료 강의 API 호출
- * - 무료 강의는 API에 무료 필터가 없으므로, size를 크게 요청한 후
- *   currentPrice가 0인 강의만 필터링하여 최대 8개만 사용합니다.
- */
+// 무료 강의 API 호출
 async function fetchFreeLectures() {
     try {
         const params = { sort: 'price_asc', page: 1, size: 8 }
         const response = await searchLectures(params)
         freeLectures.value = response.data.content.map(mapLectureItem)
     } catch (error) {
-        console.error('Error fetching free lectures:', error)
+        console.error('❌ Error fetching free lectures:', error)
+        console.error('❌ Error fetching free lectures:', error)
     }
 }
-
-// 컴포넌트가 마운트되면 세 섹션별 API 호출
-onMounted(() => {
-    fetchPopularLectures()
-    fetchNewestLectures()
-    fetchFreeLectures()
-})
 </script>
-
-<style scoped>
-/* 추가 스타일이 필요한 경우 여기에 작성 */
-</style>

@@ -4,7 +4,7 @@
             <p class="text-h3">할 일 목록</p>
             <button
                 v-if="followStatus === null"
-                class="flex gap-1 p-1 button-primary"
+                class="flex gap-1 p-1 pr-2 button-primary"
                 @click="$emit('open-add-modal')"
             >
                 <Plus class="w-[1.125rem] h-[1.125rem]" />
@@ -28,7 +28,7 @@
             </div>
             <button
                 v-if="followStatus === null"
-                class="flex gap-1 p-1 button-line"
+                class="flex gap-1 p-1 pr-2 button-line"
                 @click="rescheduleTodo(selectedDate, token, userId)"
             >
                 <Arrow class="w-[1.125rem] h-[1.125rem]" />

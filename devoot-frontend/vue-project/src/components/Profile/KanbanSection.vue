@@ -24,7 +24,7 @@
         </div>
         <div class="flex flex-col flex-1 h-full gap-[12px]">
             <div class="inline-flex w-fit text-caption tag-gray">
-                <p style="color: #fde03a !important">수강중</p>
+                <p style="color: #0edb8c !important">수강중</p>
             </div>
 
             <div class="overflow-hidden grow">
@@ -46,7 +46,7 @@
         </div>
         <div class="flex flex-col flex-1 h-full gap-[12px]">
             <div class="inline-flex w-fit text-caption tag-gray">
-                <p style="color: #0edb8c !important">수강 완료</p>
+                <p class="text-primary-500">수강 완료</p>
             </div>
 
             <div class="overflow-hidden grow">
