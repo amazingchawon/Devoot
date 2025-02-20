@@ -68,6 +68,9 @@ function mapStatus(status) {
 
 function mapActivity(item) {
     const isBookmark = item.type === 'BOOKMARK'
+    const isTodo = item.type === 'TODO'
+
+    // 공통적으로 lecture 관련 데이터를 가져옴
     const lectureData = isBookmark ? item.log?.lecture : item.log?.todo
 
     return {
@@ -78,24 +81,23 @@ function mapActivity(item) {
             item.user?.imageUrl ??
             'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png',
         lectureTitle: lectureData?.name || lectureData?.lectureName || '제목 없음',
-        lectureId: lectureData?.id?.toString() || '',
-        imageUrl: isBookmark
-            ? lectureData?.imageUrl ||
-              'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png'
-            : 'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png',
+        lectureId: (isBookmark ? lectureData?.id : lectureData?.lectureId)?.toString() || '', // BOOKMARK: id, TODO: lectureId
+        imageUrl:
+            lectureData?.imageUrl ||
+            'https://devoot-profile-image.s3.ap-northeast-2.amazonaws.com/profile/default_image.png',
         tags:
             isBookmark && lectureData?.tags
                 ? lectureData.tags.split(',').map((tag) => tag.trim())
                 : [],
         beforeStatus: isBookmark ? mapStatus(item.log?.beforeStatus) : '',
         afterStatus: isBookmark ? mapStatus(item.log?.afterStatus) : '',
-        footprints: item.log?.footprints ?? [],
+        footprints: isTodo ? (item.log?.footprints ?? []) : [],
         date: item.createdAt,
         sourceName: isBookmark ? (lectureData?.sourceName ?? '') : '',
-        sourceUrl: !isBookmark ? (lectureData?.sourceUrl ?? '') : '',
+        sourceUrl: lectureData?.sourceUrl ?? '',
         isBookmarked: isBookmark ? lectureData?.isBookmarked || false : false,
         bookmarkId: isBookmark ? lectureData?.bookmarkId || null : null,
-        subLectureName: isBookmark ? '' : (lectureData?.subLectureName ?? ''),
+        subLectureName: lectureData?.subLectureName ?? '',
     }
 }
 
