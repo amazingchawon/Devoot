@@ -103,10 +103,15 @@
                 <span
                     v-for="(tag, index) in limitedTags"
                     :key="index"
-                    class="overflow-hidden cursor-pointer tag-gray text-ellipsis whitespace-nowrap"
-                    :title="tag"
+                    class="inline-flex gap-1 text-caption tag-gray max-w-[75px]"
                 >
-                    #{{ tag }}
+                    <p>#</p>
+                    <p
+                        class="overflow-hidden cursor-default text-ellipsis whitespace-nowrap"
+                        :title="tag"
+                    >
+                        {{ tag }}
+                    </p>
                 </span>
             </div>
         </div>
