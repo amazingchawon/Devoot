@@ -37,4 +37,8 @@ out/
 .vscode/
 
 # Ignore application.yml
-src/main/resources/application.yml
+ src/main/resources/application.yml
+*firebase-adminsdk.json
+
+.env
+elasticsearch-truststore.p12

@@ -1,0 +1,52 @@
+spring:
+  profiles:
+    active: test
+  elasticsearch:
+    uris: http://elastic:${ELASTIC_PASSWORD}@${ELASTICSEARCH_HOST}:9200
+    connection-timeout: 5000
+    socket-timeout: 3000
+    ssl:
+      enabled: false
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MariaDB
+    username: sa
+    password: password
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate.dialect: org.hibernate.dialect.H2Dialect  # Explicit dialect setting
+      hibernate.show_sql: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+  cloud:
+    aws:
+      s3:
+        bucket: ${AWS_S3_BUCKET_NAME}
+      region:
+        static: ${AWS_REGION}
+      credentials:
+        access-key: ${AWS_ACCESS_KEY}
+        secret-key: ${AWS_SECRET_KEY}
+
+firebase:
+  config:
+    path: src/main/resources/firebase-adminsdk.json
+
+s3:
+  file:
+    salt: ${S3_FILE_SALT}
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+    #    root: DEBUG
+    com.google.firebase.auth: DEBUG
+#    org.springframework.web: DEBUG

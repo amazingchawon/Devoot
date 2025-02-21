@@ -1,0 +1,309 @@
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "index_analyzer": {
+          "type": "custom",
+          "tokenizer": "my_nori_tokenizer",
+          "filter": [
+            "lowercase",
+            "korean_synonym_filter",
+            "nori_posfilter"
+          ]
+        },
+        "search_analyzer": {
+          "type": "custom",
+          "tokenizer": "my_nori_tokenizer",
+          "filter": [
+            "lowercase",
+            "korean_synonym_filter",
+            "nori_posfilter",
+            "edge_ngram_filter"
+          ]
+        },
+        "mixed_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "korean_synonym_filter",
+            "edge_ngram_filter"
+          ]
+        },
+        "comma_analyzer": {
+          "type": "custom",
+          "tokenizer": "comma_tokenizer",
+          "filter": ["lowercase", "trim"]
+        },
+        "english_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "english_stop"
+          ]
+        }
+      },
+      "tokenizer": {
+        "my_nori_tokenizer": {
+          "type": "nori_tokenizer",
+          "decompound_mode": "none"
+        },
+        "comma_tokenizer": {
+          "type": "pattern",
+          "pattern": ","
+        }
+      },
+      "filter": {
+        "edge_ngram_filter": {
+          "type": "edge_ngram",
+          "min_gram": 2
+        },
+        "korean_synonym_filter": {
+          "type": "synonym",
+          "synonyms": [
+            "파이썬, python, py",
+            "자바, java",
+            "자바스크립트, javascript, js",
+            "루비, ruby",
+            "타입스크립트, typescript, ts",
+            "리액트, react",
+            "플러터, flutter",
+            "인텔리제이, intellij",
+            "스벨트, svelte",
+            "스위프트, swift",
+            "코틀린, kotlin",
+            "씨언어, C, c language",
+            "씨쁠쁠, C++, cpp",
+            "씨샵, C#, c sharp",
+            "스칼라, scala",
+            "유니티, unity",
+            "언리얼, 언리얼 엔진, unreal, unreal engine",
+            "다트, dart",
+            "마크다운, markdown",
+            "데이터 분석, data analysis",
+            "데이터 엔지니어링, data engineering",
+            "딥러닝, deep learning",
+            "머신러닝, machine learning",
+            "컴퓨터 비전, computer vision",
+            "자연어 처리, natural language processing, nlp",
+            "시스템, operating system, os, 운영체제",
+            "블록체인, blockchain",
+            "컴퓨터 구조, computer architecture",
+            "임베디드, embedded, iot, IoT",
+            "반도체, semiconductor",
+            "로봇공학, robotics",
+            "유엑스/유아이, UX/UI, user experience, user interface, ux, ui",
+            "도커, docker",
+            "쿠버네티스, kubernetes, k8s",
+            "젠킨스, jenkins",
+            "깃, git",
+            "깃허브, github",
+            "깃랩, gitlab",
+            "비주얼 스튜디오 코드, visual studio code, vscode",
+            "아마존 웹 서비스, amazon web services, aws",
+            "구글 클라우드 플랫폼, google cloud platform, gcp",
+            "마이크로소프트 애저, microsoft azure, azure",
+            "몽고디비, mongodb",
+            "마이에스큐엘, mysql",
+            "포스트그레스큐엘, postgresql",
+            "레디스, redis",
+            "엘라스틱서치, elasticsearch",
+            "카프카, kafka",
+            "래빗엠큐, rabbitmq",
+            "그래프큐엘, graphql",
+            "웹소켓, websocket",
+            "rest api, restful api",
+            "도메인 주도 설계, domain driven design, ddd",
+            "테스트 주도 개발, test driven development, tdd",
+            "데브옵스, devops",
+            "마이크로서비스, microservices, msa",
+            "서버리스, serverless",
+            "컨테이너, container",
+            "가상화, virtualization",
+            "지속적 통합, continuous integration, ci",
+            "지속적 배포, continuous deployment, cd",
+            "애자일, agile",
+            "스크럼, scrum",
+            "칸반, kanban",
+            "객체지향 프로그래밍, object oriented programming, oop",
+            "함수형 프로그래밍, functional programming, fp",
+            "머신러닝 옵스, machine learning operations, mlops",
+            "데이터 옵스, data operations, dataops",
+            "프로그레시브 웹 앱, progressive web app, pwa",
+            "웹어셈블리, webassembly, wasm",
+            "넥스트, 넥스트제이에스, next, next.js, nextjs",
+            "뷰, 뷰제이에스, vue, vue.js, vuejs",
+            "앵귤러, angular",
+            "익스프레스제이에스, 익스프레스, express, express.js, expressjs",
+            "스프링, spring",
+            "스프링부트, spring boot, springboot",
+            "장고, django",
+            "파이토치, pytorch",
+            "텐서플로우, tensorflow",
+            "케라스, keras",
+            "사이킷런, scikit-learn",
+            "판다스, pandas",
+            "넘파이, numpy",
+            "주피터, jupyter",
+            "아나콘다, anaconda",
+            "비트코인, bitcoin, btc",
+            "이더리움, ethereum, eth",
+            "솔리디티, solidity",
+            "메타마스크, metamask",
+            "하이퍼레저, hyperledger",
+            "안드로이드 스튜디오, android studio",
+            "엑스코드, xcode",
+            "패스트에이피아이, fastapi",
+            "플라스크, flask",
+            "러스트, rust",
+            "고언어, 고, golang, go",
+            "하스켈, haskell",
+            "펄, perl",
+            "피에이치피, php",
+            "엘릭서, elixir",
+            "클로저, clojure",
+            "웹팩, webpack",
+            "바벨, babel",
+            "테일윈드시에스에스, tailwind css",
+            "부트스트랩, bootstrap",
+            "사스, sass, scss",
+            "레스, less",
+            "제이쿼리, jquery",
+            "노드제이에스, 노드, node, node.js, nodejs"
+          ]
+        },
+        "nori_posfilter": {
+          "type": "nori_part_of_speech",
+          "stoptags": [
+            "E", "IC", "J", "MAG", "MAJ", "MM",
+            "NA", "NR", "SC", "SE", "SF", "SH", "SL", "SN", "SP",
+            "SSC", "SSO", "SY", "UNA", "UNKNOWN",
+            "VA", "VCN", "VCP", "VSV", "VV", "VX",
+            "XPN", "XR", "XSA", "XSN", "XSV"
+          ]
+        },
+        "english_stop": {
+          "type": "stop",
+          "stopwords": "_english_"
+        }
+      },
+      "normalizer": {
+        "tag_normalizer": {
+          "type": "custom",
+          "filter": ["lowercase", "asciifolding", "trim"]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "keyword"
+      },
+      "categoryName": {
+        "type": "keyword"
+      },
+      "name": {
+        "type": "text",
+        "analyzer": "index_analyzer",
+        "search_analyzer": "search_analyzer",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "normalizer": "tag_normalizer"
+          },
+          "en": {
+            "type": "text",
+            "analyzer": "english_analyzer"
+          },
+          "mixed": {
+            "type": "text",
+            "analyzer": "mixed_analyzer"
+          }
+        }
+      },
+      "lecturer": {
+        "type": "text",
+        "analyzer": "index_analyzer",
+        "search_analyzer": "search_analyzer",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "normalizer": "tag_normalizer"
+          },
+          "en": {
+            "type": "text",
+            "analyzer": "english_analyzer"
+          },
+          "mixed": {
+            "type": "text",
+            "analyzer": "mixed_analyzer"
+          }
+        }
+      },
+      "tags": {
+        "type": "text",
+        "analyzer": "comma_analyzer",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "normalizer": "tag_normalizer"
+          },
+          "split": {
+            "type": "text",
+            "analyzer": "comma_analyzer"
+          }
+        }
+      },
+      "currentPrice": {
+        "type": "integer"
+      },
+      "categoryId": {
+        "type": "integer",
+        "index": false
+      },
+      "imageUrl": {
+        "type": "keyword",
+        "index": false
+      },
+      "originalPrice": {
+        "type": "integer",
+        "index": false
+      },
+      "curriculum": {
+        "type": "keyword",
+        "index": false
+      },
+      "sourceUrl": {
+        "type": "keyword",
+        "index": false
+      },
+      "sourceName": {
+        "type": "keyword",
+        "index": false
+      },
+      "reviewCnt": {
+        "type": "keyword",
+        "index": false
+      },
+      "createdAt": {
+        "type": "date",
+        "format": "yyyy-MM-dd'T'HH:mm:ss.SSS||epoch_millis",
+        "index": false
+      },
+      "updatedAt": {
+        "type": "date",
+        "format": "yyyy-MM-dd'T'HH:mm:ss.SSS||epoch_millis",
+        "index": false
+      },
+      "hash": {
+        "type": "keyword",
+        "index": false
+      },
+      "popularity": {
+        "type": "float"
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+        "-//Puppy Crawl//DTD Suppressions 1.1//EN"
+        "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
+
+<suppressions>
+    <!-- Suppress all checks for .editorconfig -->
+    <suppress checks=".*" files=".*\.editorconfig"/>
+
+    <!-- Suppress all checks for build.gradle.kts -->
+    <suppress checks=".*" files=".*build\.gradle\.kts"/>
+
+    <!-- Suppress all checks for gradle-wrapper.properties -->
+    <suppress checks=".*" files=".*gradle[\\/]wrapper[\\/]gradle-wrapper\.properties"/>
+
+    <!-- Suppress all checks for application.yml -->
+    <suppress checks=".*" files=".*src[\\/]main[\\/]resources[\\/]application\.yml"/>
+</suppressions>
