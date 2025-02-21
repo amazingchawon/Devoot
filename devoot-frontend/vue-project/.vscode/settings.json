@@ -6,8 +6,10 @@
     "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .prettier*, prettier*, .editorconfig"
   },
   "editor.codeActionsOnSave": {
-    "source.fixAll": "explicit"
+    "source.fixAll": "always",
   },
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "css.validate": false, // CSS 유효성 검사 비활성화
+  "tailwindCSS.emmetCompletions": true // Tailwind CSS 클래스 이름에 대한 Emmet 자동 완성 활성화
 }
