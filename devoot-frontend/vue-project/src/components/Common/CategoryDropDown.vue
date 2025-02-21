@@ -38,12 +38,18 @@ const router = useRouter()
 // 이벤트 방출 정의
 const emit = defineEmits(['closeDropdown'])
 
-// 선택된 카테고리를 처리하는 함수
-const selectCategory = (category) => {
-    // URL 업데이트
-    router.push({ path: '/lecture', query: { category } })
+// // 선택된 카테고리를 처리하는 함수
+// const selectCategory = (category) => {
+//     // URL 업데이트
+//     router.push({ path: '/lecture', query: { category } })
 
-    // 부모 컴포넌트로 드롭다운 닫기 이벤트 전달
+//     // 부모 컴포넌트로 드롭다운 닫기 이벤트 전달
+//     emit('closeDropdown')
+// }
+
+const selectCategory = (category) => {
+    // 타임스탬프(ts)를 추가해서 항상 URL이 변경되도록 함
+    router.push({ path: '/lecture', query: { category, ts: Date.now() } })
     emit('closeDropdown')
 }
 </script>
