@@ -159,9 +159,49 @@ const closeUserSearchModal = () => {
 // }
 
 // 검색 실행 함수 (검색 후 검색어 유지)
+// const executeSearch = () => {
+//     const trimmedQuery = searchQuery.value.trim()
+//     router.push({ path: '/lecture', query: { q: trimmedQuery } })
+// }
+
+// const executeSearch = () => {
+//     const trimmedQuery = searchQuery.value.trim()
+//     // 새 검색 실행 시 태그 선택 상태 초기화
+//     selectedTags.value = []
+//     // ts 파라미터를 추가하여 항상 새로운 검색으로 인식되도록 함
+//     router.push({ path: '/lecture', query: { q: trimmedQuery, ts: Date.now() } })
+// }
+
+// const executeSearch = () => {
+//     const trimmedQuery = searchQuery.value.trim()
+//     // 새 검색 실행 시 기존 태그와 카테고리 상태 초기화
+//     selectedTags.value = []
+//     // 카테고리와 정렬도 초기화 (필요한 경우)
+//     router.push({
+//         path: '/lecture',
+//         query: {
+//             q: trimmedQuery,
+//             category: '',
+//             sort: 'relevance', // 기본 정렬 값
+//             ts: Date.now(), // 강제 URL 변경을 위한 임의 파라미터
+//         },
+//     })
+// }
+
+// AppHeader.vue
+// AppHeader.vue (검색 실행 함수)
 const executeSearch = () => {
     const trimmedQuery = searchQuery.value.trim()
-    router.push({ path: '/lecture', query: { q: trimmedQuery } })
+    router.push({
+        path: '/lecture',
+        query: {
+            q: trimmedQuery,
+            category: '', // 이전 카테고리 선택 초기화
+            sort: 'relevance', // 기본 정렬 값
+            tag: '', // 이전 태그 선택 초기화 (빈 문자열 혹은 undefined)
+            ts: Date.now(), // 강제 라우트 변경을 위한 임의 파라미터
+        },
+    })
 }
 
 // 알림 존재 여부 확인 후 아이콘 변경

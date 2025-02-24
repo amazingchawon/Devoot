@@ -42,14 +42,18 @@ export const useUserStore = defineStore('user', {
                 this.user = result.user
                 this.token = await result.user.getIdToken(true)
 
-                await this.fetchUser() // ✅ 로그인 후 바로 fetchUser() 실행
-                return true
+                try {
+                    await this.fetchUser() // ✅ 로그인 후 fetchUser() 실행
+                    return true // fetchUser 성공하면 true 반환
+                } catch (error) {
+                    console.error('🚨 유저 정보 가져오기 실패, 회원가입 필요:', error)
+                    return false // fetchUser 실패하면 false 반환
+                }
             } catch (error) {
                 console.error('🚨 Firebase 로그인 실패:', error)
-                return false
+                return null
             }
         },
-
         // 깃허브 로그인
         async loginWithGithub() {
             try {
@@ -64,11 +68,16 @@ export const useUserStore = defineStore('user', {
                 this.user = result.user
                 this.token = await result.user.getIdToken(true)
 
-                await this.fetchUser() // ✅ 로그인 후 바로 fetchUser() 실행
-                return true
+                try {
+                    await this.fetchUser() // ✅ 로그인 후 fetchUser() 실행
+                    return true // fetchUser 성공하면 true 반환
+                } catch (error) {
+                    console.error('🚨 유저 정보 가져오기 실패, 회원가입 필요:', error)
+                    return false // fetchUser 실패하면 false 반환
+                }
             } catch (error) {
                 console.error('🚨 Firebase 로그인 실패:', error)
-                return false
+                return null
             }
         },
 
@@ -85,7 +94,7 @@ export const useUserStore = defineStore('user', {
 
         // 로그인 유지 기능 추가
         async fetchUser() {
-            return new Promise((resolve) => {
+            return new Promise((resolve, reject) => {
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
                         this.user = user
@@ -100,6 +109,7 @@ export const useUserStore = defineStore('user', {
                             console.log('✅ 유저 정보 불러옴:', this.userTags)
                         } catch (error) {
                             console.error('🚨 유저 정보 가져오기 실패:', error)
+                            reject(error) // 실패 시 reject()
                         }
                     } else {
                         this.user = null

@@ -104,6 +104,47 @@ const size = ref(40)
 const totalElements = ref(0)
 const totalPages = ref(0)
 
+// LectureSearchPage.vue (script setup 부분)
+
+const isPresetTagsInitialized = ref(false)
+
+const fetchLectures = async (updatePresetTags = true) => {
+    try {
+        const params = {
+            category: selectedCategory.value || undefined,
+            tag: selectedTags.value.length > 0 ? selectedTags.value.join(',') : undefined,
+            sort: selectedSort.value, // 정렬 방식 반영
+            query: searchQuery.value || undefined, // 검색어 유지
+            page: page.value,
+            size: size.value,
+        }
+        const response = await searchLectures(params)
+        totalElements.value = response.data.totalElements
+        totalPages.value = response.data.totalPages
+        lectures.value = response.data.content.map((item, index) => ({
+            id: item.id || index,
+            name: item.name,
+            lecturer: item.lecturer,
+            platform: item.sourceName || '인프런',
+            imageUrl: item.imageUrl,
+            tags: item.tags ? item.tags.split(',').map((tag) => tag.trim()) : [],
+            currentPrice: Number(item.currentPrice),
+            originalPrice: Number(item.originPrice),
+            rating: Number(item.rating),
+            reviewCount: item.reviewCnt,
+            isBookmarked: false,
+        }))
+
+        // presetTags 업데이트: 플래그가 false일 때만 업데이트하고, 업데이트 후 true로 변경
+        if (updatePresetTags && !isPresetTagsInitialized.value) {
+            presetTags.value = Object.keys(response.data.aggregations.preset_tags || {})
+            isPresetTagsInitialized.value = true
+        }
+    } catch (error) {
+        console.error('강의 검색 API 호출 실패:', error)
+    }
+}
+
 // 전체 태그 목록
 const allTags = [
     'HTML',
@@ -144,57 +185,10 @@ const displayedTags = computed(() => {
     return searchQuery.value || selectedCategory.value ? presetTags.value : allTags
 })
 
-// // 태그 선택/해제 후 API 호출
-// function toggleTag(tag) {
-//     if (isTagSelected(tag)) {
-//         selectedTags.value = selectedTags.value.filter((t) => t !== tag)
-//     } else {
-//         selectedTags.value.push(tag)
-//     }
-//     page.value = 1
-//     fetchLectures(false)
-// }
-
 // 태그 선택 여부 확인
 function isTagSelected(tag) {
     return selectedTags.value.includes(tag)
 }
-
-// 강의 검색 API 호출
-// const fetchLectures = async (updatePresetTags = true) => {
-//     try {
-//         const params = {
-//             category: selectedCategory.value || undefined,
-//             tag: selectedTags.value.length > 0 ? selectedTags.value.join(',') : undefined,
-//             sort: selectedSort.value, // 정렬 방식 반영
-//             query: searchQuery.value || undefined,
-//             page: page.value,
-//             size: size.value,
-//         }
-//         const response = await searchLectures(params)
-//         totalElements.value = response.data.totalElements
-//         totalPages.value = response.data.totalPages
-//         lectures.value = response.data.content.map((item, index) => ({
-//             id: item.id || index,
-//             name: item.name,
-//             lecturer: item.lecturer,
-//             platform: item.sourceName || '인프런',
-//             imageUrl: item.imageUrl,
-//             tags: item.tags ? item.tags.split(',').map((tag) => tag.trim()) : [],
-//             currentPrice: Number(item.currentPrice),
-//             originalPrice: Number(item.originPrice),
-//             rating: Number(item.rating),
-//             reviewCount: item.reviewCnt,
-//             isBookmarked: false,
-//         }))
-
-//         if (updatePresetTags) {
-//             presetTags.value = Object.keys(response.data.aggregations.preset_tags || {})
-//         }
-//     } catch (error) {
-//         console.error('강의 검색 API 호출 실패:', error)
-//     }
-// }
 
 // 정렬 변경 이벤트 핸들러
 const onSortChange = () => {
@@ -239,13 +233,12 @@ const toggleDropdown = () => {
     isDropdownOpen.value = !isDropdownOpen.value
 }
 
-const selectSort = (value) => {
-    selectedSort.value = value
-    isDropdownOpen.value = false
-    fetchLectures() // API 호출
-}
+// const selectSort = (value) => {
+//     selectedSort.value = value
+//     isDropdownOpen.value = false
+//     fetchLectures() // API 호출
+// }
 
-// 태그 선택/해제 후 API 호출
 function toggleTag(tag) {
     if (isTagSelected(tag)) {
         selectedTags.value = selectedTags.value.filter((t) => t !== tag)
@@ -253,55 +246,40 @@ function toggleTag(tag) {
         selectedTags.value.push(tag)
     }
     page.value = 1
-    fetchLectures(false) // 태그 선택 시 검색어 유지
+    // 태그 변경 시 presetTags는 그대로 유지
+    fetchLectures(false)
 }
 
-// 강의 검색 API 호출
-const fetchLectures = async (updatePresetTags = true) => {
-    try {
-        const params = {
-            category: selectedCategory.value || undefined,
-            tag: selectedTags.value.length > 0 ? selectedTags.value.join(',') : undefined,
-            sort: selectedSort.value, // 정렬 방식 반영
-            query: searchQuery.value || undefined, // 검색어 유지
-            page: page.value,
-            size: size.value,
-        }
-        const response = await searchLectures(params)
-        totalElements.value = response.data.totalElements
-        totalPages.value = response.data.totalPages
-        lectures.value = response.data.content.map((item, index) => ({
-            id: item.id || index,
-            name: item.name,
-            lecturer: item.lecturer,
-            platform: item.sourceName || '인프런',
-            imageUrl: item.imageUrl,
-            tags: item.tags ? item.tags.split(',').map((tag) => tag.trim()) : [],
-            currentPrice: Number(item.currentPrice),
-            originalPrice: Number(item.originPrice),
-            rating: Number(item.rating),
-            reviewCount: item.reviewCnt,
-            isBookmarked: false,
-        }))
-
-        if (updatePresetTags) {
-            presetTags.value = Object.keys(response.data.aggregations.preset_tags || {})
-        }
-    } catch (error) {
-        console.error('강의 검색 API 호출 실패:', error)
-    }
+const selectSort = (value) => {
+    selectedSort.value = value
+    isDropdownOpen.value = false
+    // 정렬 변경 시 presetTags 업데이트 없이 강의만 새로 불러옴
+    fetchLectures(false)
 }
 
-// URL 변경 감지 (카테고리 변경 시 검색어 초기화)
+// LectureSearchPage.vue
+// LectureSearchPage.vue (쿼리 변화 감지 watcher)
 watch(
-    () => [route.query.q, route.query.category, route.query.sort],
-    ([newQ, newCat, newSort]) => {
-        if (newCat !== selectedCategory.value) {
-            searchQuery.value = '' // 카테고리 변경 시 검색어 초기화
+    () => [route.query.q, route.query.category, route.query.sort, route.query.ts],
+    ([newQ, newCat, newSort, newTs], [oldQ, oldCat, oldSort, oldTs]) => {
+        // 새 검색이 시작되면 기존 태그 선택 상태 초기화
+        selectedTags.value = []
+
+        // 검색어가 있으면 검색어 우선, 없으면 카테고리 기준
+        if (newQ && newQ.trim() !== '') {
+            searchQuery.value = newQ
+            selectedCategory.value = ''
+        } else {
+            searchQuery.value = ''
+            selectedCategory.value = newCat || ''
         }
-        selectedCategory.value = newCat || ''
+
         selectedSort.value = newSort || 'relevance'
         page.value = 1
+
+        // 새 검색이므로 presetTags 업데이트 플래그 리셋
+        isPresetTagsInitialized.value = false
+
         fetchLectures(true)
     }
 )

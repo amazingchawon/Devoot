@@ -2,11 +2,7 @@
     <div class="col-span-4 overflow-hidden border-gray-200 lg:col-span-3 h-80 rounded-2xl">
         <!-- 강의 썸네일 (고정된 높이 설정) -->
         <div class="w-full h-40 bg-gray-200">
-            <img
-                :src="lecture.imageUrl"
-                alt="Lecture Thumbnail"
-                class="object-cover w-full h-full"
-            />
+            <img :src="lecture.imgUrl" alt="Lecture Thumbnail" class="object-cover w-full h-full" />
         </div>
 
         <!-- 강의 정보 -->
@@ -45,16 +41,19 @@
                     </div>
                 </div>
             </div>
-
             <!-- 태그 리스트 -->
-            <div class="flex flex-wrap gap-1">
-                <span
-                    v-for="tag in tagList"
-                    :key="tag"
-                    class="px-2 py-1 text-gray-400 bg-gray-100 rounded-full text-caption"
-                >
-                    # {{ tag }}
-                </span>
+            <div class="flex items-center overflow-hidden whitespace-nowrap">
+                <div class="flex items-center w-full gap-1 overflow-hidden">
+                    <span
+                        v-for="(tag, index) in tagList"
+                        :key="index"
+                        class="inline-block px-2 py-1 overflow-hidden text-gray-400 bg-gray-100 rounded-full text-caption shrink-0 whitespace-nowrap text-ellipsis"
+                        :style="{ maxWidth: 'calc(100% / 3 - 8px)' }"
+                        :title="tag"
+                    >
+                        # {{ tag }}
+                    </span>
+                </div>
             </div>
         </div>
     </div>
